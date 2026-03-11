@@ -78,7 +78,6 @@
         <!-- Tabs - scrollable on mobile -->
         <div class="tabs-scroll flex space-x-1 border-t border-slate-100 pt-2 -mx-4 px-4">
             <button onclick="switchMode('growth')" id="tab-growth" class="pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2">Growth Calculator</button>
-            <button onclick="switchMode('inflation')" id="tab-inflation" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Inflation Adjusted</button>
             <button onclick="switchMode('goal')" id="tab-goal" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Goal Planner</button>
         </div>
     </nav>
@@ -87,13 +86,13 @@
     <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-4 flex flex-col lg:flex-row gap-4">
 
         <!-- LEFT PANEL: Parameters -->
-        <div class="w-full lg:w-1/3 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+        <div class="w-full lg:w-1/3 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col lg:self-start lg:sticky lg:top-24">
             <h2 class="text-lg font-bold flex items-center gap-2 mb-4 text-slate-800">Parameters</h2>
 
-            <div class="space-y-4 flex-1">
+            <div class="space-y-4 flex-1 overflow-y-auto">
                 <!-- Goal Type selector (only visible in Goal mode) -->
                 <div id="goal-type-container" class="hidden">
-                    <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">What's Your Goal?</label>
+                    <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">🎯 What's Your Goal?</label>
                     <select id="goal-type" onchange="onGoalTypeChange()" class="w-full px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold text-sm outline-none text-emerald-900">
                         <option value="vehicle">🚗 Buy a Vehicle</option>
                         <option value="marriage">💍 Marriage</option>
@@ -128,6 +127,18 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Expected Return (%)</label>
                     <input type="number" id="rate" value="12" step="0.1" inputmode="decimal" oninput="updateWords('rate', 'rate-words')" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-lg outline-none">
                     <div class="num-word" id="rate-words">Twelve</div>
+                </div>
+
+                <!-- Inflation toggle (visible in growth mode) -->
+                <div id="inflation-toggle-container" class="hidden">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <div class="relative">
+                            <input type="checkbox" id="inflation-toggle" class="sr-only" onchange="onInflationToggle()">
+                            <div id="toggle-track" class="w-10 h-5 bg-slate-200 rounded-full transition-colors duration-200"></div>
+                            <div id="toggle-thumb" class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"></div>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Adjust for Inflation</span>
+                    </label>
                 </div>
 
                 <div id="inflation-rate-container" class="hidden">
@@ -289,23 +300,51 @@
 
         function switchMode(mode) {
             currentMode = mode;
-            ['growth','inflation','goal'].forEach(m => {
+            ['growth','goal'].forEach(m => {
                 document.getElementById('tab-' + m).className = (m === mode)
                     ? 'pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2'
                     : 'pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2';
             });
-            document.getElementById('rate-container').style.display = mode === 'goal' ? 'none' : 'block';
-            document.getElementById('inflation-rate-container').style.display = mode === 'inflation' ? 'block' : 'none';
-            document.getElementById('custom-rate-container').style.display = mode === 'goal' ? 'block' : 'none';
-            document.getElementById('goal-type-container').style.display = mode === 'goal' ? 'block' : 'none';
-            document.getElementById('amount-label').innerText = mode === 'goal' ? 'Target Goal Amount (e.g. 1,00,00,000)' : 'Investment Amount';
-            document.getElementById('years-label').innerText = mode === 'goal' ? 'Goal Term (Years)' : 'Time Period (Years)';
-            document.getElementById('calc-btn').innerText = mode === 'goal' ? 'Calculate Required Investment' : 'Calculate Projection';
-            document.getElementById('growth-results').style.display = mode === 'goal' ? 'none' : 'block';
-            document.getElementById('goal-results').style.display = mode === 'goal' ? 'block' : 'none';
-            document.getElementById('amount').value = mode === 'goal' ? "1,00,00,000" : "10,000";
+            const isGoal = mode === 'goal';
+            document.getElementById('rate-container').style.display = isGoal ? 'none' : 'block';
+            document.getElementById('inflation-toggle-container').style.display = isGoal ? 'none' : 'block';
+            // Hide inflation rate if switching away
+            if (isGoal) {
+                document.getElementById('inflation-rate-container').classList.add('hidden');
+                const toggle = document.getElementById('inflation-toggle');
+                toggle.checked = false;
+                document.getElementById('toggle-track').classList.remove('on');
+                document.getElementById('toggle-thumb').classList.remove('on');
+                currentMode = 'goal';
+            }
+            document.getElementById('custom-rate-container').style.display = isGoal ? 'block' : 'none';
+            document.getElementById('goal-type-container').style.display = isGoal ? 'block' : 'none';
+            document.getElementById('amount-label').innerText = isGoal ? 'Target Goal Amount (e.g. 1,00,00,000)' : 'Investment Amount';
+            document.getElementById('years-label').innerText = isGoal ? 'Goal Term (Years)' : 'Time Period (Years)';
+            document.getElementById('calc-btn').innerText = isGoal ? 'Calculate Required Investment' : 'Calculate Projection';
+            document.getElementById('growth-results').style.display = isGoal ? 'none' : 'block';
+            document.getElementById('goal-results').style.display = isGoal ? 'block' : 'none';
+            document.getElementById('amount').value = isGoal ? "1,00,00,000" : "10,000";
             formatInput(document.getElementById('amount'), 'amount-words');
             onYearsChange();
+            calculate();
+        }
+
+        function onInflationToggle() {
+            const toggle = document.getElementById('inflation-toggle');
+            const track = document.getElementById('toggle-track');
+            const thumb = document.getElementById('toggle-thumb');
+            if (toggle.checked) {
+                track.classList.add('on');
+                thumb.classList.add('on');
+                document.getElementById('inflation-rate-container').classList.remove('hidden');
+                currentMode = 'inflation';
+            } else {
+                track.classList.remove('on');
+                thumb.classList.remove('on');
+                document.getElementById('inflation-rate-container').classList.add('hidden');
+                currentMode = 'growth';
+            }
             calculate();
         }
 
@@ -357,23 +396,79 @@
         function getInvestmentSuggestions(years) {
             if (years < 7) {
                 return [
-                    { name:'Fixed Deposit (FD)', icon:'🏦', returns:'6.5 – 8%', risk:1, riskLabel:'Very Low', why:'Bank-guaranteed returns. Ideal capital protection for short goals.' },
-                    { name:'Recurring Deposit (RD)', icon:'📅', returns:'6 – 7.5%', risk:1, riskLabel:'Very Low', why:'Build corpus monthly with fixed returns, no market risk.' },
-                    { name:'Liquid Mutual Funds', icon:'💧', returns:'5.5 – 7%', risk:1, riskLabel:'Very Low', why:'Better than savings account, withdraw anytime within hours.' },
-                    { name:'Debt Mutual Funds', icon:'📊', returns:'6 – 8.5%', risk:2, riskLabel:'Low', why:'Invests in bonds & govt securities. Slightly better returns than FD.' },
-                    { name:'NSC (Natl. Savings Cert.)', icon:'📜', returns:'7.7%', risk:1, riskLabel:'Very Low', why:'Govt-backed. Qualifies for 80C tax deduction. 5yr lock-in.' },
-                    { name:'Post Office Time Deposit', icon:'📮', returns:'6.9 – 7.5%', risk:1, riskLabel:'Very Low', why:'Sovereign guarantee. Safe alternative to bank FD.' },
+                    { name:'Fixed Deposit (FD)', icon:'🏦', returns:'6.5 – 8%', risk:1, riskLabel:'Very Low',
+                      why:'Bank-guaranteed returns. Ideal capital protection for short goals.',
+                      what:'A Fixed Deposit is a savings product offered by banks where you deposit a lump sum for a fixed tenure at a predetermined interest rate. The principal and interest are guaranteed by the bank.',
+                      scenarios:'Best when you need guaranteed, predictable returns for a specific date. Ideal for emergency funds, short-term savings goals (1–5 years), or when capital protection is your top priority.',
+                      example:'Priya deposits ₹5,00,000 in an FD at 7.5% for 3 years. At maturity she receives ₹6,23,000 — a guaranteed gain of ₹1,23,000 with zero market risk.' },
+                    { name:'Recurring Deposit (RD)', icon:'📅', returns:'6 – 7.5%', risk:1, riskLabel:'Very Low',
+                      why:'Build corpus monthly with fixed returns, no market risk.',
+                      what:'An RD lets you invest a fixed amount every month for a chosen period. Interest is compounded quarterly and the maturity amount is guaranteed by the bank — similar to an FD but with monthly contributions.',
+                      scenarios:'Perfect if you have a regular monthly surplus and want to build a lump sum without market risk. Great for salaried individuals saving for a specific short-term goal like a vacation or gadget purchase.',
+                      example:'Raj invests ₹5,000/month in an RD at 7% for 2 years. At maturity he gets ₹1,29,500 — his total investment of ₹1,20,000 grows by ₹9,500 with complete safety.' },
+                    { name:'Liquid Mutual Funds', icon:'💧', returns:'5.5 – 7%', risk:1, riskLabel:'Very Low',
+                      why:'Better than savings account, withdraw anytime within hours.',
+                      what:'Liquid funds invest in very short-term debt instruments (maturity up to 91 days) like treasury bills and commercial paper. They offer better returns than a savings account with same-day or next-day withdrawal.',
+                      scenarios:'Ideal as a parking space for your emergency fund or for money you need access to within days. Use it instead of a savings account to earn more without locking your money.',
+                      example:'Anita parks ₹2,00,000 in a liquid fund at 6.5%. After 6 months she earns ~₹6,500 — better than a savings account\'s ₹3,000 — and can withdraw to her bank within hours.' },
+                    { name:'Debt Mutual Funds', icon:'📊', returns:'6 – 8.5%', risk:2, riskLabel:'Low',
+                      why:'Invests in bonds & govt securities. Slightly better returns than FD.',
+                      what:'Debt mutual funds invest in fixed-income instruments like government bonds, corporate bonds, and money market instruments. Returns are generally stable but slightly vary with interest rate changes.',
+                      scenarios:'Good for investors who want slightly higher returns than FDs and can tolerate minor fluctuations. Suitable for 1–3 year horizons and tax-efficient for high-income earners (indexation benefit).',
+                      example:'Vikram invests ₹3,00,000 in a short-duration debt fund at 7.5% for 2 years. He earns ~₹46,800 in returns — more than an FD — and benefits from indexation to reduce tax.' },
+                    { name:'NSC (Natl. Savings Cert.)', icon:'📜', returns:'7.7%', risk:1, riskLabel:'Very Low',
+                      why:'Govt-backed. Qualifies for 80C tax deduction. 5yr lock-in.',
+                      what:'NSC is a government-backed savings scheme available at post offices with a fixed 5-year tenure. Interest is compounded annually but paid at maturity. Qualifies for ₹1.5L Section 80C deduction.',
+                      scenarios:'Best for tax-saving investors in the 20–30% tax bracket who don\'t need liquidity for 5 years. Excellent risk-free option if you\'ve exhausted PPF and ELSS limits.',
+                      example:'Suman invests ₹50,000 in NSC at 7.7% for 5 years. She gets ₹72,500 at maturity and also saves ₹10,400 in income tax (at 20% slab) — an effective return of over 10%.' },
+                    { name:'Post Office Time Deposit', icon:'📮', returns:'6.9 – 7.5%', risk:1, riskLabel:'Very Low',
+                      why:'Sovereign guarantee. Safe alternative to bank FD.',
+                      what:'Post Office Time Deposits are government-backed FD equivalents for 1, 2, 3, or 5 years. Interest is paid annually and the 5-year variant qualifies for 80C tax benefits. Backed by sovereign guarantee.',
+                      scenarios:'Ideal for conservative investors in semi-urban or rural areas who trust post office infrastructure, or anyone seeking sovereign guarantee (safer even than most banks). Perfect for senior citizens.',
+                      example:'Ramesh, a retiree, deposits ₹10,00,000 in a 5-year Post Office TD at 7.5%. He earns ₹75,000/year in interest — a reliable income stream with zero default risk.' },
                 ];
             } else {
                 return [
-                    { name:'Equity Mutual Funds', icon:'📈', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Best long-term wealth creator. CAGR ~12% historically over 10+ yrs.' },
-                    { name:'ELSS (Tax Saving Funds)', icon:'🧾', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Equity returns + 80C tax saving. Shortest lock-in (3 yrs) among tax options.' },
-                    { name:'PPF (Public Provident Fund)', icon:'🏛️', returns:'7.1%', risk:1, riskLabel:'Very Low', why:'Tax-free, govt-backed, 15yr maturity. Ideal for retirement anchor.' },
-                    { name:'NPS (National Pension Sys.)', icon:'🎯', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Pension-focused. Extra ₹50k deduction u/s 80CCD(1B). Great for retirement.' },
-                    { name:'Sovereign Gold Bonds (SGB)', icon:'🥇', returns:'8 – 11%', risk:2, riskLabel:'Low–Med', why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.' },
-                    { name:'Index Funds (Nifty 50)', icon:'🔷', returns:'11 – 13%', risk:3, riskLabel:'Medium', why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.' },
-                    { name:'Balanced/Hybrid Funds', icon:'⚖️', returns:'10 – 12%', risk:3, riskLabel:'Medium', why:'Mix of equity + debt. Smoother returns, less volatility than pure equity.' },
-                    { name:'Real Estate / REITs', icon:'🏢', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Real estate exposure without full capital. REITs give rental income.' },
+                    { name:'Equity Mutual Funds', icon:'📈', returns:'12 – 15%', risk:4, riskLabel:'High',
+                      why:'Best long-term wealth creator. CAGR ~12% historically over 10+ yrs.',
+                      what:'Equity mutual funds invest primarily in stocks across sectors and market caps. They are managed by professional fund managers and offer diversification. Returns fluctuate with the market but historically outperform all other asset classes over 10+ years.',
+                      scenarios:'Ideal for long-term goals (7+ years) where you can ride out market volatility. Best for wealth building for retirement, children\'s education, or any large long-term goal. Suited for investors with moderate-to-high risk appetite.',
+                      example:'Deepa invests ₹10,000/month via SIP in an equity fund at 12% for 15 years. She invests ₹18L total and her corpus grows to ₹50L+ — a 2.8x gain from compounding and market growth.' },
+                    { name:'ELSS (Tax Saving Funds)', icon:'🧾', returns:'12 – 15%', risk:4, riskLabel:'High',
+                      why:'Equity returns + 80C tax saving. Shortest lock-in (3 yrs) among tax options.',
+                      what:'ELSS (Equity Linked Savings Scheme) are equity mutual funds that qualify for Section 80C tax deduction up to ₹1.5L per year. They have a mandatory 3-year lock-in — the shortest among all 80C options — and invest predominantly in stocks.',
+                      scenarios:'The go-to choice for tax-saving investors who also want equity growth. If you haven\'t used your full ₹1.5L 80C limit, always consider ELSS first. Great for building wealth while saving tax simultaneously.',
+                      example:'Karan invests ₹1,50,000/year in ELSS at 13% for 10 years. He saves ₹46,800/year in tax (30% slab) and his investment grows to ₹28L — effectively earning 20%+ effective annual returns after tax savings.' },
+                    { name:'PPF (Public Provident Fund)', icon:'🏛️', returns:'7.1%', risk:1, riskLabel:'Very Low',
+                      why:'Tax-free, govt-backed, 15yr maturity. Ideal for retirement anchor.',
+                      what:'PPF is a government-backed long-term savings scheme with a 15-year lock-in (extendable in 5-year blocks). Returns are tax-free and currently earn 7.1% compounded annually. Contributions up to ₹1.5L qualify for 80C deduction.',
+                      scenarios:'Ideal as the safe, guaranteed anchor of a retirement portfolio. Use it for the debt portion of your long-term savings. Best for risk-averse investors or to balance aggressive equity investments.',
+                      example:'Meena invests ₹1,50,000/year in PPF for 15 years at 7.1%. She invests ₹22.5L total and receives ₹40.7L tax-free at maturity — all interest and maturity amount fully exempt from tax.' },
+                    { name:'NPS (National Pension Sys.)', icon:'🎯', returns:'8 – 12%', risk:3, riskLabel:'Medium',
+                      why:'Pension-focused. Extra ₹50k deduction u/s 80CCD(1B). Great for retirement.',
+                      what:'NPS is a government-regulated pension system where you invest across equity, corporate bonds, and government securities. At retirement (60), you must use 40% to buy an annuity; 60% can be withdrawn tax-free. Offers an additional ₹50,000 deduction beyond the standard 80C limit.',
+                      scenarios:'Perfect for retirement planning, especially for the self-employed and high-income earners who want extra tax deductions. Tier I NPS offers the most tax benefits but locks money till age 60.',
+                      example:'Arjun, 30, invests ₹6,000/month in NPS at 10% for 30 years. His corpus reaches ₹1.36 Cr at 60. He also saves ₹15,600/year extra in tax via the 80CCD(1B) deduction — a powerful retirement booster.' },
+                    { name:'Sovereign Gold Bonds (SGB)', icon:'🥇', returns:'8 – 11%', risk:2, riskLabel:'Low–Med',
+                      why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.',
+                      what:'SGBs are government bonds denominated in grams of gold. They provide the price appreciation of gold plus a fixed 2.5% annual interest. Held to maturity (8 years), capital gains are completely tax-free. No storage or making charges unlike physical gold.',
+                      scenarios:'Great for investors who want gold exposure without physical storage hassles. Ideal if you believe in gold as a hedge against inflation over 8 years. Best held to maturity to avail the capital gains tax exemption.',
+                      example:'Ananya buys 10g SGB at ₹6,000/g (₹60,000 total). Gold rises to ₹9,000/g in 8 years. She receives ₹90,000 (gold gain) + ₹12,000 (2.5% interest) = ₹1,02,000 — all capital gains completely tax-free.' },
+                    { name:'Index Funds (Nifty 50)', icon:'🔷', returns:'11 – 13%', risk:3, riskLabel:'Medium',
+                      why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.',
+                      what:'Index funds passively track a market index (like Nifty 50 or Sensex) by holding the same stocks in the same proportions. They have very low expense ratios (0.05–0.2%) and don\'t rely on a fund manager\'s skill. Returns mirror the index performance.',
+                      scenarios:'Ideal for first-time investors or those who believe in long-term market growth without fund manager risk. Perfect "set and forget" investment. Use it as the core of any long-term equity portfolio.',
+                      example:'Ritu starts a ₹5,000/month SIP in a Nifty 50 index fund at 12% for 20 years. She invests ₹12L and her corpus grows to ₹49.9L — with an expense ratio of only 0.1%, keeping nearly all the gains.' },
+                    { name:'Balanced/Hybrid Funds', icon:'⚖️', returns:'10 – 12%', risk:3, riskLabel:'Medium',
+                      why:'Mix of equity + debt. Smoother returns, less volatility than pure equity.',
+                      what:'Hybrid or balanced funds invest in a mix of equity (stocks) and debt (bonds). Aggressive hybrid funds are ~65–80% equity, while conservative hybrid funds lean more towards debt. They auto-rebalance, providing smoother returns than pure equity.',
+                      scenarios:'Perfect for moderate-risk investors who want equity growth with some downside protection. Great for investors 3–5 years from retirement who need to reduce risk but maintain growth, or for first-time equity investors.',
+                      example:'Suresh invests ₹8,000/month in an aggressive hybrid fund at 11% for 12 years. His ₹11.5L investment becomes ₹22.7L — equity-like returns with less volatility, making it easier to stay invested through market dips.' },
+                    { name:'Real Estate / REITs', icon:'🏢', returns:'8 – 12%', risk:3, riskLabel:'Medium',
+                      why:'Real estate exposure without full capital. REITs give rental income.',
+                      what:'REITs (Real Estate Investment Trusts) are listed instruments that own income-generating real estate (offices, malls, warehouses). They distribute 90% of net income as dividends. You can invest in REITs with as little as ₹10,000–15,000 on stock exchanges.',
+                      scenarios:'Good for investors who want real estate exposure without buying property. Ideal for adding a non-correlated asset to your portfolio. The dividend income is useful for those seeking passive income alongside capital appreciation.',
+                      example:'Neha invests ₹1,00,000 in Embassy Office Parks REIT. She earns ~₹8,000/year in dividends (8% yield) plus potential price appreciation. Total return could reach 10–12% annually over a 7-year period.' },
                 ];
             }
         }
@@ -521,7 +616,7 @@
             }
 
             grid.innerHTML = '';
-            suggestions.forEach(inv => {
+            suggestions.forEach((inv, idx) => {
                 const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
                 const riskBg = ['','#f0fdf4','#f7fee7','#fefce8','#fff7ed','#fef2f2'];
                 const color = riskColors[inv.risk];
@@ -533,21 +628,69 @@
                 }
 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white cursor-default" style="border-left: 3px solid ${color};">
+                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white cursor-pointer group relative" style="border-left: 3px solid ${color};" onclick="openInvestModal(${idx}, ${years < 7 ? 0 : 1})">
                         <div class="flex items-start justify-between gap-2 mb-1.5">
                             <div class="font-bold text-sm text-slate-800">${inv.icon} ${inv.name}</div>
                             <div class="text-xs font-black shrink-0" style="color:${color}">${inv.returns}</div>
                         </div>
                         <div class="text-[11px] text-slate-500 mb-2 leading-snug">${inv.why}</div>
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center justify-between gap-1.5">
                             <div class="flex items-center gap-0.5">${dots}</div>
                             <span class="text-[10px] font-bold" style="color:${color}">${inv.riskLabel} Risk</span>
                         </div>
+                        <div class="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-emerald-300 transition-all pointer-events-none"></div>
+                        <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-emerald-500">Tap for details →</div>
                     </div>
                 `);
             });
 
             section.style.display = 'block';
+        }
+
+        // Store last rendered suggestions for modal access
+        let _lastSuggestions = [];
+        function openInvestModal(idx, termGroup) {
+            const years = termGroup === 0 ? 1 : 10;
+            const suggestions = getInvestmentSuggestions(years);
+            _lastSuggestions = suggestions;
+            const inv = suggestions[idx];
+            if (!inv) return;
+
+            const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+            const riskBg = ['','#f0fdf4','#f7fee7','#fefce8','#fff7ed','#fef2f2'];
+            const color = riskColors[inv.risk];
+            const bg = riskBg[inv.risk];
+
+            document.getElementById('modal-header').style.background = bg;
+            document.getElementById('modal-icon').innerText = inv.icon;
+            document.getElementById('modal-name').innerText = inv.name;
+            document.getElementById('modal-returns').innerText = inv.returns;
+            document.getElementById('modal-returns').style.color = color;
+            document.getElementById('modal-risk-label').innerText = inv.riskLabel + ' Risk';
+            document.getElementById('modal-risk-label').style.color = color;
+
+            let dots = '';
+            for (let d = 1; d <= 5; d++) {
+                dots += `<div style="width:11px;height:11px;border-radius:50%;background:${d <= inv.risk ? color : '#e2e8f0'};flex-shrink:0;"></div>`;
+            }
+            document.getElementById('modal-risk-dots').innerHTML = dots;
+
+            document.getElementById('modal-what').innerText = inv.what;
+            document.getElementById('modal-scenarios').innerText = inv.scenarios;
+            document.getElementById('modal-example').innerText = inv.example;
+
+            const modal = document.getElementById('invest-modal');
+            modal.classList.remove('hidden');
+            // Re-trigger animation
+            const card = modal.querySelector('.animate-modal');
+            card.style.animation = 'none';
+            requestAnimationFrame(() => { card.style.animation = ''; });
+        }
+
+        function closeModal(e) {
+            if (e.target === document.getElementById('invest-modal') || e.target === document.getElementById('invest-modal').querySelector('.absolute.inset-0')) {
+                document.getElementById('invest-modal').classList.add('hidden');
+            }
         }
 
         function renderLineChart(labels, dataPrimary, dataSecondary, labelPrimary, labelSecondary, colorPrimary, colorSecondary) {
@@ -603,6 +746,8 @@
             updateWords('rate', 'rate-words');
             updateWords('years', 'years-words');
             updateWords('inf-rate', 'inf-rate-words');
+            // Show inflation toggle on initial growth mode
+            document.getElementById('inflation-toggle-container').style.display = 'block';
             calculate();
         };
 
@@ -610,6 +755,62 @@
             document.getElementById(id)?.addEventListener('input', calculate);
         });
         document.getElementById('inv-type').addEventListener('change', calculate);
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.getElementById('invest-modal').classList.add('hidden');
+        });
     </script>
+    <!-- Investment Detail Modal -->
+    <div id="invest-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="closeModal(event)">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-auto overflow-hidden animate-modal">
+            <!-- Header -->
+            <div id="modal-header" class="px-5 py-4 flex items-start justify-between gap-3" style="background:#f0fdf4">
+                <div>
+                    <div id="modal-icon-name" class="flex items-center gap-2 mb-1">
+                        <span id="modal-icon" class="text-2xl"></span>
+                        <span id="modal-name" class="text-base font-black text-slate-800"></span>
+                    </div>
+                    <div id="modal-returns" class="text-2xl font-black" style="color:#16a34a"></div>
+                    <div class="text-xs text-slate-500 font-medium">Expected Annual Returns</div>
+                </div>
+                <button onclick="document.getElementById('invest-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none mt-0.5 flex-shrink-0">✕</button>
+            </div>
+            <!-- Risk meter -->
+            <div class="px-5 pt-4 pb-2 border-b border-slate-100">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</span>
+                    <span id="modal-risk-label" class="text-xs font-bold"></span>
+                </div>
+                <div class="flex items-center gap-1.5" id="modal-risk-dots"></div>
+            </div>
+            <!-- Body -->
+            <div class="px-5 py-4 space-y-4">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">What is it?</p>
+                    <p id="modal-what" class="text-sm text-slate-700 leading-relaxed"></p>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Best Scenarios</p>
+                    <p id="modal-scenarios" class="text-sm text-slate-700 leading-relaxed"></p>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                    <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">💡 Example</p>
+                    <p id="modal-example" class="text-sm text-amber-900 leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-modal { animation: modal-in 0.18s ease-out; }
+        #toggle-track.on { background: #10b981; }
+        #toggle-thumb.on { transform: translateX(20px); }
+    </style>
 </body>
 </html>
