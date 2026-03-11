@@ -61,36 +61,6 @@
 
         /* Goal type badge */
         .goal-badge { display:inline-flex; align-items:center; gap:4px; background:#ecfdf5; color:#065f46; border-radius:9999px; padding:2px 10px; font-size:0.7rem; font-weight:700; letter-spacing:.03em; }
-
-        /* Investment modal */
-        #invest-modal-overlay {
-            position:fixed; inset:0; background:rgba(15,23,42,0.55); z-index:1000;
-            display:flex; align-items:center; justify-content:center;
-            padding:16px; opacity:0; pointer-events:none;
-            transition: opacity 0.22s ease;
-            backdrop-filter: blur(3px);
-        }
-        #invest-modal-overlay.open { opacity:1; pointer-events:all; }
-        #invest-modal {
-            background:#fff; border-radius:20px; width:100%; max-width:520px;
-            box-shadow:0 25px 60px rgba(0,0,0,0.22);
-            transform:translateY(24px) scale(0.97);
-            transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
-            max-height:90vh; overflow-y:auto;
-        }
-        #invest-modal-overlay.open #invest-modal { transform:translateY(0) scale(1); }
-        .modal-tag { display:inline-flex; align-items:center; gap:4px; border-radius:9999px; padding:3px 11px; font-size:0.7rem; font-weight:700; }
-        .modal-scenario-item { display:flex; gap:8px; align-items:flex-start; padding:8px 0; border-bottom:1px solid #f1f5f9; }
-        .modal-scenario-item:last-child { border-bottom:none; }
-        .pro-con-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-        .pro-box { background:#f0fdf4; border-radius:10px; padding:10px; }
-        .con-box { background:#fef2f2; border-radius:10px; padding:10px; }
-        .pro-box li, .con-box li { font-size:0.72rem; color:#374151; margin-bottom:4px; list-style:none; padding-left:14px; position:relative; }
-        .pro-box li::before { content:"✓"; position:absolute; left:0; color:#16a34a; font-weight:700; }
-        .con-box li::before { content:"✗"; position:absolute; left:0; color:#dc2626; font-weight:700; }
-        .example-box { background:linear-gradient(135deg,#f0fdf4,#ecfdf5); border:1px solid #bbf7d0; border-radius:12px; padding:14px; }
-        .invest-card { cursor:pointer; }
-        .invest-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.12); transform:translateY(-3px); }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
@@ -255,74 +225,6 @@
         Aishwaryamasthu &nbsp;·&nbsp; An Indian calculator for your Wealth generation scenarios
     </footer>
 
-    <!-- Investment Detail Modal -->
-    <div id="invest-modal-overlay" onclick="closeInvestModal(event)">
-        <div id="invest-modal">
-            <!-- header -->
-            <div id="modal-header" class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-3">
-                <div>
-                    <div class="text-2xl mb-1" id="modal-icon"></div>
-                    <h2 class="text-xl font-black text-slate-900" id="modal-name"></h2>
-                    <div class="flex flex-wrap gap-2 mt-2" id="modal-tags"></div>
-                </div>
-                <button onclick="closeInvestModal()" class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-lg leading-none transition-colors" style="margin-top:2px;">×</button>
-            </div>
-            <!-- body -->
-            <div class="px-6 py-5 space-y-5">
-                <!-- What is it -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">What is it?</h3>
-                    <p class="text-sm text-slate-700 leading-relaxed" id="modal-what"></p>
-                </div>
-                <!-- Risk meter -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Risk Level</h3>
-                    <div class="flex items-center gap-3">
-                        <div class="flex gap-1" id="modal-risk-dots"></div>
-                        <span class="text-sm font-bold" id="modal-risk-label"></span>
-                    </div>
-                </div>
-                <!-- Expected returns -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Expected Returns</h3>
-                    <p class="text-2xl font-black" id="modal-returns"></p>
-                    <p class="text-xs text-slate-500 mt-0.5" id="modal-returns-note"></p>
-                </div>
-                <!-- Good scenarios -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">When Is This A Good Choice?</h3>
-                    <div id="modal-scenarios" class="space-y-0"></div>
-                </div>
-                <!-- Pros & Cons -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Pros & Cons</h3>
-                    <div class="pro-con-grid">
-                        <div class="pro-box">
-                            <div class="text-xs font-bold text-green-700 mb-2">✅ Pros</div>
-                            <ul id="modal-pros"></ul>
-                        </div>
-                        <div class="con-box">
-                            <div class="text-xs font-bold text-red-700 mb-2">⚠️ Cons</div>
-                            <ul id="modal-cons"></ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- Example -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Quick Example</h3>
-                    <div class="example-box">
-                        <p class="text-sm text-slate-700 leading-relaxed" id="modal-example"></p>
-                    </div>
-                </div>
-                <!-- Where to invest -->
-                <div>
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Where to Start</h3>
-                    <p class="text-sm text-slate-600" id="modal-where"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         let chartInstance = null;
         let currentMode = 'growth';
@@ -452,184 +354,27 @@
             return ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'][level];
         }
 
-        const INVEST_DETAILS = {
-            'Fixed Deposit (FD)': {
-                icon:'🏦', returns:'6.5 – 8%', returnsNote:'Varies by bank & tenure. Senior citizens get extra 0.25–0.50%', risk:1, riskLabel:'Very Low',
-                why:'Bank-guaranteed returns. Ideal capital protection for short goals.',
-                what:'A Fixed Deposit is a savings instrument where you park a lump sum with a bank for a fixed tenure at a pre-agreed interest rate. The rate does not change with market conditions, so your returns are fully predictable.',
-                tags:[{label:'Debt',color:'#1d4ed8',bg:'#dbeafe'},{label:'Guaranteed',color:'#065f46',bg:'#d1fae5'},{label:'Capital Safe',color:'#7c3aed',bg:'#ede9fe'}],
-                scenarios:['You have a lump sum sitting idle in a savings account earning only 3%.','You need the money in 1–5 years and cannot afford to lose any of it.','You want zero-tension, predictable returns for a near-term goal like a down payment.','You are a retiree or conservative investor who cannot stomach any market risk.'],
-                pros:['Guaranteed, fixed returns regardless of market','DICGC insurance up to ₹5 lakh per bank','Flexible tenures: 7 days to 10 years','Loan/overdraft available against FD'],
-                cons:['Returns may not beat inflation in the long run','TDS deducted if interest > ₹40,000 p.a.','Premature withdrawal attracts penalty','Locked in – not liquid unlike savings account'],
-                example:'Ravi wants to buy a car worth ₹8 lakhs in 3 years. He puts ₹6.5 lakhs in a 3-year FD at 7.5% p.a. At maturity he gets ~₹8.07 lakhs — just enough to pay for the car with zero market risk.',
-                where:'Open directly on your bank's mobile app (SBI, HDFC, ICICI, Axis) or use Groww/Paytm Money for comparison across banks.'
-            },
-            'Recurring Deposit (RD)': {
-                icon:'📅', returns:'6 – 7.5%', returnsNote:'Similar to FD rates; interest compounds quarterly', risk:1, riskLabel:'Very Low',
-                why:'Build corpus monthly with fixed returns, no market risk.',
-                what:'A Recurring Deposit lets you invest a fixed amount every month for a chosen tenure. The bank pays you a fixed interest rate (like a FD) on each installment. It's essentially a SIP version of a Fixed Deposit.',
-                tags:[{label:'Debt',color:'#1d4ed8',bg:'#dbeafe'},{label:'Monthly SIP',color:'#065f46',bg:'#d1fae5'},{label:'Guaranteed',color:'#7c3aed',bg:'#ede9fe'}],
-                scenarios:['You earn a monthly salary and want to systematically save for a goal in 1–5 years.','You are saving for a specific event like a wedding, trip or school fees.','You want the discipline of SIP investing but without any market risk.','You are new to investing and want a completely safe starting point.'],
-                pros:['Forces monthly savings discipline','Fixed, predictable returns like FD','No market risk whatsoever','DICGC insured up to ₹5 lakh'],
-                cons:['Returns lower than equity in the long run','Penalty for missing monthly installments','TDS applicable on interest earned','Not suitable for wealth creation over 7+ years'],
-                example:'Priya earns ₹50,000/month and wants ₹1.2 lakhs for a family trip in 18 months. She starts an RD of ₹6,500/month at 7% p.a. After 18 months she gets back ~₹1.22 lakhs — her goal is met safely.',
-                where:'Available at any bank branch, net banking, or Post Office (Post Office RD at competitive rates).'
-            },
-            'Liquid Mutual Funds': {
-                icon:'💧', returns:'5.5 – 7%', returnsNote:'Returns vary. Better than savings account; not fixed', risk:1, riskLabel:'Very Low',
-                why:'Better than savings account, withdraw anytime within hours.',
-                what:'Liquid Mutual Funds invest in very short-term debt instruments like Treasury Bills, CDs, and Commercial Paper with maturity under 91 days. They are the safest category of mutual funds and behave almost like a savings account — but with better returns.',
-                tags:[{label:'Debt',color:'#1d4ed8',bg:'#dbeafe'},{label:'High Liquidity',color:'#065f46',bg:'#d1fae5'},{label:'Low Risk',color:'#92400e',bg:'#fef3c7'}],
-                scenarios:['You have an emergency fund you want to earn something on rather than leaving in a savings account.','You received a bonus or windfall and are deciding where to invest it; park it here temporarily.','You need funds accessible within 24 hours at any time.','You are building a short-term corpus (< 3 months to 1 year) with high flexibility.'],
-                pros:['Instant redemption (within hours on working days)','Returns 1.5–2x better than savings account','Very stable NAV — rarely loses value','No exit load after 7 days'],
-                cons:['Returns not guaranteed; can vary slightly','Not DICGC insured (unlike bank deposits)','Subject to debt fund taxation post April 2023','Slightly lower than FD for longer tenure'],
-                example:'Arjun keeps his ₹2 lakh emergency fund in a Liquid Fund earning ~6.5% p.a. vs 3% in his savings account. Over 1 year he earns ~₹7,000 extra — and can redeem to his bank account in under 2 hours if needed.',
-                where:'Invest via Zerodha Coin, Groww, Paytm Money, or directly on AMC websites like HDFC MF, SBI MF, ICICI Prudential.'
-            },
-            'Debt Mutual Funds': {
-                icon:'📊', returns:'6 – 8.5%', returnsNote:'Varies by category (short duration, corporate bond, gilt etc.)', risk:2, riskLabel:'Low',
-                why:'Invests in bonds & govt securities. Slightly better returns than FD.',
-                what:'Debt Mutual Funds invest in fixed-income securities like corporate bonds, government securities, and money market instruments. They aim to generate stable income with lower risk than equity. There are many sub-categories based on duration and credit quality.',
-                tags:[{label:'Debt',color:'#1d4ed8',bg:'#dbeafe'},{label:'Moderate Liquidity',color:'#065f46',bg:'#d1fae5'},{label:'Low Risk',color:'#92400e',bg:'#fef3c7'}],
-                scenarios:['You want better returns than FD with moderate liquidity and low risk.','You are saving for a goal 2–5 years away and don't want full equity exposure.','You are in a higher tax bracket and want efficient short-term debt investing.','You need a conservative allocation in a balanced portfolio.'],
-                pros:['Higher returns potential than FD','Wide variety: ultra-short, short, medium duration','Can be more tax efficient than FD (indexation)','Liquid — can redeem anytime (T+1 to T+3)'],
-                cons:['Not capital guaranteed like FD','Subject to interest rate risk in longer duration funds','Credit risk if invested in lower-rated bonds','Returns can vary year to year'],
-                example:'Meera has ₹5 lakhs to invest for 3 years for her daughter's college admission fees. She puts it in a Short Duration Debt Fund at 7.5% p.a. CAGR. She gets ~₹6.22 lakhs after 3 years — better than a bank FD of 7% (~₹6.12 L).',
-                where:'Available on all mutual fund platforms: Groww, Zerodha Coin, MF Central, or directly on AMC websites.'
-            },
-            'NSC (Natl. Savings Cert.)': {
-                icon:'📜', returns:'7.7%', returnsNote:'Government-set rate, reviewed quarterly. Currently 7.7% (2024)', risk:1, riskLabel:'Very Low',
-                why:'Govt-backed. Qualifies for 80C tax deduction. 5yr lock-in.',
-                what:'National Savings Certificate (NSC) is a fixed-income investment scheme available at India Post. It has a 5-year lock-in, offers guaranteed returns backed by the Government of India, and qualifies for ₹1.5 lakh tax deduction under Section 80C.',
-                tags:[{label:'Govt Backed',color:'#065f46',bg:'#d1fae5'},{label:'Tax Saving',color:'#7c3aed',bg:'#ede9fe'},{label:'5yr Lock-in',color:'#92400e',bg:'#fef3c7'}],
-                scenarios:['You want guaranteed returns AND want to save tax under Section 80C simultaneously.','You are a conservative investor happy to lock money for 5 years for a slightly higher rate.','You are planning for a goal exactly 5 years away and need capital certainty.','You are in the 20–30% tax bracket and want safe 80C options beyond ELSS.'],
-                pros:['Sovereign guarantee — absolutely safe','Tax deduction u/s 80C up to ₹1.5 lakh','Accrued interest itself qualifies for 80C each year','Can be used as collateral for loans'],
-                cons:['5-year lock-in — cannot exit early','Interest is taxable at maturity (unlike PPF)','Cannot be sold or transferred','No liquidity during the tenure'],
-                example:'Rajesh earns ₹12 lakhs p.a. (30% bracket). He invests ₹1.5 lakhs in NSC at 7.7%. Over 5 years it grows to ₹2.17 lakhs. PLUS he saves ₹46,800 in tax (30% of ₹1.56L). His effective return is well over 10% post-tax benefit.',
-                where:'Visit your nearest India Post branch with Aadhaar and PAN. Online NSC also available at indiapostpayments.gov.in.'
-            },
-            'Post Office Time Deposit': {
-                icon:'📮', returns:'6.9 – 7.5%', returnsNote:'Rates set by Govt quarterly. 5-year POTD offers 7.5% (2024)', risk:1, riskLabel:'Very Low',
-                why:'Sovereign guarantee. Safe alternative to bank FD.',
-                what:'Post Office Time Deposit (POTD) is a fixed deposit offered by India Post, backed by the Government of India. It offers 1, 2, 3, and 5-year terms. The 5-year variant qualifies for tax deduction under Section 80C.',
-                tags:[{label:'Govt Backed',color:'#065f46',bg:'#d1fae5'},{label:'Guaranteed',color:'#1d4ed8',bg:'#dbeafe'},{label:'80C (5yr)',color:'#7c3aed',bg:'#ede9fe'}],
-                scenarios:['You live in a semi-urban/rural area with easy Post Office access.','You don't fully trust private banks and prefer government-backed deposits.','You want better rates than a regular bank FD with sovereign safety.','You want 80C benefit via a fixed-rate instrument for a 5-year goal.'],
-                pros:['Sovereign guarantee — zero default risk','Better rates than most private bank FDs','5-yr variant qualifies for 80C deduction','Available at 1.5 lakh+ Post Office branches'],
-                cons:['Less convenient than digital bank FDs','Interest paid quarterly — not cumulative (1, 2, 3yr)','Early withdrawal has lock-in conditions','Limited online interface compared to banks'],
-                example:'Sunita invests ₹2 lakhs in a 5-year Post Office TD at 7.5%. At maturity she receives ~₹2.88 lakhs. Since it's a 5-yr deposit she also gets ₹20,000 tax saved under 80C — making the effective return even better.',
-                where:'Visit your nearest Post Office branch. Online access via IPPB (India Post Payments Bank) app for linked accounts.'
-            },
-            'Equity Mutual Funds': {
-                icon:'📈', returns:'12 – 15%', returnsNote:'Historical CAGR of Nifty 50 ~13% over 20 years. Past returns ≠ future.', risk:4, riskLabel:'High',
-                why:'Best long-term wealth creator. CAGR ~12% historically over 10+ yrs.',
-                what:'Equity Mutual Funds invest primarily in stocks (shares of companies). A professional fund manager picks stocks with the goal of beating the market. Sub-types include Large Cap, Mid Cap, Small Cap, Flexi Cap, Sectoral, and Thematic funds — each with different risk-return profiles.',
-                tags:[{label:'Equity',color:'#dc2626',bg:'#fee2e2'},{label:'High Growth',color:'#065f46',bg:'#d1fae5'},{label:'Long Term',color:'#1d4ed8',bg:'#dbeafe'}],
-                scenarios:['You are investing for a goal 7+ years away like retirement, child's education, or buying a home.','You want inflation-beating returns and can stomach short-term market ups and downs.','You want to benefit from India's growing economy over the next decade.','You have a regular income and want to build wealth via monthly SIPs.'],
-                pros:['Highest long-term return potential among all mainstream options','Professional management — no stock-picking required','SIP allows starting with just ₹500/month','Highly liquid — redeem in T+1 to T+3 working days'],
-                cons:['Market risk — value can fall 30–50% in a bear market','Returns not guaranteed; can be negative short-term','Requires patience of 7–10+ years to ride out cycles','Subject to LTCG tax (10% above ₹1L gains per year)'],
-                example:'Aditya invests ₹5,000/month SIP in a Flexi Cap Equity Fund for 15 years at 12% CAGR. He invests ₹9 lakhs total. At the end, his corpus grows to ~₹25.2 lakhs — nearly 3x his invested amount, purely through compounding.',
-                where:'Start SIPs via Zerodha Coin, Groww, Paytm Money, or directly on AMC apps like Mirae Asset, SBI MF, or ICICI Prudential.'
-            },
-            'ELSS (Tax Saving Funds)': {
-                icon:'🧾', returns:'12 – 15%', returnsNote:'Same as equity funds with a mandatory 3-year lock-in per installment', risk:4, riskLabel:'High',
-                why:'Equity returns + 80C tax saving. Shortest lock-in (3 yrs) among tax options.',
-                what:'Equity Linked Savings Scheme (ELSS) is a category of Equity Mutual Fund that qualifies for ₹1.5 lakh tax deduction under Section 80C. It has the shortest lock-in among all 80C instruments (3 years). It invests predominantly in equities.',
-                tags:[{label:'Equity',color:'#dc2626',bg:'#fee2e2'},{label:'Tax Saving 80C',color:'#7c3aed',bg:'#ede9fe'},{label:'3yr Lock-in',color:'#92400e',bg:'#fef3c7'}],
-                scenarios:['You need to save tax under 80C AND want market-linked growth simultaneously.','You are in the 20% or 30% tax slab and want to maximise post-tax wealth creation.','You can lock in money for at least 3 years (each SIP installment has its own 3-yr clock).','You want the flexibility to continue beyond 3 years for better returns.'],
-                pros:['Dual benefit: Tax saving + equity returns','Shortest lock-in (3 yr) vs PPF (15yr), NSC (5yr)','SIP installments have rolling 3-year lock-in','Potential to earn 12–15% vs 7% from other 80C options'],
-                cons:['Market risk — values fluctuate with equity markets','3-year lock-in per installment limits liquidity','LTCG tax at 10% on gains above ₹1 lakh','Not suitable if goal is within 3 years'],
-                example:'Neha is in the 30% tax slab. She invests ₹1.5 lakhs in ELSS via SIP. She immediately saves ₹46,800 in taxes. After 10 years at 13% CAGR, her ₹1.5L grows to ~₹5.1 lakhs. Compare: NSC at 7.7% would give only ₹2.17L after 5 years.',
-                where:'Available on all MF platforms. Popular ELSS funds: Mirae Asset Tax Saver, Quant Tax Plan, Axis Long Term Equity. Invest via Groww, Zerodha, or your bank.'
-            },
-            'PPF (Public Provident Fund)': {
-                icon:'🏛️', returns:'7.1%', returnsNote:'Govt-set rate reviewed quarterly. Compounded annually. Fully tax-free.', risk:1, riskLabel:'Very Low',
-                why:'Tax-free, govt-backed, 15yr maturity. Ideal for retirement anchor.',
-                what:'Public Provident Fund (PPF) is a long-term government savings scheme with a 15-year maturity. Contributions up to ₹1.5 lakh/year qualify for 80C deduction, all interest earned is tax-free, and the maturity amount is also 100% tax-free — making it an EEE (Exempt-Exempt-Exempt) investment.',
-                tags:[{label:'EEE Tax-Free',color:'#065f46',bg:'#d1fae5'},{label:'Govt Backed',color:'#1d4ed8',bg:'#dbeafe'},{label:'15yr',color:'#7c3aed',bg:'#ede9fe'}],
-                scenarios:['You are building a retirement corpus and want a guaranteed, tax-free foundation.','You are in the highest tax bracket and want to shelter income from tax completely.','You want sovereign safety for at least 15 years with no volatility.','You can extend PPF in 5-year blocks post maturity — ideal for 20–30 year wealth accumulation.'],
-                pros:['EEE: investment, interest, and maturity all tax-free','Government-backed — zero default risk','Partial withdrawal from year 7 onwards','Loan facility available from year 3'],
-                cons:['15-year lock-in — very illiquid','Maximum investment ₹1.5 lakh/year','Premature closure only after 5 years (with penalty)','Returns lower than equity; may not beat inflation over 30 years'],
-                example:'Siddharth opens a PPF at age 30 and invests ₹1.5 lakhs/year for 25 years (extending after 15 years). At 7.1% p.a. he invests ₹37.5 lakhs total and gets ~₹1.03 crore at age 55 — 100% tax-free. This forms his retirement safety net.',
-                where:'Open at SBI, PNB, Bank of Baroda (any nationalised bank) or India Post. Also available online via SBI YONO, HDFC Bank app, and Axis Bank net banking.'
-            },
-            'NPS (National Pension Sys.)': {
-                icon:'🎯', returns:'8 – 12%', returnsNote:'Depends on equity-debt mix chosen. Tier-I is the pension account; Tier-II is flexible.', risk:3, riskLabel:'Medium',
-                why:'Pension-focused. Extra ₹50k deduction u/s 80CCD(1B). Great for retirement.',
-                what:'National Pension System (NPS) is a government-sponsored retirement savings scheme regulated by PFRDA. You choose the mix of equity (up to 75%), corporate bonds, and government securities. At 60, you can withdraw 60% tax-free; the remaining 40% must be used to buy an annuity for monthly pension.',
-                tags:[{label:'Retirement',color:'#dc2626',bg:'#fee2e2'},{label:'Extra 80CCD',color:'#7c3aed',bg:'#ede9fe'},{label:'Market Linked',color:'#1d4ed8',bg:'#dbeafe'}],
-                scenarios:['You are building a retirement corpus and have exhausted other 80C options.','You want an additional ₹50,000 tax deduction beyond the ₹1.5L 80C limit.','You want market-linked growth with moderate risk for long-term retirement.','You are a salaried employee or self-employed looking for a structured pension plan.'],
-                pros:['Extra ₹50,000 deduction u/s 80CCD(1B) — over and above 80C','Flexible equity allocation up to 75%','Low fund management charges (0.01–0.09%)','60% of corpus tax-free at retirement'],
-                cons:['40% must be used for annuity (pension) — limited flexibility','Returns on annuity portion are taxable','Illiquid until retirement (age 60); partial withdrawals limited','Equity portion subject to market fluctuations'],
-                example:'Kavita, 35, invests ₹50,000/year in NPS (Tier I) for 25 years at 10% CAGR. She invests ₹12.5 lakhs and gets ~₹54 lakhs at 60. Additionally, she saves ~₹15,000/year in taxes (30% bracket on ₹50k). Net effective corpus accounting for tax savings is even higher.',
-                where:'Open via eNPS portal (enps.nsdl.com), any authorised bank (SBI, HDFC, ICICI), or through your employer's HR portal.'
-            },
-            'Sovereign Gold Bonds (SGB)': {
-                icon:'🥇', returns:'8 – 11%', returnsNote:'Gold price appreciation (~7-8% historically) + 2.5% fixed interest annually', risk:2, riskLabel:'Low–Med',
-                why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.',
-                what:'Sovereign Gold Bonds (SGB) are government securities denominated in grams of gold. They offer the benefits of physical gold ownership — without storage or purity risk — plus a 2.5% fixed annual interest. If held to maturity (8 years), capital gains are completely tax-free.',
-                tags:[{label:'Gold',color:'#92400e',bg:'#fef3c7'},{label:'Govt Backed',color:'#065f46',bg:'#d1fae5'},{label:'Tax-Free Exit',color:'#7c3aed',bg:'#ede9fe'}],
-                scenarios:['You want gold as part of your portfolio without physical storage worries.','You are investing for 8 years and want tax-free capital gains.','You want to hedge against inflation and rupee depreciation with a gold component.','You want to earn extra 2.5% on top of gold price appreciation.'],
-                pros:['2.5% fixed annual interest — physical gold gives 0%','Capital gains completely tax-free at maturity (8 yr)','Sovereign guarantee — no default or purity risk','Can be traded on stock exchanges before maturity'],
-                cons:['8-year maturity — long lock-in for full tax benefit','Gold price can fall — no guaranteed return','RBI issues SGB in limited tranches; availability not constant','Returns linked to international gold price and INR'],
-                example:'Ananya buys 10 grams of SGB at ₹6,000/gram (₹60,000 total). Over 8 years, gold price rises to ₹9,500/gram. Her corpus = ₹95,000 (gold gain) + ₹12,000 (2.5% × 8 years interest) = ₹1.07 lakhs. And the ₹35,000 gold gain is 100% tax-free.',
-                where:'Buy during RBI SGB tranches via your bank's net banking, Zerodha, Groww, or secondary market via NSE/BSE using your Demat account.'
-            },
-            'Index Funds (Nifty 50)': {
-                icon:'🔷', returns:'11 – 13%', returnsNote:'Mirrors Nifty 50 index performance. ~13% CAGR historically over 20 years.', risk:3, riskLabel:'Medium',
-                why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.',
-                what:'Index Funds passively track a market index like the Nifty 50 (top 50 Indian companies) or Sensex. Instead of a fund manager picking stocks, the fund simply mirrors the index composition. This makes them extremely low-cost (expense ratio < 0.15%) and transparent.',
-                tags:[{label:'Equity',color:'#dc2626',bg:'#fee2e2'},{label:'Passive',color:'#1d4ed8',bg:'#dbeafe'},{label:'Low Cost',color:'#065f46',bg:'#d1fae5'}],
-                scenarios:['You believe in long-term India growth story but don't want to pick individual stocks or fund managers.','You are cost-conscious — expense ratios of 0.05–0.15% vs 1–2% for active funds.','You are a beginner who wants a simple, diversified starting point.','You want to avoid the risk of underperforming active fund managers.'],
-                pros:['Very low expense ratio (0.05–0.15%)','Transparent — you always know what's in the fund','Historically matches or beats most active large-cap funds','Less manager-selection risk'],
-                cons:['Will never beat the index — capped at index returns','No downside protection during market crashes','Less suited if you want alpha over the index','Returns still subject to market volatility (equity risk)'],
-                example:'Rohan starts a ₹3,000/month SIP in a Nifty 50 Index Fund at 12% CAGR for 20 years. He invests ₹7.2 lakhs total. His corpus grows to ~₹29.9 lakhs — purely by riding India's top 50 companies with a near-zero cost fund.',
-                where:'UTI Nifty 50 Index Fund, HDFC Index Fund Nifty 50, ICICI Prudential Nifty 50. Available on Zerodha Coin, Groww, or any MF platform.'
-            },
-            'Balanced/Hybrid Funds': {
-                icon:'⚖️', returns:'10 – 12%', returnsNote:'Equity portion drives growth; debt portion cushions volatility', risk:3, riskLabel:'Medium',
-                why:'Mix of equity + debt. Smoother returns, less volatility than pure equity.',
-                what:'Balanced or Hybrid Mutual Funds invest in both equity and debt instruments. The equity component (typically 40–80%) drives growth, while the debt portion (20–60%) provides stability. Sub-categories include Aggressive Hybrid (75% equity), Balanced Hybrid (50% each), and Conservative Hybrid (25% equity).',
-                tags:[{label:'Hybrid',color:'#7c3aed',bg:'#ede9fe'},{label:'Moderate Risk',color:'#92400e',bg:'#fef3c7'},{label:'Balanced',color:'#1d4ed8',bg:'#dbeafe'}],
-                scenarios:['You are a moderate risk investor who wants equity-like growth with reduced volatility.','You are 5–10 years from your goal and want to start de-risking your portfolio.','You are a first-time equity investor not comfortable with 100% stock exposure.','You want a single fund that auto-rebalances equity and debt for you.'],
-                pros:['Built-in diversification — equity + debt in one fund','Lower volatility than pure equity funds','Automatic rebalancing by fund manager','Better inflation-beating returns than pure debt'],
-                cons:['Returns lower than pure equity funds in bull markets','Equity taxation applies (even for debt portion) if equity > 65%','May underperform both equity and debt in some scenarios','Expense ratios slightly higher than index funds'],
-                example:'Pooja is 45 and retiring at 55. She invests ₹10,000/month in an Aggressive Hybrid Fund at 10.5% CAGR for 10 years. She invests ₹12 lakhs and gets ~₹20.8 lakhs — equity growth with less sleepless nights during market crashes.',
-                where:'Mirae Asset Hybrid Equity, HDFC Balanced Advantage, ICICI Prudential Equity & Debt. Available on Groww, Zerodha, or directly at AMC websites.'
-            },
-            'Real Estate / REITs': {
-                icon:'🏢', returns:'8 – 12%', returnsNote:'REIT: rental yield ~7-8% + price appreciation. Physical RE: highly variable.', risk:3, riskLabel:'Medium',
-                why:'Real estate exposure without full capital. REITs give rental income.',
-                what:'Real Estate Investment Trusts (REITs) allow you to invest in income-generating real estate (commercial offices, malls) without buying physical property. They are listed on stock exchanges and distribute 90% of income as dividends. Physical real estate requires large capital but offers appreciation + rental income.',
-                tags:[{label:'Real Estate',color:'#92400e',bg:'#fef3c7'},{label:'Dividend Income',color:'#065f46',bg:'#d1fae5'},{label:'Inflation Hedge',color:'#1d4ed8',bg:'#dbeafe'}],
-                scenarios:['You want real estate in your portfolio but don't have ₹50–100 lakhs for physical property.','You want regular dividend income (quarterly distributions from REITs).','You want to hedge against inflation with a tangible asset.','You want portfolio diversification beyond stocks and bonds.'],
-                pros:['REITs: invest from ₹10,000–₹15,000 (much lower than physical RE)','Regular dividend income (90% of rental income distributed)','Listed on exchanges — much better liquidity than physical property','Professional management of properties'],
-                cons:['REIT returns linked to commercial real estate market conditions','Dividends taxable in hands of investor','Physical real estate: highly illiquid, large capital, maintenance costs','REITs in India still nascent — limited options (Embassy, Mindspace, Brookfield)'],
-                example:'Vijay invests ₹5 lakhs in Embassy Office Parks REIT. He earns quarterly distributions of ~6–7% annually (₹30,000–35,000/year). Over 8 years, if REIT value also appreciates 6% p.a., his ₹5L grows to ~₹8.5L PLUS ~₹2.4L in dividends collected = total ~₹10.9L.',
-                where:'Buy Embassy REIT, Mindspace REIT, or Brookfield REIT via Zerodha, Groww, or any stockbroker — just like buying shares. Minimum ~1 unit (~₹300–400).'
-            }
-        };
-
         function getInvestmentSuggestions(years) {
             if (years < 7) {
                 return [
-                    INVEST_DETAILS['Fixed Deposit (FD)'],
-                    INVEST_DETAILS['Recurring Deposit (RD)'],
-                    INVEST_DETAILS['Liquid Mutual Funds'],
-                    INVEST_DETAILS['Debt Mutual Funds'],
-                    INVEST_DETAILS['NSC (Natl. Savings Cert.)'],
-                    INVEST_DETAILS['Post Office Time Deposit'],
-                ].map((d,i) => ({...d, name: ['Fixed Deposit (FD)','Recurring Deposit (RD)','Liquid Mutual Funds','Debt Mutual Funds','NSC (Natl. Savings Cert.)','Post Office Time Deposit'][i]}));
+                    { name:'Fixed Deposit (FD)', icon:'🏦', returns:'6.5 – 8%', risk:1, riskLabel:'Very Low', why:'Bank-guaranteed returns. Ideal capital protection for short goals.' },
+                    { name:'Recurring Deposit (RD)', icon:'📅', returns:'6 – 7.5%', risk:1, riskLabel:'Very Low', why:'Build corpus monthly with fixed returns, no market risk.' },
+                    { name:'Liquid Mutual Funds', icon:'💧', returns:'5.5 – 7%', risk:1, riskLabel:'Very Low', why:'Better than savings account, withdraw anytime within hours.' },
+                    { name:'Debt Mutual Funds', icon:'📊', returns:'6 – 8.5%', risk:2, riskLabel:'Low', why:'Invests in bonds & govt securities. Slightly better returns than FD.' },
+                    { name:'NSC (Natl. Savings Cert.)', icon:'📜', returns:'7.7%', risk:1, riskLabel:'Very Low', why:'Govt-backed. Qualifies for 80C tax deduction. 5yr lock-in.' },
+                    { name:'Post Office Time Deposit', icon:'📮', returns:'6.9 – 7.5%', risk:1, riskLabel:'Very Low', why:'Sovereign guarantee. Safe alternative to bank FD.' },
+                ];
             } else {
                 return [
-                    INVEST_DETAILS['Equity Mutual Funds'],
-                    INVEST_DETAILS['ELSS (Tax Saving Funds)'],
-                    INVEST_DETAILS['PPF (Public Provident Fund)'],
-                    INVEST_DETAILS['NPS (National Pension Sys.)'],
-                    INVEST_DETAILS['Sovereign Gold Bonds (SGB)'],
-                    INVEST_DETAILS['Index Funds (Nifty 50)'],
-                    INVEST_DETAILS['Balanced/Hybrid Funds'],
-                    INVEST_DETAILS['Real Estate / REITs'],
-                ].map((d,i) => ({...d, name: ['Equity Mutual Funds','ELSS (Tax Saving Funds)','PPF (Public Provident Fund)','NPS (National Pension Sys.)','Sovereign Gold Bonds (SGB)','Index Funds (Nifty 50)','Balanced/Hybrid Funds','Real Estate / REITs'][i]}));
+                    { name:'Equity Mutual Funds', icon:'📈', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Best long-term wealth creator. CAGR ~12% historically over 10+ yrs.' },
+                    { name:'ELSS (Tax Saving Funds)', icon:'🧾', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Equity returns + 80C tax saving. Shortest lock-in (3 yrs) among tax options.' },
+                    { name:'PPF (Public Provident Fund)', icon:'🏛️', returns:'7.1%', risk:1, riskLabel:'Very Low', why:'Tax-free, govt-backed, 15yr maturity. Ideal for retirement anchor.' },
+                    { name:'NPS (National Pension Sys.)', icon:'🎯', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Pension-focused. Extra ₹50k deduction u/s 80CCD(1B). Great for retirement.' },
+                    { name:'Sovereign Gold Bonds (SGB)', icon:'🥇', returns:'8 – 11%', risk:2, riskLabel:'Low–Med', why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.' },
+                    { name:'Index Funds (Nifty 50)', icon:'🔷', returns:'11 – 13%', risk:3, riskLabel:'Medium', why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.' },
+                    { name:'Balanced/Hybrid Funds', icon:'⚖️', returns:'10 – 12%', risk:3, riskLabel:'Medium', why:'Mix of equity + debt. Smoother returns, less volatility than pure equity.' },
+                    { name:'Real Estate / REITs', icon:'🏢', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Real estate exposure without full capital. REITs give rental income.' },
+                ];
             }
         }
 
@@ -778,104 +523,31 @@
             grid.innerHTML = '';
             suggestions.forEach(inv => {
                 const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+                const riskBg = ['','#f0fdf4','#f7fee7','#fefce8','#fff7ed','#fef2f2'];
                 const color = riskColors[inv.risk];
+                const bg = riskBg[inv.risk];
 
                 let dots = '';
                 for (let d = 1; d <= 5; d++) {
-                    dots += `<div style="width:9px;height:9px;border-radius:50%;background:${d <= inv.risk ? color : '#e2e8f0'};flex-shrink:0;display:inline-block;margin-right:2px;border-radius:50%;"></div>`;
+                    dots += `<div style="width:9px;height:9px;border-radius:50%;background:${d <= inv.risk ? color : '#e2e8f0'};flex-shrink:0;"></div>`;
                 }
 
-                const safeName = inv.name.replace(/'/g, "\'").replace(/"/g, '&quot;');
-
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white" style="border-left: 3px solid ${color}; cursor:pointer;"
-                         onclick="openInvestModal('${safeName}')">
+                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white cursor-default" style="border-left: 3px solid ${color};">
                         <div class="flex items-start justify-between gap-2 mb-1.5">
                             <div class="font-bold text-sm text-slate-800">${inv.icon} ${inv.name}</div>
-                            <div class="flex items-center gap-1 shrink-0">
-                                <div class="text-xs font-black" style="color:${color}">${inv.returns}</div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            </div>
+                            <div class="text-xs font-black shrink-0" style="color:${color}">${inv.returns}</div>
                         </div>
                         <div class="text-[11px] text-slate-500 mb-2 leading-snug">${inv.why}</div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-1.5">
-                                <div class="flex items-center gap-0.5">${dots}</div>
-                                <span class="text-[10px] font-bold" style="color:${color}">${inv.riskLabel} Risk</span>
-                            </div>
-                            <span class="text-[10px] text-slate-400 font-medium">Tap to learn more →</span>
+                        <div class="flex items-center gap-1.5">
+                            <div class="flex items-center gap-0.5">${dots}</div>
+                            <span class="text-[10px] font-bold" style="color:${color}">${inv.riskLabel} Risk</span>
                         </div>
                     </div>
                 `);
             });
 
             section.style.display = 'block';
-        }
-
-        function openInvestModal(name) {
-            const data = INVEST_DETAILS[name];
-            if (!data) return;
-            const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
-            const color = riskColors[data.risk];
-
-            document.getElementById('modal-icon').innerText = data.icon;
-            document.getElementById('modal-name').innerText = name;
-            document.getElementById('modal-what').innerText = data.what;
-            document.getElementById('modal-returns').innerText = data.returns + ' p.a.';
-            document.getElementById('modal-returns').style.color = color;
-            document.getElementById('modal-returns-note').innerText = data.returnsNote;
-            document.getElementById('modal-risk-label').innerText = data.riskLabel + ' Risk';
-            document.getElementById('modal-risk-label').style.color = color;
-            document.getElementById('modal-example').innerText = data.example;
-            document.getElementById('modal-where').innerText = data.where;
-
-            // Tags
-            const tagsEl = document.getElementById('modal-tags');
-            tagsEl.innerHTML = data.tags.map(t =>
-                `<span class="modal-tag" style="color:${t.color};background:${t.bg}">${t.label}</span>`
-            ).join('');
-
-            // Risk dots
-            const dotsEl = document.getElementById('modal-risk-dots');
-            dotsEl.innerHTML = '';
-            for (let d = 1; d <= 5; d++) {
-                const dot = document.createElement('div');
-                dot.style.cssText = `width:13px;height:13px;border-radius:50%;background:${d <= data.risk ? color : '#e2e8f0'};flex-shrink:0;`;
-                dotsEl.appendChild(dot);
-            }
-
-            // Scenarios
-            const scenariosEl = document.getElementById('modal-scenarios');
-            scenariosEl.innerHTML = data.scenarios.map((s, i) =>
-                `<div class="modal-scenario-item">
-                    <span style="color:${color};font-weight:700;font-size:0.85rem;flex-shrink:0;">${i+1}.</span>
-                    <span style="font-size:0.82rem;color:#374151;line-height:1.45;">${s}</span>
-                </div>`
-            ).join('');
-
-            // Pros
-            const prosEl = document.getElementById('modal-pros');
-            prosEl.innerHTML = data.pros.map(p => `<li>${p}</li>`).join('');
-
-            // Cons
-            const consEl = document.getElementById('modal-cons');
-            consEl.innerHTML = data.cons.map(c => `<li>${c}</li>`).join('');
-
-            // Header border color
-            document.getElementById('modal-header').style.borderTop = `4px solid ${color}`;
-            document.getElementById('modal-header').style.borderRadius = '20px 20px 0 0';
-
-            const overlay = document.getElementById('invest-modal-overlay');
-            overlay.style.display = 'flex';
-            requestAnimationFrame(() => { requestAnimationFrame(() => { overlay.classList.add('open'); }); });
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeInvestModal(event) {
-            if (event && event.target !== document.getElementById('invest-modal-overlay')) return;
-            const overlay = document.getElementById('invest-modal-overlay');
-            overlay.classList.remove('open');
-            setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 240);
         }
 
         function renderLineChart(labels, dataPrimary, dataSecondary, labelPrimary, labelSecondary, colorPrimary, colorSecondary) {
