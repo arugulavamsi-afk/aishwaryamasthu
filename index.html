@@ -42,6 +42,25 @@
             font-weight: 500;
             letter-spacing: 0.03em;
         }
+
+        /* Risk meter dots */
+        .risk-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .risk-dot.filled-1 { background: #22c55e; }
+        .risk-dot.filled-2 { background: #84cc16; }
+        .risk-dot.filled-3 { background: #eab308; }
+        .risk-dot.filled-4 { background: #f97316; }
+        .risk-dot.filled-5 { background: #ef4444; }
+        .risk-dot.empty { background: #e2e8f0; }
+
+        /* Investment card animation */
+        .invest-card { transition: box-shadow 0.2s, transform 0.2s; }
+        .invest-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
+
+        /* Short-term note */
+        .debt-note { background: linear-gradient(135deg,#fef9c3,#fef3c7); border-left: 3px solid #f59e0b; }
+
+        /* Goal type badge */
+        .goal-badge { display:inline-flex; align-items:center; gap:4px; background:#ecfdf5; color:#065f46; border-radius:9999px; padding:2px 10px; font-size:0.7rem; font-weight:700; letter-spacing:.03em; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
@@ -72,6 +91,21 @@
             <h2 class="text-lg font-bold flex items-center gap-2 mb-4 text-slate-800">Parameters</h2>
 
             <div class="space-y-4 flex-1">
+                <!-- Goal Type selector (only visible in Goal mode) -->
+                <div id="goal-type-container" class="hidden">
+                    <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">🎯 What's Your Goal?</label>
+                    <select id="goal-type" onchange="onGoalTypeChange()" class="w-full px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold text-sm outline-none text-emerald-900">
+                        <option value="vehicle">🚗 Buy a Vehicle</option>
+                        <option value="marriage">💍 Marriage</option>
+                        <option value="education">🎓 Child's Education</option>
+                        <option value="retirement">🏖️ Retirement</option>
+                        <option value="custom">✏️ Custom Goal</option>
+                    </select>
+                    <div id="custom-goal-input" class="hidden mt-2">
+                        <input type="text" id="custom-goal-text" placeholder="Describe your goal..." class="w-full px-3 py-2.5 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm outline-none font-medium text-slate-700" oninput="calculate()">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Investment Type</label>
                     <select id="inv-type" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold text-sm outline-none">
@@ -109,9 +143,20 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Time Period (Years)</label>
-                    <input type="number" id="years" value="10" inputmode="numeric" oninput="updateWords('years', 'years-words')" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-lg outline-none">
+                    <label id="years-label" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Time Period (Years)</label>
+                    <input type="number" id="years" value="10" inputmode="numeric" oninput="updateWords('years', 'years-words'); onYearsChange();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-lg outline-none">
                     <div class="num-word" id="years-words">Ten</div>
+                </div>
+
+                <!-- Short-term debt note (only in goal mode, <7 years) -->
+                <div id="short-term-note" class="debt-note rounded-xl p-3 text-xs text-amber-800 font-medium hidden">
+                    <div class="flex items-start gap-2">
+                        <span class="text-base leading-none mt-0.5">⚠️</span>
+                        <div>
+                            <span class="font-bold text-amber-900">Short-Term Goal Detected (&lt;7 Years)</span><br>
+                            For goals under 7 years, always prefer <strong>Debt investments</strong> (FD, RD, Debt Funds) even if returns are lower. Equity markets can be volatile in the short run and may not recover in time to meet your goal.
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -147,8 +192,20 @@
                 </div>
 
                 <div id="goal-results" class="hidden">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3" id="goal-subtitle">Required Investment to Reach Target</h3>
+                    <div class="flex items-center gap-2 mb-3 flex-wrap">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest" id="goal-subtitle">Required Investment to Reach Target</h3>
+                        <span class="goal-badge" id="goal-type-badge">🎯 Goal</span>
+                    </div>
                     <div class="flex flex-wrap gap-3" id="goal-cards-container"></div>
+
+                    <!-- Investment Recommendations -->
+                    <div id="invest-suggestions" class="mt-5 hidden">
+                        <div class="flex items-center gap-2 mb-3">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest">🇮🇳 Recommended Indian Investments</h4>
+                            <span id="invest-term-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600"></span>
+                        </div>
+                        <div id="invest-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    </div>
                 </div>
             </div>
 
@@ -240,13 +297,85 @@
             document.getElementById('rate-container').style.display = mode === 'goal' ? 'none' : 'block';
             document.getElementById('inflation-rate-container').style.display = mode === 'inflation' ? 'block' : 'none';
             document.getElementById('custom-rate-container').style.display = mode === 'goal' ? 'block' : 'none';
+            document.getElementById('goal-type-container').style.display = mode === 'goal' ? 'block' : 'none';
             document.getElementById('amount-label').innerText = mode === 'goal' ? 'Target Goal Amount (e.g. 1,00,00,000)' : 'Investment Amount';
+            document.getElementById('years-label').innerText = mode === 'goal' ? 'Goal Term (Years)' : 'Time Period (Years)';
             document.getElementById('calc-btn').innerText = mode === 'goal' ? 'Calculate Required Investment' : 'Calculate Projection';
             document.getElementById('growth-results').style.display = mode === 'goal' ? 'none' : 'block';
             document.getElementById('goal-results').style.display = mode === 'goal' ? 'block' : 'none';
             document.getElementById('amount').value = mode === 'goal' ? "1,00,00,000" : "10,000";
             formatInput(document.getElementById('amount'), 'amount-words');
+            onYearsChange();
             calculate();
+        }
+
+        function onGoalTypeChange() {
+            const gt = document.getElementById('goal-type').value;
+            document.getElementById('custom-goal-input').style.display = gt === 'custom' ? 'block' : 'none';
+            calculate();
+        }
+
+        function onYearsChange() {
+            if (currentMode !== 'goal') {
+                document.getElementById('short-term-note').style.display = 'none';
+                return;
+            }
+            const y = parseInt(document.getElementById('years').value) || 0;
+            document.getElementById('short-term-note').style.display = y > 0 && y < 7 ? 'block' : 'none';
+        }
+
+        function getGoalLabel() {
+            const gt = document.getElementById('goal-type');
+            if (!gt) return 'Your Goal';
+            const map = { vehicle:'🚗 Buy a Vehicle', marriage:'💍 Marriage', education:"🎓 Child's Education", retirement:'🏖️ Retirement', custom:'✏️ Custom' };
+            if (gt.value === 'custom') {
+                const txt = document.getElementById('custom-goal-text')?.value.trim();
+                return txt ? '✏️ ' + txt : '✏️ Custom Goal';
+            }
+            return map[gt.value] || 'Your Goal';
+        }
+
+        function getRiskDots(level) {
+            // level 1-5
+            const colors = ['', '#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'];
+            let html = '<div class="flex items-center gap-1">';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= level) {
+                    html += `<div class="risk-dot" style="background:${colors[level]};width:10px;height:10px;border-radius:50%;flex-shrink:0;"></div>`;
+                } else {
+                    html += `<div class="risk-dot empty" style="background:#e2e8f0;width:10px;height:10px;border-radius:50%;flex-shrink:0;"></div>`;
+                }
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function getRiskColor(level) {
+            return ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'][level];
+        }
+
+        function getInvestmentSuggestions(years) {
+            if (years < 7) {
+                return [
+                    { name:'Fixed Deposit (FD)', icon:'🏦', returns:'6.5 – 8%', risk:1, riskLabel:'Very Low', why:'Bank-guaranteed returns. Ideal capital protection for short goals.' },
+                    { name:'Recurring Deposit (RD)', icon:'📅', returns:'6 – 7.5%', risk:1, riskLabel:'Very Low', why:'Build corpus monthly with fixed returns, no market risk.' },
+                    { name:'Liquid Mutual Funds', icon:'💧', returns:'5.5 – 7%', risk:1, riskLabel:'Very Low', why:'Better than savings account, withdraw anytime within hours.' },
+                    { name:'Debt Mutual Funds', icon:'📊', returns:'6 – 8.5%', risk:2, riskLabel:'Low', why:'Invests in bonds & govt securities. Slightly better returns than FD.' },
+                    { name:'NSC (Natl. Savings Cert.)', icon:'📜', returns:'7.7%', risk:1, riskLabel:'Very Low', why:'Govt-backed. Qualifies for 80C tax deduction. 5yr lock-in.' },
+                    { name:'Post Office Time Deposit', icon:'📮', returns:'6.9 – 7.5%', risk:1, riskLabel:'Very Low', why:'Sovereign guarantee. Safe alternative to bank FD.' },
+                ];
+            } else {
+                return [
+                    { name:'Equity Mutual Funds', icon:'📈', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Best long-term wealth creator. CAGR ~12% historically over 10+ yrs.' },
+                    { name:'ELSS (Tax Saving Funds)', icon:'🧾', returns:'12 – 15%', risk:4, riskLabel:'High', why:'Equity returns + 80C tax saving. Shortest lock-in (3 yrs) among tax options.' },
+                    { name:'PPF (Public Provident Fund)', icon:'🏛️', returns:'7.1%', risk:1, riskLabel:'Very Low', why:'Tax-free, govt-backed, 15yr maturity. Ideal for retirement anchor.' },
+                    { name:'NPS (National Pension Sys.)', icon:'🎯', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Pension-focused. Extra ₹50k deduction u/s 80CCD(1B). Great for retirement.' },
+                    { name:'Sovereign Gold Bonds (SGB)', icon:'🥇', returns:'8 – 11%', risk:2, riskLabel:'Low–Med', why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.' },
+                    { name:'Index Funds (Nifty 50)', icon:'🔷', returns:'11 – 13%', risk:3, riskLabel:'Medium', why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.' },
+                    { name:'Balanced/Hybrid Funds', icon:'⚖️', returns:'10 – 12%', risk:3, riskLabel:'Medium', why:'Mix of equity + debt. Smoother returns, less volatility than pure equity.' },
+                    { name:'Real Estate / REITs', icon:'🏢', returns:'8 – 12%', risk:3, riskLabel:'Medium', why:'Real estate exposure without full capital. REITs give rental income.' },
+                ];
+            }
         }
 
         function calculate() {
@@ -363,8 +492,62 @@
                 `);
             });
             document.getElementById('goal-subtitle').innerText = `To reach ${format(target)} in ${years} Years via ${type.toUpperCase()}:`;
+
+            // Update goal badge
+            const badge = document.getElementById('goal-type-badge');
+            if (badge) badge.innerText = getGoalLabel();
+
             document.getElementById('chart-title').innerText = "Required Investment vs Expected Return";
             renderBarChart(barLabels, barData, type);
+
+            // Show investment suggestions
+            renderInvestmentSuggestions(years);
+        }
+
+        function renderInvestmentSuggestions(years) {
+            const section = document.getElementById('invest-suggestions');
+            const grid = document.getElementById('invest-cards-grid');
+            const termBadge = document.getElementById('invest-term-badge');
+            if (!section || !grid) return;
+
+            const suggestions = getInvestmentSuggestions(years);
+            const isShortTerm = years < 7;
+
+            if (termBadge) {
+                termBadge.innerText = isShortTerm ? '⏱ Short-Term (<7 yrs) — Debt Focus' : '📆 Long-Term (≥7 yrs) — Balanced/Equity';
+                termBadge.className = isShortTerm
+                    ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700'
+                    : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700';
+            }
+
+            grid.innerHTML = '';
+            suggestions.forEach(inv => {
+                const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+                const riskBg = ['','#f0fdf4','#f7fee7','#fefce8','#fff7ed','#fef2f2'];
+                const color = riskColors[inv.risk];
+                const bg = riskBg[inv.risk];
+
+                let dots = '';
+                for (let d = 1; d <= 5; d++) {
+                    dots += `<div style="width:9px;height:9px;border-radius:50%;background:${d <= inv.risk ? color : '#e2e8f0'};flex-shrink:0;"></div>`;
+                }
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white cursor-default" style="border-left: 3px solid ${color};">
+                        <div class="flex items-start justify-between gap-2 mb-1.5">
+                            <div class="font-bold text-sm text-slate-800">${inv.icon} ${inv.name}</div>
+                            <div class="text-xs font-black shrink-0" style="color:${color}">${inv.returns}</div>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mb-2 leading-snug">${inv.why}</div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="flex items-center gap-0.5">${dots}</div>
+                            <span class="text-[10px] font-bold" style="color:${color}">${inv.riskLabel} Risk</span>
+                        </div>
+                    </div>
+                `);
+            });
+
+            section.style.display = 'block';
         }
 
         function renderLineChart(labels, dataPrimary, dataSecondary, labelPrimary, labelSecondary, colorPrimary, colorSecondary) {
