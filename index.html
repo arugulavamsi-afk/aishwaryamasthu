@@ -269,7 +269,7 @@
                 </div>
 
                 <!-- Expense Categories -->
-                <div class="px-5 py-4 flex-1 overflow-y-auto" style="max-height: 420px;">
+                <div class="px-5 py-4 overflow-y-auto" style="max-height: 420px;">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Monthly Expenses</label>
                     <div id="expense-rows" class="space-y-2.5">
                         <!-- Fixed categories -->
@@ -321,30 +321,7 @@
                                     oninput="efFormatInput(this); calcEmergency(); this.classList.remove('text-slate-400');">
                             </div>
                         </div>
-                        <div class="expense-row flex items-center gap-3 group" data-category="Travel / Vacation">
-                            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-base flex-shrink-0 bg-sky-50">✈️</div>
-                            <span class="text-sm font-semibold text-slate-700 flex-1 min-w-0 truncate">Travel / Vacation</span>
-                            <div class="relative flex-shrink-0">
-                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">₹</span>
-                                <input type="text" value="0" inputmode="numeric"
-                                    class="ef-input w-32 pl-6 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-right focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition-all text-slate-400"
-                                    onfocus="if(this.value==='0'){this.value='';this.classList.remove('text-slate-400');}"
-                                    onblur="if(this.value===''||this.value==='0'){this.value='0';this.classList.add('text-slate-400');}"
-                                    oninput="efFormatInput(this); calcEmergency(); this.classList.remove('text-slate-400');">
-                            </div>
-                        </div>
-                        <div class="expense-row flex items-center gap-3 group" data-category="Entertainment">
-                            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-base flex-shrink-0 bg-pink-50">🎬</div>
-                            <span class="text-sm font-semibold text-slate-700 flex-1 min-w-0 truncate">Entertainment</span>
-                            <div class="relative flex-shrink-0">
-                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">₹</span>
-                                <input type="text" value="0" inputmode="numeric"
-                                    class="ef-input w-32 pl-6 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-right focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition-all text-slate-400"
-                                    onfocus="if(this.value==='0'){this.value='';this.classList.remove('text-slate-400');}"
-                                    onblur="if(this.value===''||this.value==='0'){this.value='0';this.classList.add('text-slate-400');}"
-                                    oninput="efFormatInput(this); calcEmergency(); this.classList.remove('text-slate-400');">
-                            </div>
-                        </div>
+
                         <div class="expense-row flex items-center gap-3 group" data-category="Utilities">
                             <div class="w-7 h-7 rounded-lg flex items-center justify-center text-base flex-shrink-0 bg-orange-50">💡</div>
                             <span class="text-sm font-semibold text-slate-700 flex-1 min-w-0 truncate">Utilities (Electricity, Water, Internet)</span>
