@@ -9,9 +9,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .tab-active { border-bottom: 2px solid #10b981; color: #10b981; font-weight: 700; }
-        .tab-inactive { color: #64748b; font-weight: 500; }
-        .tab-inactive:hover { color: #334155; }
+        .tab-active {
+            background: linear-gradient(135deg, #0d9488 0%, #10b981 100%);
+            color: #ffffff;
+            font-weight: 700;
+            border-radius: 999px;
+            box-shadow: 0 4px 14px rgba(16,185,129,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+            border: none;
+        }
+        .tab-inactive {
+            color: #64748b;
+            font-weight: 500;
+            background: #f1f5f9;
+            border-radius: 999px;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.18s ease;
+        }
+        .tab-inactive:hover {
+            background: #e2e8f0;
+            color: #334155;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
         .num-word { font-size: 0.65rem; color: #64748b; font-weight: 600; text-transform: capitalize; margin-top: 2px; }
 
         /* Thin scrollbar for desktop */
@@ -351,12 +371,12 @@
             </div>
         </div>
         <!-- Tabs - scrollable on mobile -->
-        <div class="tabs-scroll flex space-x-1 border-t border-slate-100 pt-2 -mx-4 px-4">
-            <button onclick="switchMode('growth')" id="tab-growth" class="pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2">Growth Calculator</button>
-            <button onclick="switchMode('goal')" id="tab-goal" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Goal Planner</button>
-            <button onclick="switchMode('emergency')" id="tab-emergency" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Emergency Fund</button>
-            <button onclick="switchMode('mfkit')" id="tab-mfkit" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">MF Kit</button>
-            <button onclick="switchMode('healthscore')" id="tab-healthscore" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Fin Health Score</button>
+        <div class="tabs-scroll flex items-center gap-2 border-t border-slate-100 pt-3 pb-1 -mx-4 px-4">
+            <button onclick="switchMode('growth')" id="tab-growth" class="tab-active transition-all text-sm whitespace-nowrap px-4 py-1.5">Growth Calculator</button>
+            <button onclick="switchMode('goal')" id="tab-goal" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Goal Planner</button>
+            <button onclick="switchMode('emergency')" id="tab-emergency" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Emergency Fund</button>
+            <button onclick="switchMode('mfkit')" id="tab-mfkit" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">MF Kit</button>
+            <button onclick="switchMode('healthscore')" id="tab-healthscore" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fin Health Score</button>
         </div>
     </nav>
 
@@ -1105,8 +1125,8 @@
             ['growth','goal','emergency','mfkit','healthscore'].forEach(m => {
                 const tab = document.getElementById('tab-' + m);
                 if (tab) tab.className = (m === mode)
-                    ? 'pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2'
-                    : 'pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2';
+                    ? 'tab-active transition-all text-sm whitespace-nowrap px-4 py-1.5'
+                    : 'tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5';
             });
 
             const isEmergency = mode === 'emergency';
