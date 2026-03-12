@@ -80,6 +80,7 @@
             <button onclick="switchMode('growth')" id="tab-growth" class="pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2">Growth Calculator</button>
             <button onclick="switchMode('goal')" id="tab-goal" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">Goal Planner</button>
             <button onclick="switchMode('emergency')" id="tab-emergency" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">🛡️ Emergency Fund</button>
+            <button onclick="switchMode('mfkit')" id="tab-mfkit" class="pb-1 tab-inactive transition-colors text-sm whitespace-nowrap px-2">📦 MF Kit</button>
         </div>
     </nav>
 
@@ -426,6 +427,93 @@
         </div>
         <!-- =================== END EMERGENCY FUND PANEL ================== -->
 
+        <!-- ===================== MUTUAL FUND KIT PANEL ===================== -->
+        <div id="mfkit-panel" class="hidden w-full flex flex-col gap-5">
+
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl px-6 py-5 text-white shadow-md">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                    <div>
+                        <h2 class="text-xl font-black flex items-center gap-2">📦 Mutual Fund Kit</h2>
+                        <p class="text-violet-200 text-xs mt-1 max-w-xl">Tap any fund type to learn what it is, when to use it, and see a real-world Indian example. Build your financial vocabulary one card at a time.</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap" id="mf-filter-btns">
+                        <button onclick="filterMF('all')" id="mf-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all">All</button>
+                        <button onclick="filterMF('equity')" id="mf-f-equity" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Equity</button>
+                        <button onclick="filterMF('debt')" id="mf-f-debt" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Debt</button>
+                        <button onclick="filterMF('hybrid')" id="mf-f-hybrid" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Hybrid</button>
+                        <button onclick="filterMF('tax')" id="mf-f-tax" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Tax Saving</button>
+                        <button onclick="filterMF('passive')" id="mf-f-passive" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Passive</button>
+                        <button onclick="filterMF('others')" id="mf-f-others" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Others</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fund Tiles Grid -->
+            <div id="mf-tiles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+
+        </div>
+        <!-- =================== END MUTUAL FUND KIT PANEL ================== -->
+
+        <!-- ===================== MF DETAIL MODAL ===================== -->
+        <div id="mf-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4" onclick="closeMFModal(event)">
+            <div class="animate-modal bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+                <!-- Modal Header -->
+                <div id="mf-modal-header" class="px-5 pt-5 pb-4 flex items-start justify-between gap-3" style="background:#f5f3ff">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <span id="mf-modal-icon" class="text-2xl"></span>
+                            <span id="mf-modal-name" class="text-base font-black text-slate-800"></span>
+                            <span id="mf-modal-category-badge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wide"></span>
+                        </div>
+                        <div class="flex items-center gap-3 flex-wrap mt-1">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Typical Returns</span>
+                                <div id="mf-modal-returns" class="text-xl font-black"></div>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Min Horizon</span>
+                                <div id="mf-modal-horizon" class="text-xl font-black text-slate-700"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('mf-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none mt-0.5 flex-shrink-0">✕</button>
+                </div>
+                <!-- Risk Meter -->
+                <div class="px-5 pt-3 pb-2 border-b border-slate-100">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</span>
+                        <span id="mf-modal-risk-label" class="text-xs font-bold"></span>
+                    </div>
+                    <div class="flex items-center gap-1.5" id="mf-modal-risk-dots"></div>
+                </div>
+                <!-- Body -->
+                <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1">
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">What is it?</p>
+                        <p id="mf-modal-what" class="text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">✅ When to Use / Best Scenarios</p>
+                        <p id="mf-modal-scenarios" class="text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">⚠️ When NOT to Use</p>
+                        <p id="mf-modal-avoid" class="text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                        <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">💡 Real Indian Example</p>
+                        <p id="mf-modal-example" class="text-sm text-amber-900 leading-relaxed"></p>
+                    </div>
+                    <div class="bg-violet-50 border border-violet-100 rounded-xl p-3" id="mf-modal-popular-wrap">
+                        <p class="text-[11px] font-bold text-violet-700 uppercase tracking-wider mb-1.5">🔖 Popular Indian Funds in this Category</p>
+                        <p id="mf-modal-popular" class="text-xs text-violet-900 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- =================== END MF DETAIL MODAL ================== -->
+
     </main>
 
     <!-- Footer -->
@@ -497,7 +585,7 @@
 
         function switchMode(mode) {
             currentMode = mode;
-            ['growth','goal','emergency'].forEach(m => {
+            ['growth','goal','emergency','mfkit'].forEach(m => {
                 const tab = document.getElementById('tab-' + m);
                 if (tab) tab.className = (m === mode)
                     ? 'pb-1 tab-active transition-colors text-sm whitespace-nowrap px-2'
@@ -505,16 +593,19 @@
             });
 
             const isEmergency = mode === 'emergency';
+            const isMFKit = mode === 'mfkit';
             const isGoal = mode === 'goal';
 
             // Show/hide main panels
-            const leftPanel = document.querySelector('main > div:not(#emergency-panel)');
+            const leftPanel = document.querySelector('main > div:not(#emergency-panel):not(#mfkit-panel)');
             const rightPanel = document.querySelector('main > div.w-full.lg\\:w-2\\/3');
             document.getElementById('emergency-panel').classList.toggle('hidden', !isEmergency);
-            if (leftPanel) leftPanel.style.display = isEmergency ? 'none' : '';
-            if (rightPanel) rightPanel.style.display = isEmergency ? 'none' : '';
+            document.getElementById('mfkit-panel').classList.toggle('hidden', !isMFKit);
+            if (leftPanel) leftPanel.style.display = (isEmergency || isMFKit) ? 'none' : '';
+            if (rightPanel) rightPanel.style.display = (isEmergency || isMFKit) ? 'none' : '';
 
             if (isEmergency) { calcEmergency(); return; }
+            if (isMFKit) { renderMFKit(); return; }
 
             document.getElementById('rate-container').style.display = isGoal ? 'none' : 'block';
             document.getElementById('inflation-toggle-container').style.display = isGoal ? 'none' : 'block';
@@ -1125,6 +1216,358 @@
 
         // Close modal on Escape key
         document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('invest-modal').classList.add('hidden');
+                document.getElementById('mf-modal').classList.add('hidden');
+            }
+        });
+
+        // ==================== MUTUAL FUND KIT ====================
+
+        const MF_DATA = [
+            {
+                id: 'large-cap', icon: '🏛️', name: 'Large Cap Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '10 – 13%', horizon: '5+ yrs', risk: 3, riskLabel: 'Medium–High',
+                tagline: 'Invest in India\'s top 100 companies by market cap.',
+                what: 'Large cap funds invest at least 80% of their corpus in the top 100 companies by market capitalisation (like Reliance, TCS, HDFC Bank). These companies are industry leaders with proven track records, strong balance sheets, and relatively stable earnings.',
+                scenarios: 'Best for first-time equity investors who want market exposure with lower volatility. Ideal for 5–7 year goals where you need equity growth but cannot tolerate sharp drawdowns. Good as the stable core of any equity portfolio.',
+                avoid: 'Avoid if you have a short horizon (<3 years) or expect market-beating returns. They tend to underperform mid/small caps during bull runs due to lower growth potential of large companies.',
+                example: 'Rohan, 30, starts a ₹10,000/month SIP in Axis Bluechip Fund. Over 10 years at ~11% CAGR, his ₹12L investment grows to ~₹21.9L — steady, inflation-beating returns with relatively lower sleepless nights.',
+                popular: 'Mirae Asset Large Cap Fund, Axis Bluechip Fund, ICICI Pru Bluechip Fund, SBI Bluechip Fund, Canara Robeco Bluechip Equity Fund'
+            },
+            {
+                id: 'mid-cap', icon: '🚀', name: 'Mid Cap Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '13 – 18%', horizon: '7+ yrs', risk: 4, riskLabel: 'High',
+                tagline: 'Bet on tomorrow\'s large caps — companies ranked 101–250.',
+                what: 'Mid cap funds invest at least 65% in companies ranked 101–250 by market cap. These are established but growing businesses — they\'ve survived early-stage risks but still have significant headroom for growth. Think of them as future large caps.',
+                scenarios: 'Great for investors with 7–10+ year horizons who want higher returns than large caps and can tolerate higher volatility. Best used as a 20–30% satellite allocation alongside large cap or index funds. Excellent for wealth multiplication over a decade.',
+                avoid: 'Avoid for emergency funds, short-term goals, or if you panic at 30–40% drawdowns. Mid caps can fall sharply in bear markets and may take 2–3 years to recover.',
+                example: 'Priya, 28, puts ₹5,000/month in Kotak Emerging Equity Fund. Over 12 years at ~15% CAGR, her ₹7.2L investment grows to ~₹22.5L. The higher volatility was worth it — her wealth grew 3x vs a safer FD.',
+                popular: 'Kotak Emerging Equity Fund, Nippon India Growth Fund, HDFC Mid-Cap Opportunities, Axis Midcap Fund, DSP Midcap Fund'
+            },
+            {
+                id: 'small-cap', icon: '⚡', name: 'Small Cap Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '15 – 22%', horizon: '10+ yrs', risk: 5, riskLabel: 'Very High',
+                tagline: 'High octane growth — companies ranked 251 and below.',
+                what: 'Small cap funds invest at least 65% in companies ranked 251 and beyond by market cap. These are small, often undiscovered businesses with potential for explosive growth but also high risk of failure or prolonged underperformance. Returns can be spectacular or dismal.',
+                scenarios: 'Only for aggressive, experienced investors with 10+ year horizons and strong mental fortitude. Can form 10–15% of portfolio for high-growth seekers. Best entered via SIP to average out volatility.',
+                avoid: 'Absolutely avoid for any goal shorter than 7–10 years. Not for conservative investors, retirees, or those who check portfolio daily. A 50–60% drawdown is possible and has historically occurred.',
+                example: 'Aryan, 25, invests ₹3,000/month in SBI Small Cap Fund. Over 15 years at ~18% CAGR, his ₹5.4L invested becomes ~₹31.2L — over 5x his money! But he had to sit through 2018 and 2020 crashes without selling.',
+                popular: 'SBI Small Cap Fund, Nippon India Small Cap Fund, Axis Small Cap Fund, Kotak Small Cap Fund, HDFC Small Cap Fund'
+            },
+            {
+                id: 'flexi-cap', icon: '🔄', name: 'Flexi Cap Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '11 – 15%', horizon: '5+ yrs', risk: 4, riskLabel: 'High',
+                tagline: 'Fund manager picks the best across all market caps dynamically.',
+                what: 'Flexi cap funds can invest in companies of any size — large, mid, or small cap — without any minimum allocation constraint. The fund manager dynamically shifts between market caps based on market conditions and opportunities. This gives maximum flexibility to generate alpha.',
+                scenarios: 'Excellent "one fund" equity solution for investors who don\'t want to manage multiple equity funds. The fund manager does the market cap allocation for you. Good for 5–10 year goals, SIPs, and moderate-to-high risk investors.',
+                avoid: 'Avoid if you want control over specific market cap allocation. Not ideal if you already have dedicated large, mid, and small cap funds — it may create overlap.',
+                example: 'Sunita invests ₹15,000/month in Parag Parikh Flexi Cap Fund. The fund manager shifted to large caps during COVID crash and moved back to mid/small caps in recovery. Over 7 years, her ₹12.6L became ₹24L+.',
+                popular: 'Parag Parikh Flexi Cap Fund, HDFC Flexi Cap Fund, UTI Flexi Cap Fund, Kotak Flexicap Fund, Canara Robeco Flexi Cap'
+            },
+            {
+                id: 'multicap', icon: '🌐', name: 'Multi Cap Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '12 – 16%', horizon: '7+ yrs', risk: 4, riskLabel: 'High',
+                tagline: 'Mandated 25% each in large, mid & small cap — true diversification.',
+                what: 'Multi cap funds are mandated by SEBI to invest minimum 25% each in large cap, mid cap, and small cap stocks. This rule-based diversification ensures all three segments are represented, unlike flexi cap where the manager has full discretion.',
+                scenarios: 'Great for investors who want guaranteed diversification across all market caps in a single fund. Suitable for 7+ year horizons. The enforced small/mid cap allocation can boost long-term returns compared to pure large cap funds.',
+                avoid: 'Not ideal for conservative investors — the mandatory small cap exposure (25%) can cause sharp short-term volatility. Also avoid for goals under 7 years.',
+                example: 'Vikram invests ₹8,000/month in Nippon India Multi Cap Fund. The mandatory 25% small cap allocation helped his returns outperform pure large cap funds over a 10-year period at ~14% CAGR, turning ₹9.6L into ₹24.3L.',
+                popular: 'Nippon India Multi Cap Fund, HDFC Multi-Cap Fund, Kotak Multicap Fund, Mahindra Manulife Multi Cap Fund, ITI Multi Cap Fund'
+            },
+            {
+                id: 'elss', icon: '🧾', name: 'ELSS (Tax Saving)', category: 'tax',
+                categoryLabel: 'Tax Saving', categoryColor: '#7c3aed', categoryBg: '#f5f3ff',
+                returns: '12 – 15%', horizon: '3+ yrs (lock-in)', risk: 4, riskLabel: 'High',
+                tagline: 'Save up to ₹46,800 tax annually + earn equity returns.',
+                what: 'ELSS (Equity Linked Savings Scheme) are equity mutual funds with a mandatory 3-year lock-in period per SIP installment. Investments up to ₹1.5L qualify for Section 80C deduction. With the shortest lock-in among all 80C options and market-linked returns, it is the most rewarding tax-saving instrument.',
+                scenarios: 'The #1 choice for tax-saving investors who can tolerate equity risk. If you haven\'t exhausted your ₹1.5L 80C limit, always start with ELSS. Effective annual returns (after tax savings) can be 20%+ for 30% slab taxpayers.',
+                avoid: 'Avoid if you need liquidity within 3 years (lock-in is per installment for SIPs). Not suitable for retirees or purely capital-protection seekers.',
+                example: 'Kavya (30% tax bracket) invests ₹1,50,000/year in Mirae Asset Tax Saver Fund. She saves ₹46,800 in taxes every year. Over 10 years at 13% CAGR, her investment grows to ₹28.5L. Effective return: ~22% post-tax!',
+                popular: 'Mirae Asset ELSS Tax Saver Fund, Quant ELSS Tax Saver Fund, Axis ELSS Tax Saver Fund, SBI Long Term Equity Fund, Canara Robeco ELSS Tax Saver'
+            },
+            {
+                id: 'index', icon: '🔷', name: 'Index Funds', category: 'passive',
+                categoryLabel: 'Passive', categoryColor: '#0891b2', categoryBg: '#ecfeff',
+                returns: '11 – 13%', horizon: '7+ yrs', risk: 3, riskLabel: 'Medium',
+                tagline: 'Track Nifty 50 / Sensex at rock-bottom costs. No fund manager needed.',
+                what: 'Index funds passively replicate a market index (Nifty 50, Nifty Next 50, Sensex, etc.) by holding the exact same stocks in the same proportions. No active stock-picking; returns mirror the index. Ultra-low expense ratios (0.05–0.20%) mean more returns stay with you.',
+                scenarios: 'Ideal for beginner investors, long-term wealth builders, and those who believe in market efficiency. "Set and forget" — no need to monitor fund manager changes. Use Nifty 50 index funds as the core of your equity portfolio.',
+                avoid: 'Won\'t outperform the market — if you want to beat the index, go active. Not ideal if you specifically want mid/small cap exposure (use dedicated index funds for that).',
+                example: 'Ritu puts ₹5,000/month in UTI Nifty 50 Index Fund at an expense ratio of 0.20%. Over 20 years at 12% CAGR, ₹12L invested becomes ~₹49.9L. An actively managed fund charging 1.5% would have given only ₹42L — ₹7.9L less!',
+                popular: 'UTI Nifty 50 Index Fund, Nippon India Index Fund – Nifty 50, HDFC Index Fund Nifty 50, Navi Nifty 50 Index Fund (0.06% ER), Motilal Oswal Nifty Next 50'
+            },
+            {
+                id: 'etf', icon: '📡', name: 'ETFs (Exchange Traded Funds)', category: 'passive',
+                categoryLabel: 'Passive', categoryColor: '#0891b2', categoryBg: '#ecfeff',
+                returns: '11 – 13%', horizon: '7+ yrs', risk: 3, riskLabel: 'Medium',
+                tagline: 'Like index funds but traded on stock exchanges like shares.',
+                what: 'ETFs track an index (like Nifty 50) and trade on stock exchanges just like individual shares. They have even lower expense ratios than index funds (often 0.02–0.05%) but require a Demat account to buy. Price updates in real-time during market hours.',
+                scenarios: 'Best for investors with Demat accounts who want the absolute lowest cost index exposure. Great for lumpsum investors and those who want intraday flexibility. Nifty Bees and Nifty 50 ETFs are the most liquid.',
+                avoid: 'Not ideal for SIP investors (require manual monthly buying). Avoid illiquid ETFs with low trading volumes — bid-ask spread can eat into returns. Not suited for those without a Demat account.',
+                example: 'Shivam buys ₹50,000 worth of Nippon India Nifty 50 Bees ETF at ₹220/unit. The expense ratio is 0.05%. Over 10 years at 12% CAGR, his ₹50,000 grows to ₹1.55L — and the tiny 0.05% cost saved him ₹15,000 vs a higher-expense fund.',
+                popular: 'Nippon India Nifty 50 Bees ETF, HDFC Nifty 50 ETF, SBI Nifty 50 ETF, Kotak Nifty 50 ETF, Mirae Asset Nifty 50 ETF'
+            },
+            {
+                id: 'sectoral', icon: '🏗️', name: 'Sectoral / Thematic Funds', category: 'equity',
+                categoryLabel: 'Equity', categoryColor: '#2563eb', categoryBg: '#eff6ff',
+                returns: '12 – 25%+', horizon: '7+ yrs', risk: 5, riskLabel: 'Very High',
+                tagline: 'Concentrate bets on one sector — banking, IT, pharma, infra etc.',
+                what: 'Sectoral funds invest 80%+ in a specific sector (banking, technology, pharma, infrastructure, consumption, etc.). Thematic funds are broader — they invest in a theme across sectors (like ESG, manufacturing, digital India). Returns can be massive in upcycles but crashes can be brutal.',
+                scenarios: 'Only for investors with strong conviction and deep understanding of a particular sector\'s cycle. Can be used as 5–10% tactical allocation for experienced investors. Best entered at sector lows and exited at peaks.',
+                avoid: 'Avoid as a core holding. Never put more than 10–15% in any single sectoral fund. Absolutely avoid if you don\'t understand the sector\'s business cycle. Not for SIPs as a long-term strategy.',
+                example: 'Deepak invested ₹2,00,000 in Nippon India Pharma Fund in March 2020 (COVID low). Pharma boomed post-COVID. By March 2022, his investment was worth ₹4,40,000 — a 120% return in 2 years! But by 2023 it fell 20% from peak — showing the boom-bust cycle.',
+                popular: 'Nippon India Pharma Fund, ICICI Pru Technology Fund, SBI PSU Fund, Mirae Asset Great Consumer Fund, Quant Infrastructure Fund, Kotak Banking ETF'
+            },
+            {
+                id: 'international', icon: '🌍', name: 'International / Global Funds', category: 'others',
+                categoryLabel: 'Others', categoryColor: '#0f766e', categoryBg: '#f0fdfa',
+                returns: '10 – 18%', horizon: '7+ yrs', risk: 4, riskLabel: 'High',
+                tagline: 'Invest in US, China, global markets from your Indian account.',
+                what: 'International funds invest in overseas stocks — US tech giants (Apple, Google, Amazon), global index funds, or country-specific funds (US, China, Europe). They provide geographic diversification and rupee depreciation benefit (as INR weakens, USD-denominated assets gain more in INR terms).',
+                scenarios: 'Add 10–20% to your portfolio for geographic diversification and USD exposure. Great for benefiting from global tech growth. Useful hedge against INR depreciation for long-term investors.',
+                avoid: 'Currently restricted under SEBI — as of 2023, new subscriptions to many overseas funds are paused. Currency risk is a double-edged sword. Avoid if you don\'t understand forex and global macro factors.',
+                example: 'Ananya had ₹1,00,000 in Parag Parikh\'s US-tilted flexi cap fund. USD strengthened 10% against INR over 3 years. Even if US stocks returned 12% in USD terms, she made ~22%+ in INR terms — INR depreciation acting as a bonus return.',
+                popular: 'Parag Parikh Flexi Cap (US tilt), Motilal Oswal Nasdaq 100 FOF, Mirae Asset NYSE FANG+ ETF FoF, HDFC Developed World Indexes FOF, Franklin India Feeder – Franklin U.S. Opportunities'
+            },
+            {
+                id: 'liquid', icon: '💧', name: 'Liquid Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '5.5 – 7%', horizon: '1 day – 3 months', risk: 1, riskLabel: 'Very Low',
+                tagline: 'Your savings account alternative — better returns, same-day withdrawal.',
+                what: 'Liquid funds invest in very short-term debt instruments (treasury bills, commercial paper, CDs) with maturity up to 91 days. They offer better returns than savings accounts (5.5–7% vs 3–4%) with same-day or next-day withdrawal. NAV is updated every day including weekends.',
+                scenarios: 'Park your emergency fund here instead of a savings account. Use for short-term parking of money between investments or before a known expense. Businesses use it to park working capital.',
+                avoid: 'Not a long-term investment — returns are only marginally better than savings accounts. Avoid if you need money in under 30 minutes (some funds have a 1-hour settlement delay). Don\'t use as a core portfolio holding.',
+                example: 'Neha parks ₹2,00,000 in Nippon India Liquid Fund instead of a savings account. After 6 months at 6.5% p.a., she earns ₹6,500 — double the ₹3,000 her savings account would have given. When she needed the money, it arrived in her account by evening.',
+                popular: 'Nippon India Liquid Fund, HDFC Liquid Fund, ICICI Prudential Liquid Fund, Axis Liquid Fund, Mirae Asset Cash Management Fund'
+            },
+            {
+                id: 'ultra-short', icon: '⏱️', name: 'Ultra Short Duration Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '6 – 7.5%', horizon: '3–6 months', risk: 1, riskLabel: 'Very Low',
+                tagline: 'Slightly better than liquid funds for 3–6 month parking needs.',
+                what: 'Ultra short duration funds invest in debt instruments with a portfolio maturity of 3–6 months. They offer slightly higher returns than liquid funds while maintaining high liquidity. They\'re suitable for medium-short term parking and are less volatile than short duration funds.',
+                scenarios: 'Use for parking money you need in 3–6 months — like advance tax payment, insurance premium, or vacation fund. Also a good alternative to 3-month FDs as exit load is usually nil after 30–90 days.',
+                avoid: 'Interest rate changes can slightly impact returns — not risk-free like FDs. Avoid if you need money within 1–7 days (use liquid funds). Not suitable for long-term (1+ year) investment.',
+                example: 'Raj is saving for his car down payment in 5 months. He parks ₹3,00,000 in Aditya Birla Ultra Short Duration Fund. At 7% p.a. for 5 months, he earns ₹8,750 — better than a savings account and no TDS if returns stay under ₹5,000/year.',
+                popular: 'Aditya Birla SL Savings Fund, ICICI Pru Ultra Short Term Fund, SBI Magnum Ultra Short Duration Fund, Kotak Savings Fund, Nippon India Ultra Short Duration Fund'
+            },
+            {
+                id: 'short-duration', icon: '📅', name: 'Short Duration Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '6.5 – 8%', horizon: '1–3 yrs', risk: 2, riskLabel: 'Low',
+                tagline: 'Debt fund equivalent of a 1–3 year FD — but more tax efficient.',
+                what: 'Short duration funds invest in bonds and money market instruments with a portfolio duration of 1–3 years. They offer better returns than liquid/ultra short funds and benefit from falling interest rates. Post-budget 2023, they are taxed as per income slab, but offer capital gains treatment if held via indexation.',
+                scenarios: 'Best for 1–3 year goals where you want better returns than FDs with some flexibility. Good for corporate treasuries and HNIs who want tax-efficient debt returns. Works well when RBI is expected to cut rates.',
+                avoid: 'Rising interest rate environments can cause temporary losses (mark-to-market risk). Not for capital-critical goals or investors who cannot tolerate any short-term volatility.',
+                example: 'Suresh has ₹5,00,000 for his sister\'s wedding in 2 years. He puts it in HDFC Short Term Debt Fund at 7.5% p.a. After 2 years, he gets ₹5,79,000 — ₹29,000 more than a 2-year FD at 7%. Plus potential tax efficiency.',
+                popular: 'HDFC Short Term Debt Fund, ICICI Pru Short Term Fund, Aditya Birla SL Short Term Fund, Axis Short Duration Fund, Nippon India Short Term Fund'
+            },
+            {
+                id: 'gilt', icon: '🏅', name: 'Gilt Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '7 – 10%', horizon: '3–5+ yrs', risk: 3, riskLabel: 'Medium',
+                tagline: 'Zero credit risk — invest only in government bonds. But interest rate sensitive.',
+                what: 'Gilt funds invest exclusively in government securities (G-secs) issued by Central or State governments. There is absolutely zero credit/default risk since the government guarantees repayment. However, they are highly sensitive to interest rate changes — when rates fall, gilt prices rise sharply, and vice versa.',
+                scenarios: 'Ideal when you believe interest rates are about to fall significantly (like in a rate cut cycle). Can deliver FD-beating returns in falling rate environments. Good for conservative investors wanting government-only exposure.',
+                avoid: 'Avoid during rising interest rate cycles — NAV can fall sharply. Don\'t invest if you need capital protection at a specific date — not suitable for short horizons.',
+                example: 'In 2019–2020, when RBI cut rates aggressively, Nippon India Gilt Securities Fund delivered 14–18% annual returns! Investors who bought before the rate cut cycle made FD-beating returns from the safest government bonds.',
+                popular: 'SBI Magnum Gilt Fund, ICICI Pru Gilt Fund, Nippon India Gilt Securities Fund, DSP Government Securities Fund, HDFC Gilt Fund'
+            },
+            {
+                id: 'credit-risk', icon: '⚠️', name: 'Credit Risk Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '8 – 10%', horizon: '3+ yrs', risk: 3, riskLabel: 'Medium–High',
+                tagline: 'Higher returns from lower-rated corporate bonds — but comes with default risk.',
+                what: 'Credit risk funds invest at least 65% in below AA-rated bonds (i.e., BBB to A+ rated corporate bonds). These bonds pay higher interest to compensate for higher default risk. When companies default, the NAV can crash suddenly. The Franklin India Debt Scandal (2020) was a major example.',
+                scenarios: 'Only for sophisticated investors who understand credit risk and can hold 3+ years. Can add 5–10% as a satellite to boost portfolio yield. Should only be bought with proper due diligence on fund house credit quality.',
+                avoid: 'Avoid entirely if you\'re a conservative investor. Never put large sums here. Avoid if fund house has a history of credit events. Post-Franklin India episode, many investors exited this category entirely.',
+                example: 'The Franklin India Ultra Short Bond Fund fiasco in April 2020: the fund house froze 6 schemes due to credit risk in their portfolios. Investors couldn\'t redeem for months! Some eventually recovered their money, but it was a harsh lesson in credit risk.',
+                popular: 'ICICI Pru Credit Risk Fund, Nippon India Credit Risk Fund, SBI Credit Risk Fund (Use only after careful research — this category requires extra caution)'
+            },
+            {
+                id: 'aggressive-hybrid', icon: '⚖️', name: 'Aggressive Hybrid Funds', category: 'hybrid',
+                categoryLabel: 'Hybrid', categoryColor: '#b45309', categoryBg: '#fffbeb',
+                returns: '10 – 13%', horizon: '5+ yrs', risk: 3, riskLabel: 'Medium–High',
+                tagline: '65–80% equity + 20–35% debt = smoother equity-like returns.',
+                what: 'Aggressive hybrid funds (formerly "balanced funds") invest 65–80% in equities and the rest in debt. This automatic asset allocation smooths out volatility — when equity falls, debt cushions the blow. They auto-rebalance, reducing the behavioural risk of panic-selling.',
+                scenarios: 'Perfect for first-time equity investors who want equity returns but with lower volatility. Excellent "single fund" solution for 5–10 year goals. Great for investors 3–5 years from a goal who want to de-risk while maintaining some growth.',
+                avoid: 'Returns may lag pure equity funds in strong bull markets. Not ideal if you specifically want to control your own debt-equity allocation. Slightly less tax efficient due to the debt component.',
+                example: 'Meena, 45, is 7 years from retirement. She puts ₹15,000/month in ICICI Pru Equity & Debt Fund. In 2020 COVID crash, while Nifty fell 38%, her fund fell only 25%. She didn\'t panic, stayed invested, and her corpus grew steadily to ₹23L over 8 years.',
+                popular: 'ICICI Pru Equity & Debt Fund, SBI Equity Hybrid Fund, Mirae Asset Hybrid Equity Fund, Kotak Equity Hybrid Fund, DSP Equity & Bond Fund'
+            },
+            {
+                id: 'conservative-hybrid', icon: '🛡️', name: 'Conservative Hybrid Funds', category: 'hybrid',
+                categoryLabel: 'Hybrid', categoryColor: '#b45309', categoryBg: '#fffbeb',
+                returns: '7 – 9%', horizon: '2–3+ yrs', risk: 2, riskLabel: 'Low–Medium',
+                tagline: '75–90% debt + 10–25% equity — for capital protection with mild growth.',
+                what: 'Conservative hybrid funds invest 75–90% in debt (bonds, G-secs) and 10–25% in equity. The small equity portion aims to deliver slightly better returns than pure debt funds, while the large debt allocation ensures capital stability. Less volatile than aggressive hybrid funds.',
+                scenarios: 'Ideal for senior citizens, retirees, or conservative investors who want marginally better returns than FDs/debt funds. Good for 2–3 year goals where some equity exposure is acceptable.',
+                avoid: 'Not ideal for aggressive growth targets — equity allocation is too small for meaningful wealth creation. Don\'t use as a complete portfolio solution for long-term goals.',
+                example: 'Shanta, 60, parks her retirement corpus in ICICI Pru Regular Savings Fund. The 80% debt ensures stability while the 20% equity gives her inflation-beating returns of ~8–9% annually — much better than FDs, without wild swings.',
+                popular: 'ICICI Pru Regular Savings Fund, Kotak Debt Hybrid Fund, SBI Conservative Hybrid Fund, HDFC Hybrid Debt Fund, Canara Robeco Conservative Hybrid Fund'
+            },
+            {
+                id: 'arbitrage', icon: '🔀', name: 'Arbitrage Funds', category: 'hybrid',
+                categoryLabel: 'Hybrid', categoryColor: '#b45309', categoryBg: '#fffbeb',
+                returns: '5.5 – 7%', horizon: '1–3 months', risk: 1, riskLabel: 'Very Low',
+                tagline: 'Almost risk-free returns taxed as equity — ideal for high-tax investors.',
+                what: 'Arbitrage funds exploit price differences between cash and futures markets. They simultaneously buy in cash market and sell in futures — locking in a nearly risk-free spread. Since they hold 65%+ in equity, they\'re taxed as equity funds (10% LTCG after 1 year vs 30% for debt funds for high earners).',
+                scenarios: 'Perfect for investors in the 30% tax bracket who want to park money for 3 months to 1 year. Better post-tax returns than liquid/ultra-short funds for high earners. Excellent tax-efficient alternative to short-term FDs.',
+                avoid: 'Returns are market-spread dependent and can fall when arbitrage opportunities dry up. Not ideal if you\'re in a lower tax bracket (the equity tax advantage disappears). Don\'t expect equity-like returns.',
+                example: 'Vivek (30% tax bracket) parks ₹10L for 8 months in ICICI Pru Arbitrage Fund. He earns ~5.8% p.a. — seemingly low, but taxed at 15% (STCG equity). After tax he gets ~4.93%. A liquid fund at 6.5% with 30% tax gives only 4.55%. Arbitrage wins!',
+                popular: 'ICICI Pru Arbitrage Fund, Kotak Equity Arbitrage Fund, Nippon India Arbitrage Fund, SBI Arbitrage Opportunities Fund, Axis Arbitrage Fund'
+            },
+            {
+                id: 'fof', icon: '🗂️', name: 'Fund of Funds (FoF)', category: 'others',
+                categoryLabel: 'Others', categoryColor: '#0f766e', categoryBg: '#f0fdfa',
+                returns: '9 – 14%', horizon: '5+ yrs', risk: 3, riskLabel: 'Varies',
+                tagline: 'A fund that invests in other mutual funds — instant diversification.',
+                what: 'A Fund of Funds (FoF) invests in other mutual funds rather than directly in stocks or bonds. It provides instant diversification across multiple funds, fund houses, and strategies. They can be domestic FoFs (investing in Indian MFs) or overseas FoFs (investing in global funds).',
+                scenarios: 'Great for novice investors who want a complete portfolio in one fund. Overseas FoFs (like Motilal Oswal Nasdaq 100 FoF) are the only way to access international indices without a foreign brokerage account.',
+                avoid: 'Double layer of expense ratios eats into returns. Taxed as debt funds (regardless of underlying equity) post 2023 budget changes — tax efficiency is lower than direct equity. Avoid if you want to optimize costs.',
+                example: 'Pooja wants Nasdaq 100 exposure. She invests ₹50,000 in Motilal Oswal Nasdaq 100 FOF. The underlying fund tracks NASDAQ — giving her Apple, Microsoft, Google exposure without a US brokerage account. Over 5 years, US tech boomed and her ₹50k grew to ₹1.1L.',
+                popular: 'Motilal Oswal Nasdaq 100 FOF, Mirae Asset NYSE FANG+ ETF FoF, ICICI Pru Multi Asset Fund of Funds, Edelweiss Greater China Equity Off-Shore Fund, Kotak Global Innovation FoF'
+            },
+            {
+                id: 'dynamic-bond', icon: '🎛️', name: 'Dynamic Bond Funds', category: 'debt',
+                categoryLabel: 'Debt', categoryColor: '#059669', categoryBg: '#ecfdf5',
+                returns: '7 – 10%', horizon: '3+ yrs', risk: 3, riskLabel: 'Medium',
+                tagline: 'Fund manager actively adjusts duration based on interest rate outlook.',
+                what: 'Dynamic bond funds can invest across any duration of debt instruments. The fund manager actively adjusts the portfolio duration (short or long) based on interest rate expectations. When rates are expected to fall, they go long-duration (to maximize capital gains); when rates are expected to rise, they go short.',
+                scenarios: 'Ideal for investors who want professional management of interest rate risk without deciding themselves. Good for 3+ year horizons. Best when you believe in the fund manager\'s macro expertise but don\'t want to time rates yourself.',
+                avoid: 'Fund manager calls can go wrong — if the manager misjudges rate direction, returns suffer. Not suitable for investors who want predictable, fixed returns. Avoid for short-term goals.',
+                example: 'In 2019–2020 rate cut cycle, ICICI Pru All Seasons Bond Fund (dynamic) delivered ~13% returns by going long-duration. In 2022 rate hike cycle, funds that stayed long-duration lost 2–3%. Dynamic funds that shifted short early preserved capital.',
+                popular: 'ICICI Pru All Seasons Bond Fund, SBI Dynamic Bond Fund, Axis Dynamic Bond Fund, HDFC Dynamic Debt Fund, Kotak Dynamic Bond Fund'
+            }
+        ];
+
+        let _mfCurrentFilter = 'all';
+        let _mfRendered = false;
+
+        function getMFCategoryColors(category) {
+            const map = {
+                equity:  { color: '#2563eb', bg: '#eff6ff', badge: '#bfdbfe' },
+                debt:    { color: '#059669', bg: '#ecfdf5', badge: '#a7f3d0' },
+                hybrid:  { color: '#b45309', bg: '#fffbeb', badge: '#fde68a' },
+                tax:     { color: '#7c3aed', bg: '#f5f3ff', badge: '#ddd6fe' },
+                passive: { color: '#0891b2', bg: '#ecfeff', badge: '#a5f3fc' },
+                others:  { color: '#0f766e', bg: '#f0fdfa', badge: '#99f6e4' }
+            };
+            return map[category] || map.equity;
+        }
+
+        function renderMFKit() {
+            if (_mfRendered) return;
+            _mfRendered = true;
+            const grid = document.getElementById('mf-tiles-grid');
+            grid.innerHTML = '';
+            MF_DATA.forEach((fund, idx) => {
+                const c = getMFCategoryColors(fund.category);
+                const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+                const riskColor = riskColors[fund.risk];
+                let dots = '';
+                for (let d = 1; d <= 5; d++) {
+                    dots += `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d <= fund.risk ? riskColor : '#e2e8f0'};flex-shrink:0;"></span>`;
+                }
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="mf-tile bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-2.5 relative overflow-hidden group"
+                         data-category="${fund.category}" data-id="${fund.id}"
+                         onclick="openMFModal(${idx})" style="border-top: 3px solid ${c.color};">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="text-sm font-black text-slate-800 leading-tight">${fund.name}</span>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style="background:${c.badge};color:${c.color}">${fund.categoryLabel}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-snug flex-1">${fund.tagline}</p>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Returns</span>
+                                <span class="text-xs font-black" style="color:${c.color}">${fund.returns}</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Horizon</span>
+                                <span class="text-xs font-bold text-slate-600">${fund.horizon}</span>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Risk</span>
+                                <div class="flex items-center gap-0.5 mt-0.5">${dots}</div>
+                            </div>
+                        </div>
+                        <div class="pt-0.5">
+                            <span class="text-[10px] font-semibold text-slate-400 group-hover:text-violet-500 transition-colors">Learn more →</span>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-violet-300 transition-all pointer-events-none"></div>
+                    </div>
+                `);
+            });
+        }
+
+        function filterMF(category) {
+            _mfCurrentFilter = category;
+            ['all','equity','debt','hybrid','tax','passive','others'].forEach(f => {
+                const btn = document.getElementById('mf-f-' + f);
+                if (btn) btn.className = (f === category) ? 'mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all' : 'mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all';
+            });
+            const tiles = document.querySelectorAll('#mf-tiles-grid .mf-tile');
+            tiles.forEach(tile => {
+                if (category === 'all' || tile.dataset.category === category) {
+                    tile.classList.remove('mf-tile-hidden');
+                } else {
+                    tile.classList.add('mf-tile-hidden');
+                }
+            });
+        }
+
+        function openMFModal(idx) {
+            const fund = MF_DATA[idx];
+            if (!fund) return;
+            const c = getMFCategoryColors(fund.category);
+            const riskColors = ['','#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+            const riskColor = riskColors[fund.risk];
+            const header = document.getElementById('mf-modal-header');
+            header.style.background = c.bg;
+            document.getElementById('mf-modal-icon').innerText = fund.icon;
+            document.getElementById('mf-modal-name').innerText = fund.name;
+            document.getElementById('mf-modal-returns').innerText = fund.returns;
+            document.getElementById('mf-modal-returns').style.color = c.color;
+            document.getElementById('mf-modal-horizon').innerText = fund.horizon;
+            document.getElementById('mf-modal-risk-label').innerText = fund.riskLabel + ' Risk';
+            document.getElementById('mf-modal-risk-label').style.color = riskColor;
+            const badge = document.getElementById('mf-modal-category-badge');
+            badge.innerText = fund.categoryLabel;
+            badge.style.background = c.badge;
+            badge.style.color = c.color;
+            let dots = '';
+            for (let d = 1; d <= 5; d++) {
+                dots += `<div style="width:11px;height:11px;border-radius:50%;background:${d <= fund.risk ? riskColor : '#e2e8f0'};flex-shrink:0;"></div>`;
+            }
+            document.getElementById('mf-modal-risk-dots').innerHTML = dots;
+            document.getElementById('mf-modal-what').innerText = fund.what;
+            document.getElementById('mf-modal-scenarios').innerText = fund.scenarios;
+            document.getElementById('mf-modal-avoid').innerText = fund.avoid;
+            document.getElementById('mf-modal-example').innerText = fund.example;
+            document.getElementById('mf-modal-popular').innerText = fund.popular;
+            const modal = document.getElementById('mf-modal');
+            modal.classList.remove('hidden');
+            const card = modal.querySelector('.animate-modal');
+            card.style.animation = 'none';
+            requestAnimationFrame(() => { card.style.animation = ''; });
+        }
+
+        function closeMFModal(event) {
+            if (event.target === document.getElementById('mf-modal')) {
+                document.getElementById('mf-modal').classList.add('hidden');
+            }
+        }
+        // ==================== END MUTUAL FUND KIT ====================
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') document.getElementById('invest-modal').classList.add('hidden');
         });
     </script>
@@ -1178,6 +1621,14 @@
         .animate-modal { animation: modal-in 0.18s ease-out; }
         #toggle-track.on { background: #10b981; }
         #toggle-thumb.on { transform: translateX(20px); }
+
+        /* MF Kit styles */
+        .mf-tile { transition: box-shadow 0.18s, transform 0.18s; cursor: pointer; }
+        .mf-tile:hover { box-shadow: 0 6px 24px rgba(109,40,217,0.13); transform: translateY(-2px); }
+        .mf-filter-active { background: rgba(255,255,255,0.25); color: #fff; border: 1.5px solid rgba(255,255,255,0.5); }
+        .mf-filter-inactive { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); border: 1.5px solid rgba(255,255,255,0.18); }
+        .mf-filter-inactive:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .mf-tile-hidden { display: none !important; }
 
         /* Emergency Fund styles */
         .ef-months-btn {
