@@ -43,6 +43,214 @@
             letter-spacing: 0.03em;
         }
 
+        /* ===== SPLASH SCREEN ===== */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(145deg, #071e22 0%, #0d3d42 45%, #162a10 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        #splash.fade-out {
+            animation: splashFadeOut 0.75s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        @keyframes splashFadeOut {
+            to { opacity: 0; transform: scale(1.03); pointer-events: none; }
+        }
+
+        /* Animated grid lines */
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(45,137,128,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(45,137,128,0.07) 1px, transparent 1px);
+            background-size: 48px 48px;
+            animation: gridDrift 20s linear infinite;
+        }
+        @keyframes gridDrift {
+            from { background-position: 0 0; }
+            to   { background-position: 48px 48px; }
+        }
+
+        /* Glowing orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+        }
+        .orb-1 { width: 380px; height: 380px; background: rgba(45,137,128,0.2);  top: -80px;    left: -100px; }
+        .orb-2 { width: 280px; height: 280px; background: rgba(181,115,47,0.18); bottom: -50px; right: -70px; }
+        .orb-3 { width: 200px; height: 200px; background: rgba(16,185,129,0.12); top: 40%;      right: 10%;  }
+
+        /* Rising bar chart animation */
+        .chart-bars {
+            position: absolute;
+            bottom: 0;
+            left: 0; right: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 10px;
+            padding: 0 15%;
+            height: 160px;
+            opacity: 0.08;
+        }
+        .bar {
+            flex: 1;
+            max-width: 28px;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(to top, #2d8980, #10b981);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            animation: riseBar 0.6s ease-out forwards;
+        }
+        .bar:nth-child(1)  { height: 30%;  animation-delay: 0.1s; }
+        .bar:nth-child(2)  { height: 50%;  animation-delay: 0.2s; }
+        .bar:nth-child(3)  { height: 40%;  animation-delay: 0.3s; }
+        .bar:nth-child(4)  { height: 70%;  animation-delay: 0.4s; }
+        .bar:nth-child(5)  { height: 55%;  animation-delay: 0.5s; }
+        .bar:nth-child(6)  { height: 85%;  animation-delay: 0.6s; }
+        .bar:nth-child(7)  { height: 75%;  animation-delay: 0.7s; }
+        .bar:nth-child(8)  { height: 95%;  animation-delay: 0.8s; }
+        .bar:nth-child(9)  { height: 80%;  animation-delay: 0.9s; }
+        .bar:nth-child(10) { height: 100%; animation-delay: 1.0s; }
+        @keyframes riseBar {
+            from { transform: scaleY(0); }
+            to   { transform: scaleY(1); }
+        }
+
+        /* Floating coins */
+        .coin {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #f5c842, #b5732f);
+            box-shadow: 0 0 8px rgba(245,200,66,0.5);
+            animation: floatCoin linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatCoin {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.8; }
+            90%  { opacity: 0.4; }
+            100% { transform: translateY(-105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Rupee symbol watermark */
+        .rupee-watermark {
+            position: absolute;
+            font-size: clamp(180px, 28vw, 320px);
+            font-weight: 900;
+            color: rgba(255,255,255,0.025);
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            line-height: 1;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        /* Splash title */
+        .splash-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 6.5vw, 5rem);
+            line-height: 1.1;
+            letter-spacing: 0.04em;
+            text-align: center;
+            background: linear-gradient(130deg, #e8d5a3 0%, #f5c842 35%, #e8a44a 60%, #c97f3a 80%, #e8d5a3 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 3s ease-in-out infinite, titleReveal 1s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 28px rgba(245,200,66,0.3));
+        }
+        @keyframes shimmerText {
+            0%,100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+        @keyframes titleReveal {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Ticker line */
+        .splash-ticker {
+            display: flex;
+            gap: 32px;
+            margin: 20px 0 6px;
+            opacity: 0;
+            animation: taglineReveal 0.8s 1s ease-out forwards;
+            position: relative;
+            z-index: 2;
+        }
+        .ticker-item {
+            font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+            font-weight: 600;
+            color: #10b981;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .ticker-item::before {
+            content: '▲';
+            font-size: 0.55rem;
+            color: #10b981;
+        }
+
+        .splash-divider {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(245,200,66,0.6), transparent);
+            margin: 4px auto 16px;
+            animation: expandLine 0.9s 0.8s ease-out forwards;
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes expandLine {
+            from { width: 0; }
+            to   { width: min(460px, 78vw); }
+        }
+
+        .splash-tagline {
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(232,213,163,0.65);
+            opacity: 0;
+            position: relative;
+            z-index: 2;
+            animation: taglineReveal 0.9s 1.1s ease-out forwards;
+        }
+        @keyframes taglineReveal {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-skip {
+            position: absolute;
+            bottom: 24px;
+            right: 28px;
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            color: rgba(232,213,163,0.3);
+            text-transform: uppercase;
+            opacity: 0;
+            animation: taglineReveal 0.5s 1.8s ease-out forwards;
+        }
+    </style>
+
         /* Risk meter dots */
         .risk-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .risk-dot.filled-1 { background: #22c55e; }
@@ -64,6 +272,74 @@
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- ===== SPLASH SCREEN ===== -->
+    <div id="splash" onclick="dismissSplash()" title="Click anywhere to enter">
+        <div class="grid-bg"></div>
+
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <!-- ₹ watermark -->
+        <div class="rupee-watermark">₹</div>
+
+        <!-- Bar chart silhouette -->
+        <div class="chart-bars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <!-- Coin particles (JS generated) -->
+        <div id="coins-container"></div>
+
+        <!-- Main content -->
+        <h1 class="splash-title">Aishwaryamasthu</h1>
+        <div class="splash-divider"></div>
+
+        <!-- Ticker strip -->
+        <div class="splash-ticker">
+            <span class="ticker-item">SIP</span>
+            <span class="ticker-item">Lumpsum</span>
+            <span class="ticker-item">ELSS</span>
+            <span class="ticker-item">NPS</span>
+            <span class="ticker-item">PPF</span>
+        </div>
+
+        <p class="splash-tagline">Indian Wealth Generation Calculator</p>
+
+        <span class="splash-skip">tap anywhere to enter &rarr;</span>
+    </div>
+
+    <script>
+    (function() {
+        const container = document.getElementById('coins-container');
+        for (let i = 0; i < 16; i++) {
+            const c = document.createElement('div');
+            c.className = 'coin';
+            const size = 4 + Math.random() * 7;
+            c.style.cssText = `
+                left: ${Math.random() * 100}vw;
+                bottom: -12px;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${7 + Math.random() * 9}s;
+                animation-delay: ${Math.random() * 5}s;
+            `;
+            container.appendChild(c);
+        }
+    })();
+
+    function dismissSplash() {
+        const splash = document.getElementById('splash');
+        if (!splash || splash.classList.contains('fade-out')) return;
+        splash.classList.add('fade-out');
+        splash.addEventListener('animationend', () => splash.remove(), { once: true });
+    }
+    setTimeout(dismissSplash, 3400);
+    </script>
 
     <!-- NAV -->
     <nav class="bg-white border-b border-slate-200 px-4 py-3 flex-none z-10 sticky top-0 shadow-sm">
