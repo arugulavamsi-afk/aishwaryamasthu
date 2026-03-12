@@ -625,8 +625,10 @@
             document.getElementById('calc-btn').innerText = isGoal ? 'Calculate Required Investment' : 'Calculate Projection';
             document.getElementById('growth-results').style.display = isGoal ? 'none' : 'block';
             document.getElementById('goal-results').style.display = isGoal ? 'block' : 'none';
-            document.getElementById('amount').value = isGoal ? "1,00,00,000" : "10,000";
+            document.getElementById('amount').value = isGoal ? "0" : "0";
             formatInput(document.getElementById('amount'), 'amount-words');
+            const amountEl = document.getElementById('amount');
+            amountEl.classList.add('text-slate-400'); amountEl.classList.remove('text-slate-800');
             onYearsChange();
             calculate();
         }
@@ -1496,6 +1498,7 @@
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase">Risk</span>
                                 <div class="flex items-center gap-0.5 mt-0.5">${dots}</div>
+                                <span class="text-[9px] font-bold mt-0.5" style="color:${riskColor}">${fund.riskLabel}</span>
                             </div>
                         </div>
                         <div class="pt-0.5">
