@@ -485,7 +485,7 @@
                 </div>
             </div>
 
-            <button onclick="calculate()" id="calc-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-95 mt-5 text-base">
+            <button onclick="calculateFromButton()" id="calc-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-95 mt-5 text-base">
                 Calculate Projection
             </button>
 
@@ -661,6 +661,10 @@
                     <button onclick="addCustomExpense()" class="mt-4 w-full border-2 border-dashed border-slate-200 hover:border-amber-400 rounded-xl py-2.5 text-sm font-semibold text-slate-400 hover:text-amber-500 transition-all flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         Add Custom Expense
+                    </button>
+                    <button onclick="resetEmergencyFund()" class="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500 hover:bg-rose-50 font-semibold text-sm transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Reset All
                     </button>
                 </div>
             </div>
@@ -959,6 +963,12 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Reset All Button -->
+                    <button onclick="resetHealthScore()" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500 hover:bg-rose-50 font-semibold text-sm transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Reset All
+                    </button>
 
                 </div>
 
@@ -1476,6 +1486,11 @@
             }
         }
 
+        function calculateFromButton() {
+            if (currentMode === 'goal') goalCalculateClicked = true;
+            calculate();
+        }
+
         function calculate() {
             const randIndex = Math.floor(Math.random() * quotes.length);
             document.getElementById('motivation').innerText = `"${quotes[randIndex]}"`;
@@ -1598,8 +1613,6 @@
             document.getElementById('chart-title').innerText = "Required Investment vs Expected Return";
             renderBarChart(barLabels, barData, type);
 
-            // Show investment suggestions only when explicitly calculated
-            goalCalculateClicked = true;
             renderInvestmentSuggestions(years);
         }
 
@@ -1818,6 +1831,20 @@
         function removeCustomExpense(id) {
             const el = document.getElementById(id);
             if (el) { el.remove(); calcEmergency(); }
+        }
+
+        function resetEmergencyFund() {
+            // Reset all fixed expense inputs to 0
+            document.querySelectorAll('#expense-rows .ef-input').forEach(input => {
+                input.value = '0';
+                input.classList.add('text-slate-400');
+            });
+            // Remove all custom rows
+            document.getElementById('custom-expense-rows').innerHTML = '';
+            customExpenseCount = 0;
+            // Reset months to default 6
+            setMonths(6);
+            calcEmergency();
         }
 
         function calcEmergency() {
@@ -2290,6 +2317,27 @@
         function hsGetVal(id) {
             const raw = document.getElementById(id).value.replace(/[^0-9]/g, '');
             return parseInt(raw, 10) || 0;
+        }
+
+        function resetHealthScore() {
+            const moneyFields = ['hs-income','hs-emi','hs-expenses','hs-savings','hs-health-ins','hs-term-ins','hs-efund'];
+            moneyFields.forEach(id => {
+                const el = document.getElementById(id);
+                el.value = '0';
+                el.classList.add('text-slate-400');
+            });
+            document.getElementById('hs-age').value = '';
+            // Reset results display
+            document.getElementById('hs-empty-state').classList.remove('hidden');
+            document.getElementById('hs-score-result').classList.add('hidden');
+            document.getElementById('hs-score-badge').innerText = '--';
+            document.getElementById('hs-grade-badge').innerText = 'Not scored yet';
+            document.getElementById('hs-pie-empty').classList.remove('hidden');
+            document.getElementById('hs-pie-container').classList.add('hidden');
+            document.getElementById('hs-actions-empty').classList.remove('hidden');
+            document.getElementById('hs-actions-list').classList.add('hidden');
+            document.getElementById('hs-stats-strip').classList.add('hidden');
+            if (hsChartInstance) { hsChartInstance.destroy(); hsChartInstance = null; }
         }
 
         function calcHealthScore() {
