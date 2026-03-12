@@ -842,6 +842,13 @@
                                 <div class="text-[10px] text-slate-400 mt-1 font-medium">After tax, all sources combined</div>
                             </div>
                             <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Your Age <span class="text-indigo-400 font-bold">🎂</span></label>
+                                <input type="number" id="hs-age" min="18" max="80" placeholder="e.g. 32"
+                                    class="hs-input w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base font-bold outline-none focus:ring-2 focus:ring-indigo-400 transition-all text-slate-700"
+                                    oninput="calcHealthScore();">
+                                <div class="text-[10px] text-slate-400 mt-1 font-medium">Used to benchmark age-appropriate savings readiness (18–80)</div>
+                            </div>
+                            <div>
                                 <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Monthly EMIs / Loan Repayments</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
@@ -2117,6 +2124,7 @@
             const healthIns = hsGetVal('hs-health-ins');
             const termIns   = hsGetVal('hs-term-ins');
             const efund     = hsGetVal('hs-efund');
+            const age       = parseInt(document.getElementById('hs-age').value, 10) || 0;
 
             if (income === 0) {
                 document.getElementById('hs-empty-state').classList.remove('hidden');
@@ -2210,7 +2218,52 @@
             categories.push({ name: 'Spending Control', pts: spendPts, max: 15, icon: '🛒',
                 color: '#f97316', desc: `${spendPct.toFixed(1)}% of income spent` });
 
-            const totalScore = categories.reduce((a, c) => a + c.pts, 0);
+            // 7. Age Readiness (10 pts) — only scored if age is entered
+            if (age >= 18 && age <= 80) {
+                let agePts = 0;
+                let ageDesc = '';
+                if (age <= 25) {
+                    if      (savingsRate >= 10) agePts = 10;
+                    else if (savingsRate >= 5)  agePts = 8;
+                    else if (savingsRate > 0)   agePts = 5;
+                    else                        agePts = 2;
+                    ageDesc = `Great head start at ${age}! Time is your biggest asset — keep it going.`;
+                } else if (age <= 35) {
+                    if      (savingsRate >= 20) agePts = 10;
+                    else if (savingsRate >= 15) agePts = 8;
+                    else if (savingsRate >= 10) agePts = 5;
+                    else if (savingsRate >= 5)  agePts = 2;
+                    else                        agePts = 0;
+                    ageDesc = `At ${age}, target 20%+ savings rate to retire by 60 with a solid corpus.`;
+                } else if (age <= 45) {
+                    if      (savingsRate >= 25) agePts = 10;
+                    else if (savingsRate >= 20) agePts = 7;
+                    else if (savingsRate >= 15) agePts = 4;
+                    else if (savingsRate >= 10) agePts = 1;
+                    else                        agePts = 0;
+                    ageDesc = `At ${age}, 25%+ savings is the benchmark — retirement is ~20 years away.`;
+                } else if (age <= 55) {
+                    if      (savingsRate >= 30) agePts = 10;
+                    else if (savingsRate >= 25) agePts = 6;
+                    else if (savingsRate >= 20) agePts = 3;
+                    else if (savingsRate >= 15) agePts = 1;
+                    else                        agePts = 0;
+                    ageDesc = `At ${age}, target 30%+ savings — retirement is within 10 years.`;
+                } else {
+                    if      (savingsRate >= 35) agePts = 10;
+                    else if (savingsRate >= 30) agePts = 5;
+                    else if (savingsRate >= 25) agePts = 2;
+                    else                        agePts = 0;
+                    ageDesc = `At ${age}, maximize every rupee — prioritize NPS, PPF, and debt reduction.`;
+                }
+                categories.push({ name: 'Age Readiness', pts: agePts, max: 10, icon: '🎂',
+                    color: '#6366f1', desc: ageDesc });
+            }
+
+            // Normalize to 100 regardless of whether age category is present (max 100 or 110)
+            const rawTotal = categories.reduce((a, c) => a + c.pts, 0);
+            const maxTotal = categories.reduce((a, c) => a + c.max, 0);
+            const totalScore = Math.min(100, Math.round(rawTotal * 100 / maxTotal));
 
             // ---- GRADE ----
             let grade, emoji, desc, arcColor;
@@ -2324,6 +2377,7 @@
                 'Term Insurance':    { tip: `You need 10–15× your annual income in term cover. A ₹1Cr plan costs just ~₹500–800/month at your age.`, color:'#8b5cf6', icon:'🛡️' },
                 'Emergency Fund':    { tip: `Build towards 6 months of expenses (₹${(monthlyExpenses*6).toLocaleString('en-IN')}). Park in a liquid MF or sweep FD.`, color:'#f59e0b', icon:'🚨' },
                 'Spending Control':  { tip: `More than 70% of income is going to spend+EMI. Track expenses with apps like Walnut or Money Manager.`, color:'#f97316', icon:'🛒' },
+                'Age Readiness':     { tip: age <= 35 ? `You're in the wealth-building window — increase SIP aggressively. Every 1% more now = massive corpus at 60.` : age <= 50 ? `Boost savings to 25–30% now. Consider NPS for the extra 80CCD(1B) deduction on top of 80C.` : `Prioritize debt freedom + NPS + PPF. Shift equity SIPs to a more balanced fund as you near retirement.`, color:'#6366f1', icon:'🎂' },
             };
 
             document.getElementById('hs-actions-empty').classList.add('hidden');
