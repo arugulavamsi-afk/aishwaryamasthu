@@ -372,11 +372,11 @@
         </div>
         <!-- Tabs - scrollable on mobile -->
         <div class="tabs-scroll flex items-center gap-2 border-t border-slate-100 pt-3 pb-1 -mx-4 px-4">
-            <button onclick="switchMode('growth')" id="tab-growth" class="tab-active transition-all text-sm whitespace-nowrap px-4 py-1.5">Growth Calculator</button>
-            <button onclick="switchMode('goal')" id="tab-goal" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Goal Planner</button>
-            <button onclick="switchMode('emergency')" id="tab-emergency" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Emergency Fund</button>
-            <button onclick="switchMode('mfkit')" id="tab-mfkit" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">MF Kit</button>
-            <button onclick="switchMode('healthscore')" id="tab-healthscore" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fin Health Score</button>
+            <button onclick="switchMode('growth')" id="tab-growth" class="tab-active transition-all text-sm whitespace-nowrap px-4 py-1.5">📈 Growth Calculator</button>
+            <button onclick="switchMode('goal')" id="tab-goal" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">🎯 Goal Planner</button>
+            <button onclick="switchMode('emergency')" id="tab-emergency" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">🚨 Emergency Fund</button>
+            <button onclick="switchMode('mfkit')" id="tab-mfkit" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">💼 MF Kit</button>
+            <button onclick="switchMode('healthscore')" id="tab-healthscore" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">❤️ Fin Health Score</button>
         </div>
     </nav>
 
@@ -487,6 +487,16 @@
 
             <button onclick="calculate()" id="calc-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-95 mt-5 text-base">
                 Calculate Projection
+            </button>
+
+            <!-- Reset buttons -->
+            <button id="reset-growth-btn" onclick="resetGrowthCalc()" class="w-full flex items-center justify-center gap-2 mt-2 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500 hover:bg-rose-50 font-semibold text-sm transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Reset All
+            </button>
+            <button id="reset-goal-btn" onclick="resetGoalPlanner()" style="display:none;" class="w-full flex items-center justify-center gap-2 mt-2 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500 hover:bg-rose-50 font-semibold text-sm transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Reset All
             </button>
         </div>
 
@@ -1061,6 +1071,147 @@
     <script>
         let chartInstance = null;
         let currentMode = 'growth';
+        let goalCalculateClicked = false;
+
+        // Per-tab state to preserve values when switching tabs
+        const tabState = {
+            growth: { invType: 'lumpsum', amount: '', rate: '', years: '', inflationEnabled: false, infRate: '' },
+            goal:   { invType: 'lumpsum', amount: '', years: '', goalType: 'vehicle', customGoalText: '', customRate: '' }
+        };
+
+        function saveTabState(mode) {
+            if (mode === 'growth' || mode === 'inflation') {
+                tabState.growth.invType  = document.getElementById('inv-type').value;
+                tabState.growth.amount   = document.getElementById('amount').value;
+                tabState.growth.rate     = document.getElementById('rate').value;
+                tabState.growth.years    = document.getElementById('years').value;
+                tabState.growth.inflationEnabled = document.getElementById('inflation-toggle').checked;
+                tabState.growth.infRate  = document.getElementById('inf-rate').value;
+            } else if (mode === 'goal') {
+                tabState.goal.invType        = document.getElementById('inv-type').value;
+                tabState.goal.amount         = document.getElementById('amount').value;
+                tabState.goal.years          = document.getElementById('years').value;
+                tabState.goal.goalType       = document.getElementById('goal-type').value;
+                tabState.goal.customGoalText = document.getElementById('custom-goal-text')?.value || '';
+                tabState.goal.customRate     = document.getElementById('custom-rate').value;
+            }
+        }
+
+        function restoreTabState(mode) {
+            if (mode === 'growth') {
+                const s = tabState.growth;
+                document.getElementById('inv-type').value = s.invType;
+                const amountEl = document.getElementById('amount');
+                amountEl.value = s.amount;
+                if (s.amount && s.amount !== '0') {
+                    amountEl.classList.remove('text-slate-400');
+                } else {
+                    amountEl.value = '0';
+                    amountEl.classList.add('text-slate-400');
+                }
+                formatInput(amountEl, 'amount-words');
+                const rateEl = document.getElementById('rate');
+                rateEl.value = s.rate || '0';
+                if (s.rate && parseFloat(s.rate) !== 0) rateEl.classList.remove('text-slate-400');
+                else rateEl.classList.add('text-slate-400');
+                updateWords('rate', 'rate-words');
+                const yearsEl = document.getElementById('years');
+                yearsEl.value = s.years || '0';
+                if (s.years && parseInt(s.years) !== 0) yearsEl.classList.remove('text-slate-400');
+                else yearsEl.classList.add('text-slate-400');
+                updateWords('years', 'years-words');
+                // Inflation toggle
+                const toggle = document.getElementById('inflation-toggle');
+                toggle.checked = s.inflationEnabled;
+                document.getElementById('toggle-track').classList.toggle('on', s.inflationEnabled);
+                document.getElementById('toggle-thumb').classList.toggle('on', s.inflationEnabled);
+                document.getElementById('inflation-rate-container').classList.toggle('hidden', !s.inflationEnabled);
+                if (s.inflationEnabled) {
+                    currentMode = 'inflation';
+                    const infEl = document.getElementById('inf-rate');
+                    infEl.value = s.infRate || '0';
+                    if (s.infRate && parseFloat(s.infRate) !== 0) {
+                        infEl.classList.remove('text-slate-400');
+                        infEl.classList.add('text-rose-900');
+                    } else {
+                        infEl.classList.add('text-slate-400');
+                        infEl.classList.remove('text-rose-900');
+                    }
+                    updateWords('inf-rate', 'inf-rate-words');
+                } else {
+                    currentMode = 'growth';
+                }
+            } else if (mode === 'goal') {
+                const s = tabState.goal;
+                document.getElementById('inv-type').value = s.invType;
+                const amountEl = document.getElementById('amount');
+                amountEl.value = s.amount;
+                if (s.amount && s.amount !== '0') {
+                    amountEl.classList.remove('text-slate-400');
+                } else {
+                    amountEl.value = '0';
+                    amountEl.classList.add('text-slate-400');
+                }
+                formatInput(amountEl, 'amount-words');
+                const yearsEl = document.getElementById('years');
+                yearsEl.value = s.years || '0';
+                if (s.years && parseInt(s.years) !== 0) yearsEl.classList.remove('text-slate-400');
+                else yearsEl.classList.add('text-slate-400');
+                updateWords('years', 'years-words');
+                document.getElementById('goal-type').value = s.goalType;
+                const customInput = document.getElementById('custom-goal-input');
+                if (customInput) customInput.style.display = s.goalType === 'custom' ? 'block' : 'none';
+                const customText = document.getElementById('custom-goal-text');
+                if (customText) customText.value = s.customGoalText;
+                const customRateEl = document.getElementById('custom-rate');
+                customRateEl.value = s.customRate;
+                updateWords('custom-rate', 'custom-rate-words');
+            }
+        }
+
+        function resetGrowthCalc() {
+            tabState.growth = { invType: 'lumpsum', amount: '', rate: '', years: '', inflationEnabled: false, infRate: '' };
+            document.getElementById('inv-type').value = 'lumpsum';
+            const amountEl = document.getElementById('amount');
+            amountEl.value = '0'; amountEl.classList.add('text-slate-400');
+            formatInput(amountEl, 'amount-words');
+            const rateEl = document.getElementById('rate');
+            rateEl.value = '0'; rateEl.classList.add('text-slate-400');
+            updateWords('rate', 'rate-words');
+            const yearsEl = document.getElementById('years');
+            yearsEl.value = '0'; yearsEl.classList.add('text-slate-400');
+            updateWords('years', 'years-words');
+            const toggle = document.getElementById('inflation-toggle');
+            toggle.checked = false;
+            document.getElementById('toggle-track').classList.remove('on');
+            document.getElementById('toggle-thumb').classList.remove('on');
+            document.getElementById('inflation-rate-container').classList.add('hidden');
+            const infEl = document.getElementById('inf-rate');
+            infEl.value = '0'; infEl.classList.add('text-slate-400'); infEl.classList.remove('text-rose-900');
+            currentMode = 'growth';
+            calculate();
+        }
+
+        function resetGoalPlanner() {
+            tabState.goal = { invType: 'lumpsum', amount: '', years: '', goalType: 'vehicle', customGoalText: '', customRate: '' };
+            document.getElementById('inv-type').value = 'lumpsum';
+            const amountEl = document.getElementById('amount');
+            amountEl.value = '0'; amountEl.classList.add('text-slate-400');
+            formatInput(amountEl, 'amount-words');
+            const yearsEl = document.getElementById('years');
+            yearsEl.value = '0'; yearsEl.classList.add('text-slate-400');
+            updateWords('years', 'years-words');
+            document.getElementById('goal-type').value = 'vehicle';
+            const customInput = document.getElementById('custom-goal-input');
+            if (customInput) customInput.style.display = 'none';
+            const customText = document.getElementById('custom-goal-text');
+            if (customText) customText.value = '';
+            const customRateEl = document.getElementById('custom-rate');
+            customRateEl.value = ''; updateWords('custom-rate', 'custom-rate-words');
+            goalCalculateClicked = false;
+            document.getElementById('invest-suggestions').classList.add('hidden');
+            calculate();
+        }
 
         const quotes = [
             "Compound interest is the eighth wonder of the world.", "Time is your greatest asset in investing.", "Patience is the key to building wealth.", "Invest in yourself first.", "The best time to plant a tree was 20 years ago. The second best time is now.",
@@ -1121,6 +1272,9 @@
         }
 
         function switchMode(mode) {
+            // Save current tab state before switching
+            saveTabState(currentMode);
+
             currentMode = mode;
             ['growth','goal','emergency','mfkit','healthscore'].forEach(m => {
                 const tab = document.getElementById('tab-' + m);
@@ -1148,9 +1302,12 @@
             if (isMFKit) { renderMFKit(); return; }
             if (isHealthScore) { calcHealthScore(); return; }
 
+            // Show/hide reset buttons
+            document.getElementById('reset-growth-btn').style.display = isGoal ? 'none' : 'flex';
+            document.getElementById('reset-goal-btn').style.display = isGoal ? 'flex' : 'none';
+
             document.getElementById('rate-container').style.display = isGoal ? 'none' : 'block';
             document.getElementById('inflation-toggle-container').style.display = isGoal ? 'none' : 'block';
-            // Hide inflation rate if switching away
             if (isGoal) {
                 document.getElementById('inflation-rate-container').classList.add('hidden');
                 const toggle = document.getElementById('inflation-toggle');
@@ -1158,6 +1315,9 @@
                 document.getElementById('toggle-track').classList.remove('on');
                 document.getElementById('toggle-thumb').classList.remove('on');
                 currentMode = 'goal';
+                // Hide investment suggestions until Calculate is clicked
+                document.getElementById('invest-suggestions').classList.add('hidden');
+                goalCalculateClicked = false;
             }
             document.getElementById('custom-rate-container').style.display = isGoal ? 'block' : 'none';
             document.getElementById('goal-type-container').style.display = isGoal ? 'block' : 'none';
@@ -1166,15 +1326,9 @@
             document.getElementById('calc-btn').innerText = isGoal ? 'Calculate Required Investment' : 'Calculate Projection';
             document.getElementById('growth-results').style.display = isGoal ? 'none' : 'block';
             document.getElementById('goal-results').style.display = isGoal ? 'block' : 'none';
-            document.getElementById('amount').value = isGoal ? "0" : "0";
-            formatInput(document.getElementById('amount'), 'amount-words');
-            const amountEl = document.getElementById('amount');
-            amountEl.classList.add('text-slate-400'); amountEl.classList.remove('text-slate-800');
-            // Also reset years to greyed zero
-            const yearsEl = document.getElementById('years');
-            yearsEl.value = '0';
-            yearsEl.classList.add('text-slate-400');
-            document.getElementById('years-words').innerText = 'Zero';
+
+            // Restore saved state for the new tab
+            restoreTabState(isGoal ? 'goal' : 'growth');
             onYearsChange();
             calculate();
         }
@@ -1444,7 +1598,8 @@
             document.getElementById('chart-title').innerText = "Required Investment vs Expected Return";
             renderBarChart(barLabels, barData, type);
 
-            // Show investment suggestions
+            // Show investment suggestions only when explicitly calculated
+            goalCalculateClicked = true;
             renderInvestmentSuggestions(years);
         }
 
@@ -1453,6 +1608,7 @@
             const grid = document.getElementById('invest-cards-grid');
             const termBadge = document.getElementById('invest-term-badge');
             if (!section || !grid) return;
+            if (!goalCalculateClicked) { section.classList.add('hidden'); return; }
 
             const suggestions = getInvestmentSuggestions(years);
             const isShortTerm = years < 7;
