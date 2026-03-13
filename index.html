@@ -1335,6 +1335,22 @@
                             <div id="fp-sip-breakdown" class="space-y-1.5"></div>
                         </div>
 
+                        <!-- Goal Corpus Projections -->
+                        <div class="px-5 pb-3" id="fp-corpus-section" style="display:none">
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🎯 Goal Corpus Projections</h3>
+                            <div id="fp-corpus-cards" class="space-y-3"></div>
+                            <div class="mt-3 px-3 py-2.5 rounded-xl border border-amber-100 text-[10px] text-amber-700 leading-relaxed" style="background:#fffbeb;">
+                                ⚠️ <strong>Disclaimer:</strong> Projections use a blended expected return based on your risk profile. Actual returns will vary — equity is not guaranteed. Use these as directional estimates to course-correct, not as guarantees.
+                            </div>
+                        </div>
+
+                        <!-- Redemption Guide -->
+                        <div class="px-5 pb-3" id="fp-redemption-section" style="display:none">
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🏦 When &amp; What to Redeem</h3>
+                            <p class="text-[11px] text-slate-400 mb-3 leading-relaxed">For each goal, redeem in the order shown — most liquid first, equity last. This protects your compounding and avoids selling equity at a bad time.</p>
+                            <div id="fp-redemption-cards" class="space-y-3"></div>
+                        </div>
+
                         <!-- Action Roadmap -->
                         <div class="px-5 pb-5 mt-2">
                             <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">🚀 Your Action Roadmap</h3>
@@ -1756,11 +1772,11 @@
                       what:'NPS is a government-regulated pension system where you invest across equity, corporate bonds, and government securities. At retirement (60), you must use 40% to buy an annuity; 60% can be withdrawn tax-free. Offers an additional ₹50,000 deduction beyond the standard 80C limit.',
                       scenarios:'Perfect for retirement planning, especially for the self-employed and high-income earners who want extra tax deductions. Tier I NPS offers the most tax benefits but locks money till age 60.',
                       example:'Arjun, 30, invests ₹6,000/month in NPS at 10% for 30 years. His corpus reaches ₹1.36 Cr at 60. He also saves ₹15,600/year extra in tax via the 80CCD(1B) deduction — a powerful retirement booster.' },
-                    { name:'Sovereign Gold Bonds (SGB)', icon:'🥇', returns:'8 – 11%', risk:2, riskLabel:'Low–Med',
-                      why:'Gold price gain + 2.5% fixed interest. No storage risk, capital gains tax-free on maturity.',
-                      what:'SGBs are government bonds denominated in grams of gold. They provide the price appreciation of gold plus a fixed 2.5% annual interest. Held to maturity (8 years), capital gains are completely tax-free. No storage or making charges unlike physical gold.',
-                      scenarios:'Great for investors who want gold exposure without physical storage hassles. Ideal if you believe in gold as a hedge against inflation over 8 years. Best held to maturity to avail the capital gains tax exemption.',
-                      example:'Ananya buys 10g SGB at ₹6,000/g (₹60,000 total). Gold rises to ₹9,000/g in 8 years. She receives ₹90,000 (gold gain) + ₹12,000 (2.5% interest) = ₹1,02,000 — all capital gains completely tax-free.' },
+                    { name:'Gold ETF / Gold Fund', icon:'🥇', returns:'9 – 11%', risk:2, riskLabel:'Low–Med',
+                      why:'Gold price appreciation without physical storage, purity or making charge worries. Fully liquid, SIP-able.',
+                      what:'Gold ETFs and Gold Funds are the smartest way to own gold today. Gold ETFs (like Nippon India Gold ETF, HDFC Gold ETF) trade on NSE/BSE like stocks and need a demat account. Gold Funds (like Mirae Asset Gold Fund FoF, Nippon India Gold Savings Fund) allow SIP investing without a demat account. Note: Sovereign Gold Bonds (SGBs) are no longer being issued by the Government of India — Gold ETFs are now the recommended alternative.',
+                      scenarios:'Ideal as a portfolio hedge — allocate 5–10% for inflation protection and crisis insurance. When equity markets crash, gold typically rises, cushioning your portfolio. Works well in a long-term diversified strategy.',
+                      example:'Priya invests ₹3,000/month in Nippon India Gold ETF FoF via SIP for 10 years. As gold appreciated ~10% annually, her ₹3.6L investment grew to approximately ₹6.1L — with zero storage hassle and instant liquidity.' },
                     { name:'Index Funds (Nifty 50)', icon:'🔷', returns:'11 – 13%', risk:3, riskLabel:'Medium',
                       why:'Low-cost, passive. Tracks Nifty 50. Less risk than active equity funds.',
                       what:'Index funds passively track a market index (like Nifty 50 or Sensex) by holding the same stocks in the same proportions. They have very low expense ratios (0.05–0.2%) and don\'t rely on a fund manager\'s skill. Returns mirror the index performance.',
@@ -3004,78 +3020,82 @@
             conservative: {
                 label: 'Conservative Investor', sub: 'Capital preservation with steady, low-risk growth',
                 gradient: 'linear-gradient(135deg,#1e3a5f,#2563eb)', barColor: '#60a5fa',
+                blendedReturn: 8.5,
                 allocations: [
-                    { name:'Large Cap Mutual Funds', pct:20, color:'#3b82f6', icon:'📊', tip:'Low volatility blue-chip equity' },
-                    { name:'PPF / Sukanya Samriddhi', pct:25, color:'#10b981', icon:'🔒', tip:'7.1% guaranteed, tax-free, 15-yr lock-in' },
-                    { name:'Debt Mutual Funds',        pct:20, color:'#6366f1', icon:'🏛️', tip:'Stable returns, better than FD post-tax' },
-                    { name:'Bank FD / RD',             pct:15, color:'#8b5cf6', icon:'🏦', tip:'Guaranteed returns, high liquidity' },
-                    { name:'Gold (SGB / Gold ETF)',    pct:10, color:'#f59e0b', icon:'🥇', tip:'Hedge against inflation' },
-                    { name:'Liquid Fund',              pct:10, color:'#64748b', icon:'💧', tip:'Park your emergency buffer here' }
+                    { name:'Large Cap Mutual Funds',  pct:20, color:'#3b82f6', icon:'📊', tip:'Low volatility blue-chip equity',            rate:12,  liquid:'medium',  when:'Long-term goals (7+ yrs)' },
+                    { name:'PPF / Sukanya Samriddhi', pct:25, color:'#10b981', icon:'🔒', tip:'7.1% guaranteed, tax-free, 15-yr lock-in',   rate:7.1, liquid:'low',     when:'Retirement / education (lock-in applies)' },
+                    { name:'Debt Mutual Funds',       pct:20, color:'#6366f1', icon:'🏛️', tip:'Stable returns, better than FD post-tax',   rate:7.5, liquid:'high',    when:'Medium-term goals (3–7 yrs)' },
+                    { name:'Bank FD / RD',            pct:15, color:'#8b5cf6', icon:'🏦', tip:'Guaranteed returns, high liquidity',          rate:7.0, liquid:'high',    when:'Short-term goals (1–5 yrs)' },
+                    { name:'Gold ETF / Gold Fund',    pct:10, color:'#f59e0b', icon:'🥇', tip:'Inflation hedge — Nippon/Mirae Gold ETF FoF', rate:10,  liquid:'high',    when:'Crisis hedge — redeem last' },
+                    { name:'Liquid Fund',             pct:10, color:'#64748b', icon:'💧', tip:'Park your emergency buffer here',             rate:6.5, liquid:'instant', when:'Emergency / near-term needs' }
                 ],
                 roadmap: [
-                    { icon:'🔒', title:'Start PPF immediately',     desc:'Open a PPF account and SIP Rs.1,500/month. Tax-free at maturity + 80C benefit.',     color:'#10b981' },
-                    { icon:'📊', title:'SIP in 1–2 Large Cap Funds',desc:'Start with DSP Top 100 or HDFC Top 100. Keep it simple, consistent, long-term.',     color:'#3b82f6' },
-                    { icon:'🏦', title:'Ladder your FDs',           desc:'Instead of one large FD, create 3–6 month staggered FDs for better liquidity.',       color:'#8b5cf6' },
-                    { icon:'🥇', title:'Buy Sovereign Gold Bonds',  desc:'SGBs give 2.5% extra interest on top of gold appreciation. Zero storage risk.',       color:'#f59e0b' }
+                    { icon:'🔒', title:'Start PPF immediately',      desc:'Open a PPF account and invest Rs.1,500/month minimum. Tax-free at maturity + 80C benefit.',      color:'#10b981' },
+                    { icon:'📊', title:'SIP in 1–2 Large Cap Funds', desc:'Start with a Nifty 100 index fund or HDFC Top 100. Keep it simple, consistent, long-term.',      color:'#3b82f6' },
+                    { icon:'🏦', title:'Ladder your FDs',            desc:'Instead of one large FD, create 3–6 month staggered FDs for better liquidity.',                  color:'#8b5cf6' },
+                    { icon:'🥇', title:'SIP into Gold ETF monthly',  desc:'Buy Nippon India Gold ETF FoF or Mirae Asset Gold Fund. No storage risk, no making charges.',   color:'#f59e0b' }
                 ]
             },
             moderate: {
                 label: 'Moderate Investor', sub: 'Balanced growth — wealth building with managed risk',
                 gradient: 'linear-gradient(135deg,#064e3b,#0d9488)', barColor: '#34d399',
+                blendedReturn: 10.5,
                 allocations: [
-                    { name:'Large Cap Mutual Funds', pct:28, color:'#3b82f6', icon:'📊', tip:'Core equity holding, lower volatility' },
-                    { name:'Mid Cap Mutual Funds',   pct:15, color:'#6366f1', icon:'📈', tip:'Higher growth potential over 5+ years' },
-                    { name:'ELSS / Tax Saving Funds',pct:10, color:'#8b5cf6', icon:'🎯', tip:'Equity + 80C benefit, 3-yr lock-in' },
-                    { name:'PPF / NPS Tier-I',       pct:15, color:'#10b981', icon:'🔒', tip:'Tax-efficient long-term debt anchor' },
-                    { name:'Debt Mutual Funds',      pct:15, color:'#0ea5e9', icon:'🏛️', tip:'Stability buffer within the portfolio' },
-                    { name:'Gold (SGB / Gold ETF)',  pct:10, color:'#f59e0b', icon:'🥇', tip:'Inflation hedge, 5–7% allocation' },
-                    { name:'Liquid Fund',            pct: 7, color:'#64748b', icon:'💧', tip:'Minimum 3–6 months of expenses' }
+                    { name:'Large Cap Mutual Funds',  pct:28, color:'#3b82f6', icon:'📊', tip:'Core equity holding, lower volatility',       rate:12,  liquid:'medium',  when:'Long-term goals (7+ yrs)' },
+                    { name:'Mid Cap Mutual Funds',    pct:15, color:'#6366f1', icon:'📈', tip:'Higher growth potential over 5+ years',       rate:14,  liquid:'medium',  when:'Long-term goals (8+ yrs)' },
+                    { name:'ELSS / Tax Saving Funds', pct:10, color:'#8b5cf6', icon:'🎯', tip:'Equity + 80C benefit, 3-yr lock-in',          rate:13,  liquid:'low',     when:'Post 3-yr lock-in, long-term' },
+                    { name:'PPF / NPS Tier-I',        pct:15, color:'#10b981', icon:'🔒', tip:'Tax-efficient long-term debt anchor',          rate:7.5, liquid:'low',     when:'Retirement corpus only' },
+                    { name:'Debt Mutual Funds',       pct:15, color:'#0ea5e9', icon:'🏛️', tip:'Stability buffer within the portfolio',       rate:7.5, liquid:'high',    when:'Medium-term goals (3–7 yrs)' },
+                    { name:'Gold ETF / Gold Fund',    pct:10, color:'#f59e0b', icon:'🥇', tip:'Inflation hedge — Nippon/Mirae Gold ETF FoF', rate:10,  liquid:'high',    when:'Crisis hedge — redeem last' },
+                    { name:'Liquid Fund',             pct: 7, color:'#64748b', icon:'💧', tip:'Minimum 3–6 months of expenses',              rate:6.5, liquid:'instant', when:'Emergency / near-term needs' }
                 ],
                 roadmap: [
-                    { icon:'🎯', title:'Max out 80C with ELSS',       desc:'Invest Rs.1.5L/year in ELSS — save up to Rs.46,800 in taxes while building equity.', color:'#8b5cf6' },
-                    { icon:'📈', title:'Add Mid Cap SIP after 6 months',desc:'Once large cap SIP is stable, add mid cap exposure. Stay for 7+ years.',           color:'#6366f1' },
-                    { icon:'🛡️', title:'Open NPS for extra tax benefit',desc:'NPS gives Rs.50,000 extra deduction under 80CCD(1B) beyond the 80C limit.',        color:'#10b981' },
-                    { icon:'🥇', title:'Invest in SGBs periodically',  desc:'Sovereign Gold Bonds open 3–4 times a year. Set a reminder and invest consistently.',color:'#f59e0b' }
+                    { icon:'🎯', title:'Max out 80C with ELSS',         desc:'Invest Rs.1.5L/year in ELSS — save up to Rs.46,800 in taxes while building equity.',         color:'#8b5cf6' },
+                    { icon:'📈', title:'Add Mid Cap SIP after 6 months', desc:'Once large cap SIP is stable, add mid cap exposure. Stay for 7+ years.',                     color:'#6366f1' },
+                    { icon:'🛡️', title:'Open NPS for extra tax benefit', desc:'NPS gives Rs.50,000 extra deduction under 80CCD(1B) beyond the 80C limit.',                 color:'#10b981' },
+                    { icon:'🥇', title:'SIP into Gold ETF each month',   desc:'Nippon India or Mirae Asset Gold ETF FoF. Treat as portfolio insurance, not speculation.',   color:'#f59e0b' }
                 ]
             },
             moderateAggressive: {
                 label: 'Moderately Aggressive', sub: 'Growth-oriented — equity heavy, long investment horizon',
                 gradient: 'linear-gradient(135deg,#7c2d12,#ea580c)', barColor: '#fb923c',
+                blendedReturn: 12.5,
                 allocations: [
-                    { name:'Large Cap Mutual Funds',   pct:25, color:'#3b82f6', icon:'📊', tip:'Stable backbone of your equity portfolio' },
-                    { name:'Mid Cap Mutual Funds',     pct:20, color:'#6366f1', icon:'📈', tip:'12–15% returns historically over 10yr' },
-                    { name:'Small Cap Mutual Funds',   pct:12, color:'#a855f7', icon:'🚀', tip:'High risk, high reward — stay 10+ years' },
-                    { name:'ELSS / Flexi Cap Funds',   pct:13, color:'#8b5cf6', icon:'🎯', tip:'Flexibility across market caps + tax saving' },
-                    { name:'NPS (Tier-I Equity option)',pct:10, color:'#10b981', icon:'🛡️', tip:'Pension + 80CCD extra deduction' },
-                    { name:'Debt / Hybrid Fund',       pct:10, color:'#0ea5e9', icon:'🏛️', tip:'Reduces overall portfolio volatility' },
-                    { name:'Gold (SGB)',                pct: 5, color:'#f59e0b', icon:'🥇', tip:'Small gold allocation as crisis hedge' },
-                    { name:'Liquid Fund',              pct: 5, color:'#64748b', icon:'💧', tip:'Minimum 3 months emergency corpus' }
+                    { name:'Large Cap Mutual Funds',    pct:25, color:'#3b82f6', icon:'📊', tip:'Stable backbone of your equity portfolio', rate:12,  liquid:'medium',  when:'Long-term goals (7+ yrs)' },
+                    { name:'Mid Cap Mutual Funds',      pct:20, color:'#6366f1', icon:'📈', tip:'12–15% returns historically over 10yr',   rate:14,  liquid:'medium',  when:'Long-term goals (8+ yrs)' },
+                    { name:'Small Cap Mutual Funds',    pct:12, color:'#a855f7', icon:'🚀', tip:'High risk, high reward — stay 10+ years', rate:16,  liquid:'medium',  when:'Only for goals 10+ yrs away' },
+                    { name:'ELSS / Flexi Cap Funds',    pct:13, color:'#8b5cf6', icon:'🎯', tip:'Flexibility across market caps + tax save', rate:13, liquid:'low',     when:'Post 3-yr lock-in, long-term' },
+                    { name:'NPS (Tier-I Equity)',       pct:10, color:'#10b981', icon:'🛡️', tip:'Pension + 80CCD extra deduction',         rate:12,  liquid:'low',     when:'Retirement only — long lock-in' },
+                    { name:'Debt / Hybrid Fund',        pct:10, color:'#0ea5e9', icon:'🏛️', tip:'Reduces overall portfolio volatility',    rate:8,   liquid:'high',    when:'Medium-term goals (3–8 yrs)' },
+                    { name:'Gold ETF / Gold Fund',      pct: 5, color:'#f59e0b', icon:'🥇', tip:'Crisis hedge — Nippon/Mirae Gold ETF FoF', rate:10, liquid:'high',    when:'Crisis hedge — redeem last' },
+                    { name:'Liquid Fund',               pct: 5, color:'#64748b', icon:'💧', tip:'Minimum 3 months emergency corpus',       rate:6.5, liquid:'instant', when:'Emergency / near-term needs' }
                 ],
                 roadmap: [
-                    { icon:'🚀', title:'Build a Core-Satellite SIP portfolio',desc:'Core: 50% in large cap. Satellite: 30% mid + 20% small cap. Rebalance yearly.',color:'#6366f1' },
-                    { icon:'🛡️', title:'Max NPS for dual tax benefits',       desc:'Invest Rs.2L/year in NPS — get 80C + extra 80CCD(1B) deductions simultaneously.',color:'#10b981' },
-                    { icon:'📊', title:'Use index funds for large cap',        desc:'Nifty 50 index funds beat 80% of active large cap funds at a fraction of the cost.',color:'#3b82f6' },
-                    { icon:'⚖️', title:'Annual rebalancing is key',           desc:'Once a year, bring your portfolio back to target allocation. Sell high, buy low.',color:'#ea580c' }
+                    { icon:'🚀', title:'Build a Core-Satellite SIP portfolio', desc:'Core: 50% in large cap. Satellite: 30% mid + 20% small cap. Rebalance yearly.', color:'#6366f1' },
+                    { icon:'🛡️', title:'Max NPS for dual tax benefits',        desc:'Invest Rs.2L/year in NPS — get 80C + extra 80CCD(1B) deductions simultaneously.', color:'#10b981' },
+                    { icon:'📊', title:'Use index funds for large cap',         desc:'Nifty 50 index funds beat 80% of active large cap funds at a fraction of the cost.', color:'#3b82f6' },
+                    { icon:'⚖️', title:'Annual rebalancing is key',            desc:'Once a year, bring your portfolio back to target allocation. Sell high, buy low.', color:'#ea580c' }
                 ]
             },
             aggressive: {
                 label: 'Aggressive Investor', sub: 'Maximum wealth creation — high risk, high conviction',
                 gradient: 'linear-gradient(135deg,#4c1d95,#7c3aed)', barColor: '#a78bfa',
+                blendedReturn: 13.5,
                 allocations: [
-                    { name:'Large Cap / Index Funds',      pct:22, color:'#3b82f6', icon:'📊', tip:'Cost-efficient core equity allocation' },
-                    { name:'Mid Cap Mutual Funds',         pct:20, color:'#6366f1', icon:'📈', tip:'High alpha potential, 7–10yr horizon' },
-                    { name:'Small Cap Mutual Funds',       pct:18, color:'#a855f7', icon:'🚀', tip:'Aggressive growth, stay invested 10+ yrs' },
-                    { name:'Direct Stocks / Sectoral ETFs',pct:15, color:'#ec4899', icon:'🎯', tip:'Research-backed concentrated bets' },
-                    { name:'ELSS / International Funds',   pct:10, color:'#8b5cf6', icon:'🌐', tip:'Diversify globally + save tax with ELSS' },
-                    { name:'NPS (Tier-I, Equity heavy)',   pct: 8, color:'#10b981', icon:'🛡️', tip:'Tax-efficient retirement anchor' },
-                    { name:'Gold (SGB)',                   pct: 4, color:'#f59e0b', icon:'🥇', tip:'Minimal crisis hedge in portfolio' },
-                    { name:'Liquid Fund',                  pct: 3, color:'#64748b', icon:'💧', tip:'Keep bare minimum liquid for safety' }
+                    { name:'Large Cap / Index Funds',       pct:22, color:'#3b82f6', icon:'📊', tip:'Cost-efficient core equity allocation',    rate:12,  liquid:'medium',  when:'Long-term goals (7+ yrs)' },
+                    { name:'Mid Cap Mutual Funds',          pct:20, color:'#6366f1', icon:'📈', tip:'High alpha potential, 7–10yr horizon',     rate:14,  liquid:'medium',  when:'Long-term goals (8+ yrs)' },
+                    { name:'Small Cap Mutual Funds',        pct:18, color:'#a855f7', icon:'🚀', tip:'Aggressive growth, stay invested 10+ yrs', rate:16,  liquid:'medium',  when:'Only for goals 10+ yrs away' },
+                    { name:'Direct Stocks / Sectoral ETFs', pct:15, color:'#ec4899', icon:'🎯', tip:'Research-backed concentrated bets',        rate:15,  liquid:'high',    when:'Long-term + tactical rebalancing' },
+                    { name:'ELSS / International Funds',   pct:10, color:'#8b5cf6', icon:'🌐', tip:'Diversify globally + save tax with ELSS',  rate:12,  liquid:'low',     when:'Long-term, post lock-in' },
+                    { name:'NPS (Tier-I, Equity heavy)',   pct: 8, color:'#10b981', icon:'🛡️', tip:'Tax-efficient retirement anchor',          rate:12,  liquid:'low',     when:'Retirement only — long lock-in' },
+                    { name:'Gold ETF / Gold Fund',         pct: 4, color:'#f59e0b', icon:'🥇', tip:'Minimal crisis hedge — Nippon/Mirae Gold ETF', rate:10, liquid:'high', when:'Crisis hedge — redeem last' },
+                    { name:'Liquid Fund',                  pct: 3, color:'#64748b', icon:'💧', tip:'Keep bare minimum liquid for safety',       rate:6.5, liquid:'instant', when:'Emergency / near-term needs' }
                 ],
                 roadmap: [
-                    { icon:'🎯', title:'Pick direct stocks with conviction',desc:'Limit direct stock picks to 8–12 companies you understand deeply. Max 15% of portfolio.',color:'#ec4899' },
-                    { icon:'🌐', title:'Add international exposure',        desc:'Invest in Nasdaq or S&P 500 index fund through Motilal Oswal or Mirae for global diversification.',color:'#8b5cf6' },
-                    { icon:'⚡', title:'Deploy capital during corrections', desc:'Keep a 10% cash war chest ready to deploy aggressively in market downturns.',          color:'#a855f7' },
-                    { icon:'📚', title:'Track and learn continuously',      desc:'Read annual reports, study businesses. The more you know, the better your returns.',   color:'#6366f1' }
+                    { icon:'🎯', title:'Pick direct stocks with conviction',   desc:'Limit direct stock picks to 8–12 companies you understand deeply. Max 15% of portfolio.', color:'#ec4899' },
+                    { icon:'🌐', title:'Add international exposure',           desc:'Invest in Nasdaq or S&P 500 index fund through Motilal Oswal or Mirae for global diversification.', color:'#8b5cf6' },
+                    { icon:'⚡', title:'Deploy capital during corrections',    desc:'Keep a 10% cash war chest ready to deploy aggressively in market downturns.', color:'#a855f7' },
+                    { icon:'📚', title:'Track and learn continuously',         desc:'Read annual reports, study businesses. The more you know, the better your returns.', color:'#6366f1' }
                 ]
             }
         };
@@ -3364,14 +3384,56 @@
         }
 
         // Build goal-specific SIP allocation table
-        function fpBuildGoalSIPs(goals, monthlyInvest) {
+        // SIP FV formula: P × [((1+r)^n − 1)/r] × (1+r)  where r = monthly rate, n = months
+        function fpSipCorpus(monthlyAmt, annualRate, years) {
+            if (!monthlyAmt || monthlyAmt <= 0) return 0;
+            var r = (annualRate / 100) / 12;
+            var n = years * 12;
+            return Math.round(monthlyAmt * ((Math.pow(1+r,n)-1)/r) * (1+r));
+        }
+
+        function fpBuildGoalSIPs(goals, monthlyInvest, blendedRate) {
             if (!monthlyInvest || goals.length === 0) return null;
-            // Weight each goal equally (or by inverse urgency: sooner goals get more)
             var weights = goals.map(function(g){ return 1 / Math.max(g.years, 1); });
-            var wTotal = weights.reduce(function(s,w){ return s+w; },0);
+            var wTotal  = weights.reduce(function(s,w){ return s+w; }, 0);
             return goals.map(function(g, i) {
-                var share = Math.round((weights[i]/wTotal) * monthlyInvest / 100) * 100;
-                return { label: g.emoji + ' ' + g.label, years: g.years, amt: share, color: FP_GOAL_META[g.type].color };
+                var share      = Math.round((weights[i]/wTotal) * monthlyInvest / 100) * 100;
+                var corpus     = fpSipCorpus(share, blendedRate, g.years);
+                var target     = parseInt((g.targetAmt+'').replace(/,/g,'')) || 0;
+                var gap        = target > 0 ? target - corpus : null;
+                // Extra SIP needed to close a shortfall
+                var r = (blendedRate/100)/12, n = g.years*12;
+                var extraSIP   = (gap > 0) ? Math.ceil(gap / (((Math.pow(1+r,n)-1)/r)*(1+r)) / 100)*100 : 0;
+                return {
+                    label: g.emoji + ' ' + (g.customName || g.label),
+                    goalLabel: g.customName || g.label,
+                    emoji: g.emoji, years: g.years, amt: share,
+                    corpus: corpus, target: target, gap: gap, extraSIP: extraSIP,
+                    color: FP_GOAL_META[g.type].color,
+                    type: g.type,
+                    weightPct: Math.round((weights[i]/wTotal)*100)
+                };
+            });
+        }
+
+        // For each goal: which portfolio assets to redeem, in what order (most liquid → least)
+        function fpBuildRedemptionPlan(goals, allocs) {
+            var liqRank = { instant:0, high:1, medium:2, low:3 };
+            var sorted  = allocs.slice().sort(function(a,b){ return (liqRank[a.liquid]||1)-(liqRank[b.liquid]||1); });
+            return goals.map(function(g) {
+                // Filter assets suitable for this goal's horizon
+                var suitable = sorted.filter(function(a){
+                    if (g.years <= 3)  return a.liquid === 'instant' || a.liquid === 'high';
+                    if (g.years <= 7)  return a.liquid !== 'low';
+                    return true;
+                });
+                var top = suitable.slice(0, Math.min(3, suitable.length));
+                return {
+                    label: g.customName || g.label, emoji: g.emoji,
+                    years: g.years, color: FP_GOAL_META[g.type].color,
+                    assets: top,
+                    hasLocked: top.some(function(a){ return a.liquid === 'low'; })
+                };
             });
         }
 
@@ -3400,18 +3462,21 @@
         function fpCalculatePlan() {
             var answered = fpQuestions.filter(function(q){ return fpState.answers[q.id] !== undefined; }).length;
             if (answered < fpQuestions.length) { alert('Please answer all 5 questions to generate your plan.'); return; }
-            var totalScore = fpQuestions.reduce(function(s,q){ return s + (fpState.answers[q.id+'_pts'] || 0); },0);
-            var age = parseInt(document.getElementById('fp-age').value) || 30;
-            var name = document.getElementById('fp-name').value.trim() || 'there';
+
+            var totalScore    = fpQuestions.reduce(function(s,q){ return s + (fpState.answers[q.id+'_pts'] || 0); },0);
+            var age           = parseInt(document.getElementById('fp-age').value) || 30;
+            var name          = document.getElementById('fp-name').value.trim() || 'there';
             var monthlyInvest = parseInt(document.getElementById('fp-invest-amt').value.replace(/,/g,'')) || 0;
 
             var profileKey = fpGetRiskProfile(totalScore, age);
             var profile    = fpPortfolios[profileKey];
             var allocs     = fpBlendPortfolio(profileKey, fpState.goals);
-            var goalSIPs   = fpBuildGoalSIPs(fpState.goals, monthlyInvest);
+            var goalSIPs   = fpBuildGoalSIPs(fpState.goals, monthlyInvest, profile.blendedReturn);
             var roadmap    = fpBuildGoalRoadmap(fpState.goals, profile.roadmap);
+            var redeemPlan = (fpState.goals.length > 0) ? fpBuildRedemptionPlan(fpState.goals, allocs) : [];
 
             fpState.planGenerated = true;
+            var fmt = function(n){ return new Intl.NumberFormat('en-IN').format(Math.round(n)); };
 
             [1,2,3,4].forEach(function(s) {
                 var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]'); if (!dot) return;
@@ -3421,22 +3486,24 @@
             document.getElementById('fp-results-placeholder').classList.add('hidden');
             document.getElementById('fp-results-card').classList.remove('hidden');
 
-            document.getElementById('fp-result-header').style.background = profile.gradient;
-            document.getElementById('fp-result-greeting').textContent     = 'Hi ' + name + '! Here\'s your personalised plan';
-            document.getElementById('fp-result-profile-label').textContent = profile.label;
-            document.getElementById('fp-result-profile-sub').textContent   = profile.sub;
-            document.getElementById('fp-risk-score-label').textContent     = 'Risk Score: ' + totalScore + '/15';
+            document.getElementById('fp-result-header').style.background   = profile.gradient;
+            document.getElementById('fp-result-greeting').textContent       = 'Hi ' + name + '! Here\'s your personalised plan';
+            document.getElementById('fp-result-profile-label').textContent  = profile.label;
+            document.getElementById('fp-result-profile-sub').textContent    = profile.sub;
+            document.getElementById('fp-risk-score-label').textContent      = 'Risk Score: ' + totalScore + '/15';
             var barFill = document.getElementById('fp-risk-bar-fill');
             barFill.style.background = profile.barColor;
             barFill.style.width = ((totalScore / 15) * 100) + '%';
 
-            // Donut
+            // ---- Donut chart ----
             if (fpDonutChart) { fpDonutChart.destroy(); fpDonutChart = null; }
             var ctx = document.getElementById('fp-donut-chart').getContext('2d');
             fpDonutChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: allocs.map(function(a){ return a.name; }),
-                        datasets: [{ data: allocs.map(function(a){ return a.pct; }), backgroundColor: allocs.map(function(a){ return a.color; }), borderWidth:2, borderColor:'#fff', hoverOffset:8 }] },
+                data: {
+                    labels: allocs.map(function(a){ return a.name; }),
+                    datasets: [{ data: allocs.map(function(a){ return a.pct; }), backgroundColor: allocs.map(function(a){ return a.color; }), borderWidth:2, borderColor:'#fff', hoverOffset:8 }]
+                },
                 options: {
                     responsive:true, maintainAspectRatio:false, cutout:'68%',
                     plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ return ' ' + c.label + ': ' + c.parsed + '%'; } } } },
@@ -3449,68 +3516,188 @@
                 }
             });
             document.getElementById('fp-center-pct').textContent   = totalScore + '/15';
-            document.getElementById('fp-center-label').textContent = 'Risk Score';
+            document.getElementById('fp-center-label').textContent  = 'Risk Score';
 
-            // Legend
+            // ---- Legend — shows "best used for" per asset ----
             document.getElementById('fp-legend').innerHTML = allocs.map(function(a) {
-                return '<div class="fp-legend-row"><div class="flex items-center gap-2 min-w-0"><div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:' + a.color + '"></div><div class="min-w-0"><div class="text-xs font-bold text-slate-700 truncate">' + a.icon + ' ' + a.name + '</div><div class="text-[10px] text-slate-400">' + a.tip + '</div></div></div><span class="text-sm font-black flex-shrink-0 ml-1" style="color:' + a.color + '">' + a.pct + '%</span></div>';
+                return '<div class="fp-legend-row">' +
+                    '<div class="flex items-center gap-2 min-w-0">' +
+                        '<div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:' + a.color + '"></div>' +
+                        '<div class="min-w-0">' +
+                            '<div class="text-xs font-bold text-slate-700 truncate">' + a.icon + ' ' + a.name + '</div>' +
+                            '<div class="text-[10px] text-slate-400">' + a.tip + '</div>' +
+                            (a.when ? '<div class="text-[9px] font-semibold mt-0.5" style="color:' + a.color + '">Use for: ' + a.when + '</div>' : '') +
+                        '</div>' +
+                    '</div>' +
+                    '<span class="text-sm font-black flex-shrink-0 ml-1" style="color:' + a.color + '">' + a.pct + '%</span>' +
+                '</div>';
             }).join('');
 
-            // SIP breakdown — by goal if available, else by asset
+            // ---- SIP Breakdown ----
             var sipDiv = document.getElementById('fp-sip-breakdown');
             if (goalSIPs && monthlyInvest > 0) {
-                // Build urgency explanation per goal
-                var weights = fpState.goals.map(function(g){ return 1 / Math.max(g.years,1); });
-                var wTotal  = weights.reduce(function(s,w){ return s+w; },0);
-                var reasonLines = goalSIPs.map(function(g, i) {
-                    var pct = Math.round((weights[i]/wTotal)*100);
-                    var urgency = g.years <= 4 ? 'highest urgency — very little compounding time left'
+                var reasonLines = goalSIPs.map(function(g) {
+                    var urgency = g.years <= 4 ? 'highest urgency — very little compounding time'
                                 : g.years <= 8 ? 'medium urgency — moderate compounding window'
                                 : 'long runway — compounding does the heavy lifting';
                     return '<div class="flex items-start gap-2 text-[11px] text-slate-500 leading-relaxed">' +
-                        '<span style="color:' + g.color + ';font-weight:900;flex-shrink:0;">' + g.label.split(' ')[0] + '</span>' +
-                        '<span><strong style="color:#374151;">' + pct + '%</strong> of your SIP (' + g.years + '-yr goal): ' + urgency + '.</span></div>';
+                        '<span style="color:' + g.color + ';font-weight:900;flex-shrink:0;">' + g.emoji + '</span>' +
+                        '<span><strong style="color:#374151;">' + g.weightPct + '%</strong> → ' + g.goalLabel + ' (' + g.years + '-yr goal): ' + urgency + '.</span></div>';
                 }).join('');
-
                 sipDiv.innerHTML =
-                    // Reason box
                     '<div class="rounded-xl border border-blue-100 p-3 mb-3" style="background:#eff6ff;">' +
                         '<div class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1.5">💡 Why this split?</div>' +
                         '<div class="space-y-1">' + reasonLines + '</div>' +
-                        '<div class="text-[10px] text-blue-400 mt-2 pt-2 border-t border-blue-100">Sooner goals get a bigger share because they have less time to grow. Longer goals can rely on compounding, so they need smaller monthly contributions to reach the same target.</div>' +
+                        '<div class="text-[10px] text-blue-400 mt-2 pt-2 border-t border-blue-100">Sooner goals receive a larger share because they have less time to compound. Distant goals need a smaller monthly input to reach the same corpus.</div>' +
                     '</div>' +
-                    // Goal-wise table
                     '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">SIP split by goal</div>' +
                     goalSIPs.map(function(g) {
                         return '<div class="fp-sip-row" style="border-left:3px solid ' + g.color + ';padding-left:10px;">' +
-                            '<div class="flex items-center gap-2">' +
-                                '<span class="text-sm">' + g.label + '</span>' +
-                                '<span class="text-[10px] text-slate-400">' + g.years + 'yr horizon</span>' +
-                            '</div>' +
-                            '<span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(g.amt) + '/mo</span>' +
+                            '<div class="flex items-center gap-2"><span class="text-sm">' + g.label + '</span><span class="text-[10px] text-slate-400">' + g.years + 'yr horizon</span></div>' +
+                            '<span class="text-xs font-black text-slate-800">₹' + fmt(g.amt) + '/mo</span>' +
                         '</div>';
                     }).join('') +
-                    // Asset-wise table
                     '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-3 mb-1.5">Asset-wise SIP split</div>' +
                     allocs.map(function(a) {
                         var amt = Math.round((a.pct/100) * monthlyInvest / 100) * 100;
-                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(amt) + '/mo</span></div>';
+                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + fmt(amt) + '/mo</span></div>';
                     }).join('');
             } else if (monthlyInvest > 0) {
                 sipDiv.innerHTML =
                     '<div class="rounded-xl border border-blue-100 p-3 mb-3" style="background:#eff6ff;">' +
                         '<div class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1">💡 How this is calculated</div>' +
-                        '<div class="text-[11px] text-slate-500 leading-relaxed">Each asset gets a share proportional to its weight in your risk-adjusted portfolio. Higher-equity assets are held for long-term compounding; debt and liquid funds protect your near-term stability.</div>' +
+                        '<div class="text-[11px] text-slate-500 leading-relaxed">Each asset gets a share proportional to its weight in your risk-adjusted portfolio. Equity for long-term growth, debt and liquid for stability and near-term needs.</div>' +
                     '</div>' +
                     allocs.map(function(a) {
                         var amt = Math.round((a.pct/100) * monthlyInvest / 100) * 100;
-                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(amt) + '/mo</span></div>';
+                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + fmt(amt) + '/mo</span></div>';
                     }).join('');
             } else {
                 sipDiv.innerHTML = '<p class="text-xs text-slate-400 italic">Enter your monthly investable amount (Step 1) to see the exact SIP split.</p>';
             }
 
-            // Roadmap
+            // ---- Goal Corpus Projections ----
+            var corpusSection = document.getElementById('fp-corpus-section');
+            var corpusCards   = document.getElementById('fp-corpus-cards');
+            if (goalSIPs && goalSIPs.length > 0) {
+                corpusSection.style.display = '';
+                corpusCards.innerHTML = goalSIPs.map(function(g) {
+                    var onTrack     = g.gap !== null && g.gap <= 0;
+                    var shortfall   = g.gap !== null && g.gap > 0;
+                    var noTarget    = g.target <= 0;
+                    var statusColor = noTarget ? '#6366f1' : (onTrack ? '#10b981' : '#ef4444');
+                    var statusIcon  = noTarget ? '📊' : (onTrack ? '✅' : '⚠️');
+                    var progressPct = (!noTarget && g.corpus > 0) ? Math.min(100, Math.round((g.corpus / g.target) * 100)) : 100;
+                    var statusMsg   = noTarget ? 'No target set — showing projected corpus' :
+                                     onTrack  ? 'On track! Surplus of ₹' + fmt(Math.abs(g.gap)) :
+                                                'Shortfall of ₹' + fmt(g.gap) + ' — add ₹' + fmt(g.extraSIP) + '/mo to close the gap';
+                    // Total invested vs corpus
+                    var totalInvested = g.amt * g.years * 12;
+                    var gainAmt       = g.corpus - totalInvested;
+                    var gainPct       = totalInvested > 0 ? Math.round((gainAmt/totalInvested)*100) : 0;
+
+                    return '<div class="rounded-2xl border overflow-hidden" style="border-color:' + statusColor + '25;">' +
+                        // Header
+                        '<div class="flex items-center justify-between px-4 py-3" style="background:' + statusColor + '0c;">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<span class="text-lg">' + g.emoji + '</span>' +
+                                '<div>' +
+                                    '<div class="text-xs font-black text-slate-700">' + g.goalLabel + '</div>' +
+                                    '<div class="text-[10px] text-slate-400">₹' + fmt(g.amt) + '/mo SIP · ' + g.years + ' years</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<span class="text-xl">' + statusIcon + '</span>' +
+                        '</div>' +
+                        // Numbers grid
+                        '<div class="px-4 py-3">' +
+                            '<div class="grid grid-cols-2 gap-2 mb-3">' +
+                                // Projected corpus
+                                '<div class="rounded-xl p-3" style="background:' + statusColor + '0f;">' +
+                                    '<div class="text-[9px] font-black uppercase tracking-wider mb-1" style="color:' + statusColor + '">Projected Corpus</div>' +
+                                    '<div class="text-base font-black text-slate-800 leading-tight">₹' + fmt(g.corpus) + '</div>' +
+                                    '<div class="text-[10px] text-slate-400 mt-0.5">@ ~' + profile.blendedReturn + '% p.a. blended</div>' +
+                                    (gainAmt > 0 ? '<div class="text-[10px] font-bold mt-1" style="color:' + statusColor + '">+₹' + fmt(gainAmt) + ' gain (' + gainPct + '%)</div>' : '') +
+                                '</div>' +
+                                // Target or invested
+                                (!noTarget ?
+                                '<div class="rounded-xl p-3 bg-slate-50">' +
+                                    '<div class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Your Target</div>' +
+                                    '<div class="text-base font-black text-slate-800 leading-tight">₹' + fmt(g.target) + '</div>' +
+                                    '<div class="text-[10px] text-slate-400 mt-0.5">as entered by you</div>' +
+                                '</div>' :
+                                '<div class="rounded-xl p-3 bg-slate-50">' +
+                                    '<div class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Total Invested</div>' +
+                                    '<div class="text-base font-black text-slate-800 leading-tight">₹' + fmt(totalInvested) + '</div>' +
+                                    '<div class="text-[10px] text-slate-400 mt-0.5">' + g.years * 12 + ' months × ₹' + fmt(g.amt) + '</div>' +
+                                '</div>') +
+                            '</div>' +
+                            // Progress bar (only if target set)
+                            (!noTarget ?
+                            '<div class="mb-3">' +
+                                '<div class="flex justify-between text-[10px] mb-1">' +
+                                    '<span class="text-slate-400">Progress to target</span>' +
+                                    '<span class="font-black" style="color:' + statusColor + '">' + progressPct + '%</span>' +
+                                '</div>' +
+                                '<div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">' +
+                                    '<div class="h-full rounded-full transition-all duration-700" style="width:' + progressPct + '%;background:' + statusColor + ';"></div>' +
+                                '</div>' +
+                            '</div>' : '') +
+                            // Status message
+                            '<div class="rounded-xl px-3 py-2 text-[11px] font-semibold" style="background:' + statusColor + '0f;color:' + statusColor + '">' +
+                                statusMsg +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            } else {
+                corpusSection.style.display = 'none';
+            }
+
+            // ---- Redemption Guide ----
+            var redeemSection = document.getElementById('fp-redemption-section');
+            var redeemCards   = document.getElementById('fp-redemption-cards');
+            if (redeemPlan.length > 0) {
+                redeemSection.style.display = '';
+                var liqLabel = { instant:'🟢 Instant', high:'🟡 1–3 days', medium:'🟠 3–7 days', low:'🔴 Lock-in applies' };
+                redeemCards.innerHTML = redeemPlan.map(function(g) {
+                    return '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                        '<div class="flex items-center justify-between px-4 py-3" style="background:' + g.color + '0c;">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<span class="text-lg">' + g.emoji + '</span>' +
+                                '<div>' +
+                                    '<div class="text-xs font-black text-slate-700">' + g.label + '</div>' +
+                                    '<div class="text-[10px] text-slate-400">Needed in ' + g.years + ' years · Redeem in this order ↓</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="text-[9px] font-bold px-2 py-1 rounded-full text-white" style="background:' + g.color + '">' +
+                                (g.years <= 4 ? 'Short-term' : g.years <= 10 ? 'Medium-term' : 'Long-term') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="px-4 py-3 space-y-2.5">' +
+                            g.assets.map(function(a, idx) {
+                                return '<div class="flex items-start gap-3">' +
+                                    '<div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0 mt-0.5" style="background:' + a.color + '">' + (idx+1) + '</div>' +
+                                    '<div class="flex-1 min-w-0">' +
+                                        '<div class="text-xs font-bold text-slate-700">' + a.icon + ' ' + a.name + '</div>' +
+                                        '<div class="flex items-center flex-wrap gap-x-2 gap-y-0.5 mt-0.5">' +
+                                            '<span class="text-[10px] text-slate-500">' + (liqLabel[a.liquid]||'—') + '</span>' +
+                                            '<span class="text-[10px] text-slate-300">·</span>' +
+                                            '<span class="text-[10px] font-semibold text-slate-500">Est. ' + a.rate + '% p.a.</span>' +
+                                            '<span class="text-[10px] text-slate-300">·</span>' +
+                                            '<span class="text-[10px] italic text-slate-400">' + (a.when||'') + '</span>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>';
+                            }).join('') +
+                            (g.hasLocked ? '<div class="text-[10px] font-semibold text-amber-600 pt-2 border-t border-slate-100 mt-1">⚠️ One or more assets above have lock-in periods. Begin exit planning at least 6–12 months before the goal date.</div>' : '') +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            } else {
+                redeemSection.style.display = 'none';
+            }
+
+            // ---- Roadmap ----
             document.getElementById('fp-roadmap').innerHTML = roadmap.map(function(r) {
                 return '<div class="fp-road-item" style="background:' + r.color + '0f;border-color:' + r.color + '30;"><span class="text-lg flex-shrink-0">' + r.icon + '</span><div><div class="text-xs font-black uppercase tracking-wide mb-0.5" style="color:' + r.color + '">' + r.title + '</div><div class="text-xs text-slate-600 leading-relaxed">' + r.desc + '</div></div></div>';
             }).join('');
