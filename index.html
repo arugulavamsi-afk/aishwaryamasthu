@@ -1136,16 +1136,16 @@
                             <div>
                                 <label class="fp-label">Monthly Take-Home Income</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
-                                    <input type="text" id="fp-income" inputmode="numeric" placeholder="e.g. 1,00,000" class="fp-input pl-8" oninput="fpFormatMoney(this,'fp-income-words'); fpLiveUpdate()">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm" style="pointer-events:none;">₹</span>
+                                    <input type="text" id="fp-income" inputmode="numeric" placeholder="e.g. 1,00,000" class="fp-input" style="padding-left:2rem;" oninput="fpFormatMoney(this,'fp-income-words'); fpLiveUpdate()">
                                 </div>
                                 <div id="fp-income-words" class="num-word">-</div>
                             </div>
                             <div>
                                 <label class="fp-label">Monthly Amount You Can Invest</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
-                                    <input type="text" id="fp-invest-amt" inputmode="numeric" placeholder="e.g. 25,000" class="fp-input pl-8" oninput="fpFormatMoney(this,'fp-invest-words'); fpLiveUpdate()">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm" style="pointer-events:none;">₹</span>
+                                    <input type="text" id="fp-invest-amt" inputmode="numeric" placeholder="e.g. 25,000" class="fp-input" style="padding-left:2rem;" oninput="fpFormatMoney(this,'fp-invest-words'); fpLiveUpdate()">
                                 </div>
                                 <div id="fp-invest-words" class="num-word">-</div>
                             </div>
@@ -1159,31 +1159,54 @@
                             <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-sm">2</div>
                             <div>
                                 <div class="font-black text-slate-800 text-sm">Your Financial Goals</div>
-                                <div class="text-[11px] text-slate-400">What are you investing towards?</div>
+                                <div class="text-[11px] text-slate-400">Select all that apply — add a target amount &amp; timeline for each</div>
                             </div>
                         </div>
                         <div class="p-5 space-y-4">
+
+                            <!-- Goal tiles picker -->
                             <div>
-                                <label class="fp-label">Primary Goal</label>
-                                <div class="grid grid-cols-2 gap-2" id="fp-goals-grid">
-                                    <button onclick="fpSelectGoal(this,'retirement')" class="fp-goal-btn fp-goal-active" data-goal="retirement">🏖️<span>Retirement</span></button>
-                                    <button onclick="fpSelectGoal(this,'home')" class="fp-goal-btn" data-goal="home">🏠<span>Buy a Home</span></button>
-                                    <button onclick="fpSelectGoal(this,'education')" class="fp-goal-btn" data-goal="education">🎓<span>Child's Education</span></button>
-                                    <button onclick="fpSelectGoal(this,'wealth')" class="fp-goal-btn" data-goal="wealth">💰<span>Wealth Creation</span></button>
-                                    <button onclick="fpSelectGoal(this,'marriage')" class="fp-goal-btn" data-goal="marriage">💍<span>Marriage</span></button>
-                                    <button onclick="fpSelectGoal(this,'travel')" class="fp-goal-btn" data-goal="travel">✈️<span>Travel / Sabbatical</span></button>
+                                <label class="fp-label">Select Your Goals <span class="normal-case font-medium text-slate-400">(pick one or more)</span></label>
+                                <div class="grid grid-cols-3 gap-2" id="fp-goals-grid">
+                                    <button onclick="fpToggleGoalTile(this,'retirement','🏖️','Retirement')" class="fp-goal-tile" data-goal="retirement">
+                                        <span class="text-xl">🏖️</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Retirement</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'home','🏠','Buy a Home')" class="fp-goal-tile" data-goal="home">
+                                        <span class="text-xl">🏠</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Buy a Home</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'education','🎓','Child\'s Education')" class="fp-goal-tile" data-goal="education">
+                                        <span class="text-xl">🎓</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Education</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'wealth','💰','Wealth Creation')" class="fp-goal-tile" data-goal="wealth">
+                                        <span class="text-xl">💰</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Wealth Creation</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'marriage','💍','Marriage')" class="fp-goal-tile" data-goal="marriage">
+                                        <span class="text-xl">💍</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Marriage</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'travel','✈️','Travel / Break')" class="fp-goal-tile" data-goal="travel">
+                                        <span class="text-xl">✈️</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Travel / Break</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'emergency','🛡️','Emergency Fund')" class="fp-goal-tile" data-goal="emergency">
+                                        <span class="text-xl">🛡️</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Emergency Fund</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'business','🚀','Start a Business')" class="fp-goal-tile" data-goal="business">
+                                        <span class="text-xl">🚀</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Start Business</span>
+                                    </button>
+                                    <button onclick="fpToggleGoalTile(this,'custom','✏️','Custom Goal')" class="fp-goal-tile" data-goal="custom">
+                                        <span class="text-xl">✏️</span><span class="text-[11px] font-bold text-slate-600 mt-1 leading-tight">Custom</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div>
-                                <label class="fp-label">Investment Horizon</label>
-                                <div class="flex gap-2" id="fp-horizon-btns">
-                                    <button onclick="fpSelectHorizon(this,3)" class="fp-horizon-btn">Short<span class="block text-[10px] opacity-70">&lt;5 yrs</span></button>
-                                    <button onclick="fpSelectHorizon(this,8)" class="fp-horizon-btn fp-horizon-active">Medium<span class="block text-[10px] opacity-70">5–10 yrs</span></button>
-                                    <button onclick="fpSelectHorizon(this,15)" class="fp-horizon-btn">Long<span class="block text-[10px] opacity-70">&gt;10 yrs</span></button>
-                                </div>
+
+                            <!-- Dynamic goal detail cards -->
+                            <div id="fp-goal-details" class="space-y-3 hidden">
+                                <label class="fp-label">Goal Details <span class="normal-case font-medium text-slate-400">(optional but improves your plan)</span></label>
+                                <div id="fp-goal-cards"></div>
                             </div>
+
+                            <!-- Existing investments -->
                             <div>
-                                <label class="fp-label">Any existing investments? (Optional)</label>
+                                <label class="fp-label">Any existing investments? <span class="normal-case font-medium text-slate-400">(optional)</span></label>
                                 <div class="grid grid-cols-3 gap-2" id="fp-existing-grid">
                                     <button onclick="fpToggleExisting(this,'fd')" class="fp-existing-btn">🏦 FD/RD</button>
                                     <button onclick="fpToggleExisting(this,'mf')" class="fp-existing-btn">📊 Mutual Funds</button>
@@ -1191,8 +1214,16 @@
                                     <button onclick="fpToggleExisting(this,'gold')" class="fp-existing-btn">🥇 Gold</button>
                                     <button onclick="fpToggleExisting(this,'stocks')" class="fp-existing-btn">📈 Stocks</button>
                                     <button onclick="fpToggleExisting(this,'nps')" class="fp-existing-btn">🛡️ NPS</button>
+                                    <button onclick="fpToggleExisting(this,'real_estate')" class="fp-existing-btn">🏘️ Real Estate</button>
+                                    <button onclick="fpToggleExisting(this,'crypto')" class="fp-existing-btn">₿ Crypto</button>
+                                    <button onclick="fpToggleExisting(this,'custom_inv')" class="fp-existing-btn" id="fp-existing-custom-btn">✏️ Custom</button>
+                                </div>
+                                <div id="fp-existing-custom-input" class="hidden mt-2">
+                                    <input type="text" id="fp-existing-custom-text" placeholder="e.g. ULIP, Chit Fund, Bonds…" class="fp-mini-input w-full" style="padding:9px 12px;"
+                                        oninput="fpState.existingCustom = this.value; fpLiveUpdate()">
                                 </div>
                             </div>
+
                             <div class="flex gap-2">
                                 <button onclick="fpGoStep(1)" class="fp-back-btn">← Back</button>
                                 <button onclick="fpGoStep(3)" class="fp-next-btn flex-1">Next: Risk Profile →</button>
@@ -1251,6 +1282,12 @@
                             <div class="flex items-center justify-between">
                                 <span class="text-xs text-slate-500 font-medium">Primary Goal</span>
                                 <span id="fp-snap-goal" class="text-xs font-black text-violet-600">—</span>
+                            </div>
+                            <div class="flex items-start justify-between gap-2">
+                                <span class="text-xs text-slate-500 font-medium flex-shrink-0">All Goals</span>
+                                <div id="fp-snap-goals-list" class="text-right space-y-0.5">
+                                    <span class="text-xs text-slate-400 italic">None selected yet</span>
+                                </div>
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="text-xs text-slate-500 font-medium">Horizon</span>
@@ -2891,19 +2928,29 @@
 
         let fpState = {
             step: 1,
-            goal: 'retirement',
-            horizon: 8,
+            goals: [],          // array of { type, emoji, label, targetAmt, years }
             existing: [],
             answers: {},
             planGenerated: false
         };
         let fpDonutChart = null;
 
+        const FP_GOAL_META = {
+            retirement: { emoji:'🏖️', label:'Retirement',      defaultYrs: 25, color:'#6366f1' },
+            home:       { emoji:'🏠', label:'Buy a Home',       defaultYrs: 7,  color:'#3b82f6' },
+            education:  { emoji:'🎓', label:"Child's Education",defaultYrs: 10, color:'#8b5cf6' },
+            wealth:     { emoji:'💰', label:'Wealth Creation',  defaultYrs: 15, color:'#10b981' },
+            marriage:   { emoji:'💍', label:'Marriage',         defaultYrs: 5,  color:'#ec4899' },
+            travel:     { emoji:'✈️', label:'Travel / Break',   defaultYrs: 3,  color:'#0ea5e9' },
+            emergency:  { emoji:'🛡️', label:'Emergency Fund',   defaultYrs: 1,  color:'#f59e0b' },
+            business:   { emoji:'🚀', label:'Start a Business', defaultYrs: 5,  color:'#ef4444' },
+            custom:     { emoji:'✏️', label:'Custom Goal',      defaultYrs: 5,  color:'#64748b' }
+        };
+
         const fpQuestions = [
             {
-                id: 'q1',
+                id: 'q1', icon: '📉',
                 text: 'Your investment drops 20% in a market crash. What do you do?',
-                icon: '📉',
                 options: [
                     { pts: 0, label: "Sell immediately — I can't bear to watch it fall further" },
                     { pts: 1, label: 'Wait nervously and reassess in a few months' },
@@ -2912,9 +2959,8 @@
                 ]
             },
             {
-                id: 'q2',
+                id: 'q2', icon: '💼',
                 text: 'How stable and predictable is your monthly income?',
-                icon: '💼',
                 options: [
                     { pts: 0, label: 'Very uncertain — freelance / gig work / irregular' },
                     { pts: 1, label: 'Mostly stable but sometimes variable' },
@@ -2923,9 +2969,8 @@
                 ]
             },
             {
-                id: 'q3',
+                id: 'q3', icon: '🧠',
                 text: 'Which statement best describes your investing mindset?',
-                icon: '🧠',
                 options: [
                     { pts: 0, label: 'Preserve my capital above all — no losses please' },
                     { pts: 1, label: 'Slow and steady — small gains are fine' },
@@ -2934,9 +2979,8 @@
                 ]
             },
             {
-                id: 'q4',
+                id: 'q4', icon: '⏳',
                 text: 'How long can you leave your money invested without touching it?',
-                icon: '⏳',
                 options: [
                     { pts: 0, label: 'Less than 2 years — might need it soon' },
                     { pts: 1, label: '2 to 5 years' },
@@ -2945,9 +2989,8 @@
                 ]
             },
             {
-                id: 'q5',
+                id: 'q5', icon: '📊',
                 text: 'What is your experience with investing?',
-                icon: '📊',
                 options: [
                     { pts: 0, label: 'None — I mostly keep money in savings accounts' },
                     { pts: 1, label: 'Some — Fixed Deposits or recurring deposits only' },
@@ -2959,126 +3002,229 @@
 
         const fpPortfolios = {
             conservative: {
-                label: 'Conservative Investor',
-                sub: 'Capital preservation with steady, low-risk growth',
-                gradient: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-                barColor: '#60a5fa',
+                label: 'Conservative Investor', sub: 'Capital preservation with steady, low-risk growth',
+                gradient: 'linear-gradient(135deg,#1e3a5f,#2563eb)', barColor: '#60a5fa',
                 allocations: [
-                    { name: 'Large Cap Mutual Funds', pct: 20, color: '#3b82f6', icon: '📊', tip: 'Low volatility blue-chip equity' },
-                    { name: 'PPF / Sukanya Samriddhi', pct: 25, color: '#10b981', icon: '🔒', tip: '7.1% guaranteed, tax-free, 15-yr lock-in' },
-                    { name: 'Debt Mutual Funds', pct: 20, color: '#6366f1', icon: '🏛️', tip: 'Stable returns, better than FD post-tax' },
-                    { name: 'Bank FD / Recurring Deposit', pct: 15, color: '#8b5cf6', icon: '🏦', tip: 'Guaranteed returns, high liquidity' },
-                    { name: 'Gold (SGB / Gold ETF)', pct: 10, color: '#f59e0b', icon: '🥇', tip: 'Hedge against inflation' },
-                    { name: 'Liquid Fund (Emergency)', pct: 10, color: '#64748b', icon: '💧', tip: 'Park your emergency buffer here' }
+                    { name:'Large Cap Mutual Funds', pct:20, color:'#3b82f6', icon:'📊', tip:'Low volatility blue-chip equity' },
+                    { name:'PPF / Sukanya Samriddhi', pct:25, color:'#10b981', icon:'🔒', tip:'7.1% guaranteed, tax-free, 15-yr lock-in' },
+                    { name:'Debt Mutual Funds',        pct:20, color:'#6366f1', icon:'🏛️', tip:'Stable returns, better than FD post-tax' },
+                    { name:'Bank FD / RD',             pct:15, color:'#8b5cf6', icon:'🏦', tip:'Guaranteed returns, high liquidity' },
+                    { name:'Gold (SGB / Gold ETF)',    pct:10, color:'#f59e0b', icon:'🥇', tip:'Hedge against inflation' },
+                    { name:'Liquid Fund',              pct:10, color:'#64748b', icon:'💧', tip:'Park your emergency buffer here' }
                 ],
                 roadmap: [
-                    { icon: '🔒', title: 'Start PPF immediately', desc: 'Open a PPF account and SIP Rs.1,500/month. Tax-free at maturity + 80C benefit.', color: '#10b981' },
-                    { icon: '📊', title: 'SIP in 1–2 Large Cap Funds', desc: 'Start with DSP Top 100 or HDFC Top 100. Keep it simple, consistent, long-term.', color: '#3b82f6' },
-                    { icon: '🏦', title: 'Ladder your FDs', desc: 'Instead of one large FD, create 3–6 month staggered FDs for better liquidity.', color: '#8b5cf6' },
-                    { icon: '🥇', title: 'Buy Sovereign Gold Bonds', desc: 'SGBs give 2.5% extra interest on top of gold appreciation. Zero storage risk.', color: '#f59e0b' }
+                    { icon:'🔒', title:'Start PPF immediately',     desc:'Open a PPF account and SIP Rs.1,500/month. Tax-free at maturity + 80C benefit.',     color:'#10b981' },
+                    { icon:'📊', title:'SIP in 1–2 Large Cap Funds',desc:'Start with DSP Top 100 or HDFC Top 100. Keep it simple, consistent, long-term.',     color:'#3b82f6' },
+                    { icon:'🏦', title:'Ladder your FDs',           desc:'Instead of one large FD, create 3–6 month staggered FDs for better liquidity.',       color:'#8b5cf6' },
+                    { icon:'🥇', title:'Buy Sovereign Gold Bonds',  desc:'SGBs give 2.5% extra interest on top of gold appreciation. Zero storage risk.',       color:'#f59e0b' }
                 ]
             },
             moderate: {
-                label: 'Moderate Investor',
-                sub: 'Balanced growth — wealth building with managed risk',
-                gradient: 'linear-gradient(135deg, #064e3b, #0d9488)',
-                barColor: '#34d399',
+                label: 'Moderate Investor', sub: 'Balanced growth — wealth building with managed risk',
+                gradient: 'linear-gradient(135deg,#064e3b,#0d9488)', barColor: '#34d399',
                 allocations: [
-                    { name: 'Large Cap Mutual Funds', pct: 28, color: '#3b82f6', icon: '📊', tip: 'Core equity holding, lower volatility' },
-                    { name: 'Mid Cap Mutual Funds', pct: 15, color: '#6366f1', icon: '📈', tip: 'Higher growth potential over 5+ years' },
-                    { name: 'ELSS / Tax Saving Funds', pct: 10, color: '#8b5cf6', icon: '🎯', tip: 'Equity + 80C benefit, 3-yr lock-in' },
-                    { name: 'PPF / NPS Tier-I', pct: 15, color: '#10b981', icon: '🔒', tip: 'Tax-efficient long-term debt anchor' },
-                    { name: 'Debt Mutual Funds', pct: 15, color: '#0ea5e9', icon: '🏛️', tip: 'Stability buffer within the portfolio' },
-                    { name: 'Gold (SGB / Gold ETF)', pct: 10, color: '#f59e0b', icon: '🥇', tip: 'Inflation hedge, 5–7% allocation' },
-                    { name: 'Liquid Fund (Emergency)', pct: 7, color: '#64748b', icon: '💧', tip: 'Minimum 3–6 months of expenses' }
+                    { name:'Large Cap Mutual Funds', pct:28, color:'#3b82f6', icon:'📊', tip:'Core equity holding, lower volatility' },
+                    { name:'Mid Cap Mutual Funds',   pct:15, color:'#6366f1', icon:'📈', tip:'Higher growth potential over 5+ years' },
+                    { name:'ELSS / Tax Saving Funds',pct:10, color:'#8b5cf6', icon:'🎯', tip:'Equity + 80C benefit, 3-yr lock-in' },
+                    { name:'PPF / NPS Tier-I',       pct:15, color:'#10b981', icon:'🔒', tip:'Tax-efficient long-term debt anchor' },
+                    { name:'Debt Mutual Funds',      pct:15, color:'#0ea5e9', icon:'🏛️', tip:'Stability buffer within the portfolio' },
+                    { name:'Gold (SGB / Gold ETF)',  pct:10, color:'#f59e0b', icon:'🥇', tip:'Inflation hedge, 5–7% allocation' },
+                    { name:'Liquid Fund',            pct: 7, color:'#64748b', icon:'💧', tip:'Minimum 3–6 months of expenses' }
                 ],
                 roadmap: [
-                    { icon: '🎯', title: 'Max out your 80C with ELSS', desc: 'Invest Rs.1.5L/year in ELSS — save up to Rs.46,800 in taxes while building equity wealth.', color: '#8b5cf6' },
-                    { icon: '📈', title: 'Start Mid Cap SIP after 6 months', desc: 'Once your large cap SIP is stable, add mid cap exposure for extra growth. Stay for 7+ years.', color: '#6366f1' },
-                    { icon: '🛡️', title: 'Open NPS for additional tax benefit', desc: 'NPS gives extra Rs.50,000 deduction under 80CCD(1B) beyond the usual 80C limit.', color: '#10b981' },
-                    { icon: '🥇', title: 'Invest in SGBs during open windows', desc: 'Sovereign Gold Bonds open 3–4 times a year. Set a reminder and invest consistently.', color: '#f59e0b' }
+                    { icon:'🎯', title:'Max out 80C with ELSS',       desc:'Invest Rs.1.5L/year in ELSS — save up to Rs.46,800 in taxes while building equity.', color:'#8b5cf6' },
+                    { icon:'📈', title:'Add Mid Cap SIP after 6 months',desc:'Once large cap SIP is stable, add mid cap exposure. Stay for 7+ years.',           color:'#6366f1' },
+                    { icon:'🛡️', title:'Open NPS for extra tax benefit',desc:'NPS gives Rs.50,000 extra deduction under 80CCD(1B) beyond the 80C limit.',        color:'#10b981' },
+                    { icon:'🥇', title:'Invest in SGBs periodically',  desc:'Sovereign Gold Bonds open 3–4 times a year. Set a reminder and invest consistently.',color:'#f59e0b' }
                 ]
             },
             moderateAggressive: {
-                label: 'Moderately Aggressive',
-                sub: 'Growth-oriented — equity heavy, long investment horizon',
-                gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
-                barColor: '#fb923c',
+                label: 'Moderately Aggressive', sub: 'Growth-oriented — equity heavy, long investment horizon',
+                gradient: 'linear-gradient(135deg,#7c2d12,#ea580c)', barColor: '#fb923c',
                 allocations: [
-                    { name: 'Large Cap Mutual Funds', pct: 25, color: '#3b82f6', icon: '📊', tip: 'Stable backbone of your equity portfolio' },
-                    { name: 'Mid Cap Mutual Funds', pct: 20, color: '#6366f1', icon: '📈', tip: '12–15% returns historically over 10yr' },
-                    { name: 'Small Cap Mutual Funds', pct: 12, color: '#a855f7', icon: '🚀', tip: 'High risk, high reward — stay 10+ years' },
-                    { name: 'ELSS / Flexi Cap Funds', pct: 13, color: '#8b5cf6', icon: '🎯', tip: 'Flexibility across market caps + tax saving' },
-                    { name: 'NPS (Tier-I Equity option)', pct: 10, color: '#10b981', icon: '🛡️', tip: 'Pension + 80CCD extra deduction' },
-                    { name: 'Debt / Hybrid Fund', pct: 10, color: '#0ea5e9', icon: '🏛️', tip: 'Reduces overall portfolio volatility' },
-                    { name: 'Gold (SGB)', pct: 5, color: '#f59e0b', icon: '🥇', tip: 'Small gold allocation as crisis hedge' },
-                    { name: 'Liquid Fund (Emergency)', pct: 5, color: '#64748b', icon: '💧', tip: 'Minimum 3 months emergency corpus' }
+                    { name:'Large Cap Mutual Funds',   pct:25, color:'#3b82f6', icon:'📊', tip:'Stable backbone of your equity portfolio' },
+                    { name:'Mid Cap Mutual Funds',     pct:20, color:'#6366f1', icon:'📈', tip:'12–15% returns historically over 10yr' },
+                    { name:'Small Cap Mutual Funds',   pct:12, color:'#a855f7', icon:'🚀', tip:'High risk, high reward — stay 10+ years' },
+                    { name:'ELSS / Flexi Cap Funds',   pct:13, color:'#8b5cf6', icon:'🎯', tip:'Flexibility across market caps + tax saving' },
+                    { name:'NPS (Tier-I Equity option)',pct:10, color:'#10b981', icon:'🛡️', tip:'Pension + 80CCD extra deduction' },
+                    { name:'Debt / Hybrid Fund',       pct:10, color:'#0ea5e9', icon:'🏛️', tip:'Reduces overall portfolio volatility' },
+                    { name:'Gold (SGB)',                pct: 5, color:'#f59e0b', icon:'🥇', tip:'Small gold allocation as crisis hedge' },
+                    { name:'Liquid Fund',              pct: 5, color:'#64748b', icon:'💧', tip:'Minimum 3 months emergency corpus' }
                 ],
                 roadmap: [
-                    { icon: '🚀', title: 'Build a Core-Satellite SIP portfolio', desc: 'Core: 50% in large cap. Satellite: 30% mid cap + 20% small cap. Rebalance yearly.', color: '#6366f1' },
-                    { icon: '🛡️', title: 'Max NPS for dual tax benefits', desc: 'Invest Rs.2L/year in NPS — get 80C + extra 80CCD(1B) deductions simultaneously.', color: '#10b981' },
-                    { icon: '📊', title: 'Use index funds for large cap', desc: 'Nifty 50 or Sensex index funds are cheaper and beat 80% of active large cap funds.', color: '#3b82f6' },
-                    { icon: '⚖️', title: 'Annual rebalancing is key', desc: 'Once a year, bring your portfolio back to target allocation. Sell high, buy low systematically.', color: '#ea580c' }
+                    { icon:'🚀', title:'Build a Core-Satellite SIP portfolio',desc:'Core: 50% in large cap. Satellite: 30% mid + 20% small cap. Rebalance yearly.',color:'#6366f1' },
+                    { icon:'🛡️', title:'Max NPS for dual tax benefits',       desc:'Invest Rs.2L/year in NPS — get 80C + extra 80CCD(1B) deductions simultaneously.',color:'#10b981' },
+                    { icon:'📊', title:'Use index funds for large cap',        desc:'Nifty 50 index funds beat 80% of active large cap funds at a fraction of the cost.',color:'#3b82f6' },
+                    { icon:'⚖️', title:'Annual rebalancing is key',           desc:'Once a year, bring your portfolio back to target allocation. Sell high, buy low.',color:'#ea580c' }
                 ]
             },
             aggressive: {
-                label: 'Aggressive Investor',
-                sub: 'Maximum wealth creation — high risk, high conviction',
-                gradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
-                barColor: '#a78bfa',
+                label: 'Aggressive Investor', sub: 'Maximum wealth creation — high risk, high conviction',
+                gradient: 'linear-gradient(135deg,#4c1d95,#7c3aed)', barColor: '#a78bfa',
                 allocations: [
-                    { name: 'Large Cap / Index Funds', pct: 22, color: '#3b82f6', icon: '📊', tip: 'Cost-efficient core equity allocation' },
-                    { name: 'Mid Cap Mutual Funds', pct: 20, color: '#6366f1', icon: '📈', tip: 'High alpha potential, 7–10yr horizon' },
-                    { name: 'Small Cap Mutual Funds', pct: 18, color: '#a855f7', icon: '🚀', tip: 'Aggressive growth, stay invested 10+ yrs' },
-                    { name: 'Direct Stocks / Sectoral ETFs', pct: 15, color: '#ec4899', icon: '🎯', tip: 'Research-backed concentrated bets' },
-                    { name: 'ELSS / International Funds', pct: 10, color: '#8b5cf6', icon: '🌐', tip: 'Diversify globally + save tax with ELSS' },
-                    { name: 'NPS (Tier-I, Equity heavy)', pct: 8, color: '#10b981', icon: '🛡️', tip: 'Tax-efficient retirement anchor' },
-                    { name: 'Gold (SGB)', pct: 4, color: '#f59e0b', icon: '🥇', tip: 'Minimal crisis hedge in portfolio' },
-                    { name: 'Liquid Fund (Emergency)', pct: 3, color: '#64748b', icon: '💧', tip: 'Keep bare minimum liquid for safety' }
+                    { name:'Large Cap / Index Funds',      pct:22, color:'#3b82f6', icon:'📊', tip:'Cost-efficient core equity allocation' },
+                    { name:'Mid Cap Mutual Funds',         pct:20, color:'#6366f1', icon:'📈', tip:'High alpha potential, 7–10yr horizon' },
+                    { name:'Small Cap Mutual Funds',       pct:18, color:'#a855f7', icon:'🚀', tip:'Aggressive growth, stay invested 10+ yrs' },
+                    { name:'Direct Stocks / Sectoral ETFs',pct:15, color:'#ec4899', icon:'🎯', tip:'Research-backed concentrated bets' },
+                    { name:'ELSS / International Funds',   pct:10, color:'#8b5cf6', icon:'🌐', tip:'Diversify globally + save tax with ELSS' },
+                    { name:'NPS (Tier-I, Equity heavy)',   pct: 8, color:'#10b981', icon:'🛡️', tip:'Tax-efficient retirement anchor' },
+                    { name:'Gold (SGB)',                   pct: 4, color:'#f59e0b', icon:'🥇', tip:'Minimal crisis hedge in portfolio' },
+                    { name:'Liquid Fund',                  pct: 3, color:'#64748b', icon:'💧', tip:'Keep bare minimum liquid for safety' }
                 ],
                 roadmap: [
-                    { icon: '🎯', title: 'Pick direct stocks with conviction', desc: 'Limit direct stock picks to 8–12 companies you understand deeply. No more than 15% of portfolio.', color: '#ec4899' },
-                    { icon: '🌐', title: 'Add international exposure', desc: 'Invest in Nasdaq or S&P 500 index fund through Motilal Oswal or Mirae for global diversification.', color: '#8b5cf6' },
-                    { icon: '⚡', title: 'Deploy capital during corrections', desc: 'Keep a separate war chest of 10% cash to deploy aggressively in market downturns.', color: '#a855f7' },
-                    { icon: '📚', title: 'Track and learn continuously', desc: 'Read annual reports, study businesses. The more you know, the better your returns will be.', color: '#6366f1' }
+                    { icon:'🎯', title:'Pick direct stocks with conviction',desc:'Limit direct stock picks to 8–12 companies you understand deeply. Max 15% of portfolio.',color:'#ec4899' },
+                    { icon:'🌐', title:'Add international exposure',        desc:'Invest in Nasdaq or S&P 500 index fund through Motilal Oswal or Mirae for global diversification.',color:'#8b5cf6' },
+                    { icon:'⚡', title:'Deploy capital during corrections', desc:'Keep a 10% cash war chest ready to deploy aggressively in market downturns.',          color:'#a855f7' },
+                    { icon:'📚', title:'Track and learn continuously',      desc:'Read annual reports, study businesses. The more you know, the better your returns.',   color:'#6366f1' }
                 ]
             }
         };
 
+        // ---- Multi-goal tile toggle ----
+        function fpToggleGoalTile(btn, type, emoji, label) {
+            var meta = FP_GOAL_META[type];
+            var isActive = btn.classList.contains('fp-goal-tile-active');
+            if (isActive) {
+                btn.classList.remove('fp-goal-tile-active');
+                fpState.goals = fpState.goals.filter(function(g){ return g.type !== type; });
+            } else {
+                btn.classList.add('fp-goal-tile-active');
+                fpState.goals.push({ type: type, emoji: meta.emoji, label: meta.label, targetAmt: '', years: meta.defaultYrs });
+            }
+            fpRenderGoalCards();
+            fpLiveUpdate();
+        }
+
+        function fpRenderGoalCards() {
+            var container = document.getElementById('fp-goal-details');
+            var cardsDiv  = document.getElementById('fp-goal-cards');
+            if (!container || !cardsDiv) return;
+            if (fpState.goals.length === 0) { container.classList.add('hidden'); return; }
+            container.classList.remove('hidden');
+            cardsDiv.innerHTML = '';
+            fpState.goals.forEach(function(g, i) {
+                var meta = FP_GOAL_META[g.type];
+                var card = document.createElement('div');
+                card.className = 'fp-goal-card';
+                var horizClass = g.years <= 4 ? 'text-red-500' : g.years <= 10 ? 'text-amber-500' : 'text-emerald-600';
+                var horizLabel = g.years <= 4 ? 'Short-term' : g.years <= 10 ? 'Medium-term' : 'Long-term';
+                // Format stored raw number for display
+                var displayAmt = '';
+                if (g.targetAmt && g.targetAmt !== '') {
+                    var raw = parseInt((g.targetAmt + '').replace(/,/g,''), 10);
+                    if (!isNaN(raw)) displayAmt = new Intl.NumberFormat('en-IN').format(raw);
+                }
+                card.innerHTML =
+                    '<div class="fp-goal-card-header" onclick="fpToggleCardBody(this)">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="text-base">' + meta.emoji + '</span>' +
+                            '<div>' +
+                                '<div class="text-xs font-black text-slate-700">' + (g.customName || meta.label) + '</div>' +
+                                '<div class="text-[10px] ' + horizClass + ' font-bold" id="fp-horiz-label-' + i + '">' + horizLabel + ' · ' + g.years + ' yrs</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<svg class="fp-card-chevron w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
+                    '</div>' +
+                    '<div class="fp-goal-card-body">' +
+                        '<div>' +
+                            '<div class="fp-mini-label">Target Amount (₹)</div>' +
+                            '<div class="relative">' +
+                                '<span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:0.75rem;font-weight:700;color:#94a3b8;pointer-events:none;">₹</span>' +
+                                '<input type="text" class="fp-mini-input" inputmode="numeric" placeholder="e.g. 50,00,000" value="' + displayAmt + '" ' +
+                                    'style="padding-left:1.5rem;" ' +
+                                    'id="fp-amt-input-' + i + '" ' +
+                                    'oninput="fpFormatGoalAmt(this,' + i + ')">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="fp-mini-label">Years to Achieve</div>' +
+                            '<div class="relative">' +
+                                '<input type="number" class="fp-mini-input" min="1" max="40" placeholder="yrs" value="' + g.years + '" ' +
+                                    'id="fp-yrs-input-' + i + '" ' +
+                                    'oninput="fpUpdateGoalYears(' + i + ',this.value)">' +
+                                '<span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:0.65rem;font-weight:700;color:#94a3b8;pointer-events:none;">yrs</span>' +
+                            '</div>' +
+                        '</div>' +
+                        (g.type === 'custom' ?
+                        '<div class="col-span-2">' +
+                            '<div class="fp-mini-label">Goal Name</div>' +
+                            '<input type="text" class="fp-mini-input" placeholder="e.g. Dream car" value="' + (g.customName||'') + '" ' +
+                                'oninput="fpUpdateGoal(' + i + ',\'customName\',this.value); fpLiveUpdate(); document.querySelector(\'#fp-horiz-label-' + i + '\').previousElementSibling && (document.getElementById(\'fp-goal-cards\').querySelectorAll(\'.text-xs.font-black\')[' + i + '].textContent = this.value || \'Custom Goal\')">' +
+                        '</div>' : '') +
+                    '</div>';
+                cardsDiv.appendChild(card);
+            });
+        }
+
+        function fpToggleCardBody(header) {
+            var body = header.nextElementSibling;
+            var chevron = header.querySelector('.fp-card-chevron');
+            var isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : 'grid';
+            if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+        }
+
+        function fpUpdateGoal(idx, key, val) {
+            if (fpState.goals[idx]) fpState.goals[idx][key] = val;
+            fpLiveUpdate();
+        }
+
+        // Format target amount with Indian comma system live while typing
+        function fpFormatGoalAmt(el, idx) {
+            var raw = el.value.replace(/[^0-9]/g, '');
+            if (!raw) { el.value = ''; fpUpdateGoal(idx, 'targetAmt', ''); return; }
+            var num = parseInt(raw, 10);
+            el.value = new Intl.NumberFormat('en-IN').format(num);
+            // Put cursor at end
+            var pos = el.value.length;
+            if (el.setSelectionRange) { setTimeout(function(){ el.setSelectionRange(pos,pos); },0); }
+            fpUpdateGoal(idx, 'targetAmt', raw);
+        }
+
+        // Update years + refresh the horizon label inside the card header live
+        function fpUpdateGoalYears(idx, val) {
+            var yrs = parseInt(val) || 1;
+            fpUpdateGoal(idx, 'years', yrs);
+            // Update the sub-label in the card header without full re-render
+            var lbl = document.getElementById('fp-horiz-label-' + idx);
+            if (lbl) {
+                var hClass = yrs <= 4 ? 'text-red-500' : yrs <= 10 ? 'text-amber-500' : 'text-emerald-600';
+                var hText  = yrs <= 4 ? 'Short-term' : yrs <= 10 ? 'Medium-term' : 'Long-term';
+                lbl.className = 'text-[10px] ' + hClass + ' font-bold';
+                lbl.textContent = hText + ' · ' + yrs + ' yrs';
+            }
+        }
+
+        // ---- Risk questions ----
         function fpInitQuestions() {
-            const qContainer = document.getElementById('fp-questions-container');
+            var qContainer = document.getElementById('fp-questions-container');
             if (!qContainer) return;
             qContainer.innerHTML = '';
-            fpQuestions.forEach((q, qi) => {
-                const div = document.createElement('div');
+            fpQuestions.forEach(function(q, qi) {
+                var div = document.createElement('div');
                 div.className = 'space-y-2';
                 div.innerHTML = '<p class="text-sm font-bold text-slate-700 flex items-start gap-2"><span>' + q.icon + '</span><span>Q' + (qi+1) + '. ' + q.text + '</span></p>' +
-                    '<div class="space-y-1\\.5">' +
+                    '<div class="space-y-1" style="gap:6px;display:flex;flex-direction:column;">' +
                     q.options.map(function(opt, oi) {
                         var sel = fpState.answers[q.id] === oi ? 'fp-q-selected' : '';
-                        return '<div class="fp-q-option ' + sel + '" onclick="fpSelectAnswer(\'' + q.id + '\', ' + oi + ', ' + opt.pts + ', this)"><div class="fp-q-radio"></div><span class="text-xs font-semibold text-slate-600 leading-relaxed">' + opt.label + '</span></div>';
+                        return '<div class="fp-q-option ' + sel + '" onclick="fpSelectAnswer(\'' + q.id + '\',' + oi + ',' + opt.pts + ',this)"><div class="fp-q-radio"></div><span class="text-xs font-semibold text-slate-600 leading-relaxed">' + opt.label + '</span></div>';
                     }).join('') + '</div>';
                 qContainer.appendChild(div);
             });
         }
 
         function fpSelectAnswer(qId, optIdx, pts, el) {
-            var parent = el.parentElement;
-            parent.querySelectorAll('.fp-q-option').forEach(function(o) { o.classList.remove('fp-q-selected'); });
+            el.parentElement.querySelectorAll('.fp-q-option').forEach(function(o){ o.classList.remove('fp-q-selected'); });
             el.classList.add('fp-q-selected');
             fpState.answers[qId] = optIdx;
             fpState.answers[qId + '_pts'] = pts;
         }
 
-        function fpSelectGoal(btn, goal) {
-            document.querySelectorAll('.fp-goal-btn').forEach(function(b) { b.classList.remove('fp-goal-active'); });
-            btn.classList.add('fp-goal-active');
-            fpState.goal = goal;
-            fpLiveUpdate();
-        }
+        // kept for compatibility — no longer used for single select
+        function fpSelectGoal(btn, goal) { fpToggleGoalTile(btn, goal, FP_GOAL_META[goal].emoji, FP_GOAL_META[goal].label); }
 
         function fpSelectHorizon(btn, yrs) {
-            document.querySelectorAll('.fp-horizon-btn').forEach(function(b) { b.classList.remove('fp-horizon-active'); });
+            document.querySelectorAll('.fp-horizon-btn').forEach(function(b){ b.classList.remove('fp-horizon-active'); });
             btn.classList.add('fp-horizon-active');
             fpState.horizon = yrs;
             fpLiveUpdate();
@@ -3087,8 +3233,12 @@
         function fpToggleExisting(btn, key) {
             btn.classList.toggle('fp-existing-active');
             var idx = fpState.existing.indexOf(key);
-            if (idx === -1) fpState.existing.push(key);
-            else fpState.existing.splice(idx, 1);
+            if (idx === -1) fpState.existing.push(key); else fpState.existing.splice(idx,1);
+            // Show/hide custom text field
+            if (key === 'custom_inv') {
+                var inp = document.getElementById('fp-existing-custom-input');
+                if (inp) inp.classList.toggle('hidden', !btn.classList.contains('fp-existing-active'));
+            }
         }
 
         function fpGoStep(n) {
@@ -3098,26 +3248,23 @@
                 if (!age || age < 18 || age > 80) { alert('Please enter a valid age (18–80).'); return; }
                 if (!income || parseInt(income) < 1000) { alert('Please enter your monthly income.'); return; }
             }
+            if (n === 3 && fpState.goals.length === 0) { alert('Please select at least one financial goal.'); return; }
             fpState.step = n;
             [1,2,3].forEach(function(s) {
-                var el = document.getElementById('fp-step-' + s);
-                if (el) el.classList.toggle('hidden', s !== n);
+                var el = document.getElementById('fp-step-' + s); if (el) el.classList.toggle('hidden', s !== n);
             });
             [1,2,3,4].forEach(function(s) {
-                var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]');
-                if (!dot) return;
+                var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]'); if (!dot) return;
                 dot.className = 'fp-step-dot ' + (s < n ? 'fp-dot-done' : s === n ? 'fp-dot-active' : 'fp-dot-inactive');
             });
             if (n === 3) fpInitQuestions();
         }
 
+        // ---- Live snapshot ----
         function fpLiveUpdate() {
-            var name = document.getElementById('fp-name') ? document.getElementById('fp-name').value.trim() : '';
-            var age = document.getElementById('fp-age') ? document.getElementById('fp-age').value : '';
-            var retireAge = document.getElementById('fp-retire-age') ? document.getElementById('fp-retire-age').value : '';
-            var income = document.getElementById('fp-income') ? document.getElementById('fp-income').value : '';
-            var invest = document.getElementById('fp-invest-amt') ? document.getElementById('fp-invest-amt').value : '';
-
+            var get = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+            var name = get('fp-name'), age = get('fp-age'), retireAge = get('fp-retire-age');
+            var income = get('fp-income'), invest = get('fp-invest-amt');
             if (document.getElementById('fp-snap-name')) document.getElementById('fp-snap-name').textContent = name || '—';
             if (document.getElementById('fp-snap-age')) document.getElementById('fp-snap-age').textContent = age ? age + ' years' : '—';
             if (document.getElementById('fp-snap-retire')) {
@@ -3126,47 +3273,148 @@
             }
             if (document.getElementById('fp-snap-income')) document.getElementById('fp-snap-income').textContent = income ? '₹' + income + '/mo' : '—';
             if (document.getElementById('fp-snap-invest')) document.getElementById('fp-snap-invest').textContent = invest ? '₹' + invest + '/mo' : '—';
-            var goalLabels = { retirement:'🏖️ Retirement', home:'🏠 Buy a Home', education:'🎓 Child\'s Education', wealth:'💰 Wealth Creation', marriage:'💍 Marriage', travel:'✈️ Travel' };
-            if (document.getElementById('fp-snap-goal')) document.getElementById('fp-snap-goal').textContent = goalLabels[fpState.goal] || '—';
+            // Primary goal (first selected)
+            var goalEl = document.getElementById('fp-snap-goal');
+            if (goalEl) goalEl.textContent = fpState.goals.length > 0 ? (fpState.goals[0].emoji + ' ' + fpState.goals[0].label) : '—';
+            // All goals list
+            var listEl = document.getElementById('fp-snap-goals-list');
+            if (listEl) {
+                if (fpState.goals.length === 0) {
+                    listEl.innerHTML = '<span class="text-xs text-slate-400 italic">None selected yet</span>';
+                } else {
+                    listEl.innerHTML = fpState.goals.map(function(g) {
+                        return '<div class="text-xs font-bold text-violet-600">' + g.emoji + ' ' + g.label + (g.years ? ' · ' + g.years + 'yr' : '') + '</div>';
+                    }).join('');
+                }
+            }
             var hLabels = { 3:'Short-term (<5 yrs)', 8:'Medium-term (5–10 yrs)', 15:'Long-term (>10 yrs)' };
             if (document.getElementById('fp-snap-horizon')) document.getElementById('fp-snap-horizon').textContent = hLabels[fpState.horizon] || '—';
         }
 
         function fpFormatMoney(el, wordsId) {
-            var val = el.value.replace(/[^0-9]/g, '');
+            var val = el.value.replace(/[^0-9]/g,'');
             if (!val) { document.getElementById(wordsId).textContent = '—'; return; }
-            var num = parseInt(val, 10);
+            var num = parseInt(val,10);
             el.value = new Intl.NumberFormat('en-IN').format(num);
             document.getElementById(wordsId).textContent = numberToWords(num);
         }
 
+        // ---- Risk profile + goal-aware blending ----
         function fpGetRiskProfile(score, age) {
             var adjusted = score;
             if (age >= 55) adjusted = Math.max(0, score - 5);
             else if (age >= 45) adjusted = Math.max(0, score - 2);
             else if (age <= 28) adjusted = Math.min(15, score + 1);
-            if (adjusted <= 4) return 'conservative';
-            if (adjusted <= 8) return 'moderate';
+            if (adjusted <= 4)  return 'conservative';
+            if (adjusted <= 8)  return 'moderate';
             if (adjusted <= 11) return 'moderateAggressive';
             return 'aggressive';
         }
 
+        // Blend base portfolio with goal-horizon nudges
+        function fpBlendPortfolio(baseKey, goals) {
+            var base = fpPortfolios[baseKey];
+            var allocs = base.allocations.map(function(a){ return Object.assign({}, a); });
+
+            // Compute weighted average horizon from goals (weight by target amount if available, else equal)
+            var totalWt = 0, weightedYrs = 0;
+            goals.forEach(function(g) {
+                var wt = parseFloat((g.targetAmt+'').replace(/,/g,'')) || 1;
+                weightedYrs += g.years * wt;
+                totalWt += wt;
+            });
+            var avgHorizon = totalWt > 0 ? weightedYrs / totalWt : 10;
+
+            // Short-horizon nudge: increase debt/liquid, reduce small/mid cap
+            if (avgHorizon < 5) {
+                allocs.forEach(function(a) {
+                    if (a.name.includes('Small Cap')) a.pct = Math.max(0, a.pct - 8);
+                    if (a.name.includes('Mid Cap'))   a.pct = Math.max(0, a.pct - 5);
+                    if (a.name.includes('Debt') || a.name.includes('FD'))  a.pct += 8;
+                    if (a.name.includes('Liquid'))    a.pct += 5;
+                });
+            }
+
+            // Emergency fund goal → boost liquid allocation
+            var hasEmergency = goals.some(function(g){ return g.type === 'emergency'; });
+            if (hasEmergency) {
+                allocs.forEach(function(a) {
+                    if (a.name.includes('Liquid')) a.pct = Math.min(a.pct + 8, 20);
+                });
+            }
+
+            // Home buy goal with short timeline → more debt
+            var homeGoal = goals.find(function(g){ return g.type === 'home'; });
+            if (homeGoal && homeGoal.years <= 7) {
+                allocs.forEach(function(a) {
+                    if (a.name.includes('Debt') || a.name.includes('FD')) a.pct += 5;
+                    if (a.name.includes('Small Cap') || a.name.includes('Mid Cap')) a.pct = Math.max(0, a.pct - 3);
+                });
+            }
+
+            // Normalise to 100%
+            var total = allocs.reduce(function(s,a){ return s + a.pct; }, 0);
+            allocs = allocs.filter(function(a){ return a.pct > 0; });
+            allocs.forEach(function(a){ a.pct = Math.round(a.pct / total * 100); });
+            // Fix rounding
+            var diff = 100 - allocs.reduce(function(s,a){ return s + a.pct; },0);
+            if (allocs.length > 0) allocs[0].pct += diff;
+
+            return allocs;
+        }
+
+        // Build goal-specific SIP allocation table
+        function fpBuildGoalSIPs(goals, monthlyInvest) {
+            if (!monthlyInvest || goals.length === 0) return null;
+            // Weight each goal equally (or by inverse urgency: sooner goals get more)
+            var weights = goals.map(function(g){ return 1 / Math.max(g.years, 1); });
+            var wTotal = weights.reduce(function(s,w){ return s+w; },0);
+            return goals.map(function(g, i) {
+                var share = Math.round((weights[i]/wTotal) * monthlyInvest / 100) * 100;
+                return { label: g.emoji + ' ' + g.label, years: g.years, amt: share, color: FP_GOAL_META[g.type].color };
+            });
+        }
+
+        // Build per-goal roadmap items
+        function fpBuildGoalRoadmap(goals, baseRoadmap) {
+            var extras = [];
+            var goalRoadmapMap = {
+                home:      { icon:'🏠', title:'Set up a Home Down Payment SIP',       desc:'Allocate a separate SIP for your home down payment in a low-risk debt fund. Keep it accessible.',        color:'#3b82f6' },
+                education: { icon:'🎓', title:'Open a Sukanya Samriddhi / Child Fund', desc:'For a child\'s education corpus, Sukanya Samriddhi (girls) or a dedicated ELSS gives tax-free growth.',  color:'#8b5cf6' },
+                marriage:  { icon:'💍', title:'Marriage Goal — Use Hybrid Funds',      desc:'For a 3–7 year marriage goal, balanced/hybrid funds reduce risk while keeping returns above inflation.',  color:'#ec4899' },
+                emergency: { icon:'🛡️', title:'Emergency Fund First — Always',        desc:'Before any SIP, build 6 months of expenses in a liquid fund or sweep-in FD. This is non-negotiable.',   color:'#f59e0b' },
+                business:  { icon:'🚀', title:'Business Fund in Flexi-Cap SIPs',       desc:'A 5–7 year SIP in flexi-cap funds can compound your business seed capital significantly.',               color:'#ef4444' },
+                travel:    { icon:'✈️', title:'Travel Fund via Recurring Deposits',    desc:'Short-term goal? Use RDs or short-duration debt funds. Avoid equity for goals under 3 years.',           color:'#0ea5e9' },
+                retirement: { icon:'🏖️', title:'NPS is your Retirement Superweapon',  desc:'NPS offers the lowest-cost pension solution. Max out Tier-I equity allocation for the long run.',       color:'#6366f1' },
+                wealth:    { icon:'💰', title:'SIP Step-up Strategy',                  desc:'Increase your SIP by 10% every year. A Rs.10,000 SIP growing at 10% p.a. step-up becomes 4× in 15 years.',color:'#10b981' },
+                custom:    { icon:'✏️', title:'Map this goal to a dedicated fund',     desc:'Open a separate SIP for this goal so you can track progress independently and avoid mixing funds.',      color:'#64748b' }
+            };
+            goals.forEach(function(g) {
+                if (goalRoadmapMap[g.type]) extras.push(goalRoadmapMap[g.type]);
+            });
+            // Merge: goal-specific first, then base
+            return extras.concat(baseRoadmap).slice(0, 5);
+        }
+
+        // ---- Generate Plan ----
         function fpCalculatePlan() {
-            var answered = fpQuestions.filter(function(q) { return fpState.answers[q.id] !== undefined; }).length;
+            var answered = fpQuestions.filter(function(q){ return fpState.answers[q.id] !== undefined; }).length;
             if (answered < fpQuestions.length) { alert('Please answer all 5 questions to generate your plan.'); return; }
-            var totalScore = fpQuestions.reduce(function(sum, q) { return sum + (fpState.answers[q.id + '_pts'] || 0); }, 0);
+            var totalScore = fpQuestions.reduce(function(s,q){ return s + (fpState.answers[q.id+'_pts'] || 0); },0);
             var age = parseInt(document.getElementById('fp-age').value) || 30;
             var name = document.getElementById('fp-name').value.trim() || 'there';
-            var investRaw = document.getElementById('fp-invest-amt').value.replace(/,/g, '');
-            var monthlyInvest = parseInt(investRaw) || 0;
+            var monthlyInvest = parseInt(document.getElementById('fp-invest-amt').value.replace(/,/g,'')) || 0;
 
             var profileKey = fpGetRiskProfile(totalScore, age);
-            var profile = fpPortfolios[profileKey];
+            var profile    = fpPortfolios[profileKey];
+            var allocs     = fpBlendPortfolio(profileKey, fpState.goals);
+            var goalSIPs   = fpBuildGoalSIPs(fpState.goals, monthlyInvest);
+            var roadmap    = fpBuildGoalRoadmap(fpState.goals, profile.roadmap);
+
             fpState.planGenerated = true;
 
             [1,2,3,4].forEach(function(s) {
-                var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]');
-                if (!dot) return;
+                var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]'); if (!dot) return;
                 dot.className = 'fp-step-dot ' + (s <= 3 ? 'fp-dot-done' : 'fp-dot-active');
             });
 
@@ -3174,83 +3422,116 @@
             document.getElementById('fp-results-card').classList.remove('hidden');
 
             document.getElementById('fp-result-header').style.background = profile.gradient;
-            document.getElementById('fp-result-greeting').textContent = 'Hi ' + name + '! Here\'s your personalised plan';
+            document.getElementById('fp-result-greeting').textContent     = 'Hi ' + name + '! Here\'s your personalised plan';
             document.getElementById('fp-result-profile-label').textContent = profile.label;
-            document.getElementById('fp-result-profile-sub').textContent = profile.sub;
-            document.getElementById('fp-risk-score-label').textContent = 'Risk Score: ' + totalScore + '/15';
+            document.getElementById('fp-result-profile-sub').textContent   = profile.sub;
+            document.getElementById('fp-risk-score-label').textContent     = 'Risk Score: ' + totalScore + '/15';
             var barFill = document.getElementById('fp-risk-bar-fill');
             barFill.style.background = profile.barColor;
             barFill.style.width = ((totalScore / 15) * 100) + '%';
 
-            var allocs = profile.allocations;
+            // Donut
             if (fpDonutChart) { fpDonutChart.destroy(); fpDonutChart = null; }
             var ctx = document.getElementById('fp-donut-chart').getContext('2d');
             fpDonutChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: allocs.map(function(a){ return a.name; }),
-                    datasets: [{ data: allocs.map(function(a){ return a.pct; }), backgroundColor: allocs.map(function(a){ return a.color; }), borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-                },
+                data: { labels: allocs.map(function(a){ return a.name; }),
+                        datasets: [{ data: allocs.map(function(a){ return a.pct; }), backgroundColor: allocs.map(function(a){ return a.color; }), borderWidth:2, borderColor:'#fff', hoverOffset:8 }] },
                 options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '68%',
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + ctx.parsed + '%'; } } } },
-                    animation: { animateRotate: true, duration: 700 },
+                    responsive:true, maintainAspectRatio:false, cutout:'68%',
+                    plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ return ' ' + c.label + ': ' + c.parsed + '%'; } } } },
+                    animation:{ animateRotate:true, duration:700 },
                     onHover: function(evt, elements) {
-                        var pctEl = document.getElementById('fp-center-pct');
-                        var lblEl = document.getElementById('fp-center-label');
-                        if (elements.length > 0) {
-                            var i = elements[0].index;
-                            pctEl.textContent = allocs[i].pct + '%';
-                            lblEl.textContent = allocs[i].name;
-                        } else {
-                            pctEl.textContent = totalScore + '/15';
-                            lblEl.textContent = 'Risk Score';
-                        }
+                        var p = document.getElementById('fp-center-pct'), l = document.getElementById('fp-center-label');
+                        if (elements.length > 0) { var i = elements[0].index; p.textContent = allocs[i].pct + '%'; l.textContent = allocs[i].name; }
+                        else { p.textContent = totalScore + '/15'; l.textContent = 'Risk Score'; }
                     }
                 }
             });
-            document.getElementById('fp-center-pct').textContent = totalScore + '/15';
+            document.getElementById('fp-center-pct').textContent   = totalScore + '/15';
             document.getElementById('fp-center-label').textContent = 'Risk Score';
 
-            var legend = document.getElementById('fp-legend');
-            legend.innerHTML = allocs.map(function(a) {
-                return '<div class="fp-legend-row"><div class="flex items-center gap-2 min-w-0"><div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:' + a.color + '"></div><div class="min-w-0"><div class="text-xs font-bold text-slate-700 truncate">' + a.icon + ' ' + a.name + '</div><div class="text-[10px] text-slate-400 font-medium">' + a.tip + '</div></div></div><span class="text-sm font-black flex-shrink-0 ml-2" style="color:' + a.color + '">' + a.pct + '%</span></div>';
+            // Legend
+            document.getElementById('fp-legend').innerHTML = allocs.map(function(a) {
+                return '<div class="fp-legend-row"><div class="flex items-center gap-2 min-w-0"><div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:' + a.color + '"></div><div class="min-w-0"><div class="text-xs font-bold text-slate-700 truncate">' + a.icon + ' ' + a.name + '</div><div class="text-[10px] text-slate-400">' + a.tip + '</div></div></div><span class="text-sm font-black flex-shrink-0 ml-1" style="color:' + a.color + '">' + a.pct + '%</span></div>';
             }).join('');
 
+            // SIP breakdown — by goal if available, else by asset
             var sipDiv = document.getElementById('fp-sip-breakdown');
-            if (monthlyInvest > 0) {
-                sipDiv.innerHTML = allocs.map(function(a) {
-                    var amt = Math.round((a.pct / 100) * monthlyInvest / 100) * 100;
-                    return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span class="text-base">' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(amt) + '/mo</span></div>';
+            if (goalSIPs && monthlyInvest > 0) {
+                // Build urgency explanation per goal
+                var weights = fpState.goals.map(function(g){ return 1 / Math.max(g.years,1); });
+                var wTotal  = weights.reduce(function(s,w){ return s+w; },0);
+                var reasonLines = goalSIPs.map(function(g, i) {
+                    var pct = Math.round((weights[i]/wTotal)*100);
+                    var urgency = g.years <= 4 ? 'highest urgency — very little compounding time left'
+                                : g.years <= 8 ? 'medium urgency — moderate compounding window'
+                                : 'long runway — compounding does the heavy lifting';
+                    return '<div class="flex items-start gap-2 text-[11px] text-slate-500 leading-relaxed">' +
+                        '<span style="color:' + g.color + ';font-weight:900;flex-shrink:0;">' + g.label.split(' ')[0] + '</span>' +
+                        '<span><strong style="color:#374151;">' + pct + '%</strong> of your SIP (' + g.years + '-yr goal): ' + urgency + '.</span></div>';
                 }).join('');
+
+                sipDiv.innerHTML =
+                    // Reason box
+                    '<div class="rounded-xl border border-blue-100 p-3 mb-3" style="background:#eff6ff;">' +
+                        '<div class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1.5">💡 Why this split?</div>' +
+                        '<div class="space-y-1">' + reasonLines + '</div>' +
+                        '<div class="text-[10px] text-blue-400 mt-2 pt-2 border-t border-blue-100">Sooner goals get a bigger share because they have less time to grow. Longer goals can rely on compounding, so they need smaller monthly contributions to reach the same target.</div>' +
+                    '</div>' +
+                    // Goal-wise table
+                    '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">SIP split by goal</div>' +
+                    goalSIPs.map(function(g) {
+                        return '<div class="fp-sip-row" style="border-left:3px solid ' + g.color + ';padding-left:10px;">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<span class="text-sm">' + g.label + '</span>' +
+                                '<span class="text-[10px] text-slate-400">' + g.years + 'yr horizon</span>' +
+                            '</div>' +
+                            '<span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(g.amt) + '/mo</span>' +
+                        '</div>';
+                    }).join('') +
+                    // Asset-wise table
+                    '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-3 mb-1.5">Asset-wise SIP split</div>' +
+                    allocs.map(function(a) {
+                        var amt = Math.round((a.pct/100) * monthlyInvest / 100) * 100;
+                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(amt) + '/mo</span></div>';
+                    }).join('');
+            } else if (monthlyInvest > 0) {
+                sipDiv.innerHTML =
+                    '<div class="rounded-xl border border-blue-100 p-3 mb-3" style="background:#eff6ff;">' +
+                        '<div class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1">💡 How this is calculated</div>' +
+                        '<div class="text-[11px] text-slate-500 leading-relaxed">Each asset gets a share proportional to its weight in your risk-adjusted portfolio. Higher-equity assets are held for long-term compounding; debt and liquid funds protect your near-term stability.</div>' +
+                    '</div>' +
+                    allocs.map(function(a) {
+                        var amt = Math.round((a.pct/100) * monthlyInvest / 100) * 100;
+                        return '<div class="fp-sip-row"><div class="flex items-center gap-2"><span>' + a.icon + '</span><span class="text-xs font-semibold text-slate-600">' + a.name + '</span></div><span class="text-xs font-black text-slate-800">₹' + new Intl.NumberFormat('en-IN').format(amt) + '/mo</span></div>';
+                    }).join('');
             } else {
                 sipDiv.innerHTML = '<p class="text-xs text-slate-400 italic">Enter your monthly investable amount (Step 1) to see the exact SIP split.</p>';
             }
 
-            var roadmapDiv = document.getElementById('fp-roadmap');
-            roadmapDiv.innerHTML = profile.roadmap.map(function(r) {
+            // Roadmap
+            document.getElementById('fp-roadmap').innerHTML = roadmap.map(function(r) {
                 return '<div class="fp-road-item" style="background:' + r.color + '0f;border-color:' + r.color + '30;"><span class="text-lg flex-shrink-0">' + r.icon + '</span><div><div class="text-xs font-black uppercase tracking-wide mb-0.5" style="color:' + r.color + '">' + r.title + '</div><div class="text-xs text-slate-600 leading-relaxed">' + r.desc + '</div></div></div>';
             }).join('');
 
-            setTimeout(function() { document.getElementById('fp-results-card').scrollIntoView({ behavior:'smooth', block:'start' }); }, 200);
+            setTimeout(function(){ document.getElementById('fp-results-card').scrollIntoView({behavior:'smooth',block:'start'}); },200);
         }
 
+        // ---- Reset ----
         function fpReset() {
-            fpState = { step: 1, goal: 'retirement', horizon: 8, existing: [], answers: {}, planGenerated: false };
-            ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id) {
-                var el = document.getElementById(id); if (el) el.value = '';
-            });
-            ['fp-income-words','fp-invest-words'].forEach(function(id) {
-                var el = document.getElementById(id); if (el) el.textContent = '—';
-            });
-            document.querySelectorAll('.fp-goal-btn').forEach(function(b) { b.classList.remove('fp-goal-active'); });
-            var retBtn = document.querySelector('[data-goal="retirement"]'); if (retBtn) retBtn.classList.add('fp-goal-active');
-            document.querySelectorAll('.fp-horizon-btn').forEach(function(b) { b.classList.remove('fp-horizon-active'); });
-            var horizBtns = document.querySelectorAll('.fp-horizon-btn'); if (horizBtns[1]) horizBtns[1].classList.add('fp-horizon-active');
-            document.querySelectorAll('.fp-existing-btn').forEach(function(b) { b.classList.remove('fp-existing-active'); });
+            fpState = { step:1, goals:[], existing:[], existingCustom:'', answers:{}, planGenerated:false };
+            ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+            ['fp-income-words','fp-invest-words'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent='—'; });
+            document.querySelectorAll('.fp-goal-tile').forEach(function(b){ b.classList.remove('fp-goal-tile-active'); });
+            document.querySelectorAll('.fp-existing-btn').forEach(function(b){ b.classList.remove('fp-existing-active'); });
+            var ci = document.getElementById('fp-existing-custom-input'); if(ci) ci.classList.add('hidden');
+            var ct = document.getElementById('fp-existing-custom-text'); if(ct) ct.value='';
+            var gd = document.getElementById('fp-goal-details'); if(gd) gd.classList.add('hidden');
+            var gc = document.getElementById('fp-goal-cards');   if(gc) gc.innerHTML='';
             fpGoStep(1);
-            var rc = document.getElementById('fp-results-card'); if (rc) rc.classList.add('hidden');
-            var rp = document.getElementById('fp-results-placeholder'); if (rp) rp.classList.remove('hidden');
+            var rc=document.getElementById('fp-results-card'); if(rc) rc.classList.add('hidden');
+            var rp=document.getElementById('fp-results-placeholder'); if(rp) rp.classList.remove('hidden');
             fpLiveUpdate();
         }
 
@@ -3398,17 +3679,43 @@
             transition: all 0.15s;
         }
         .fp-back-btn:hover { background: #e2e8f0; color: #334155; }
-        .fp-goal-btn {
+        .fp-goal-tile {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; padding: 10px 6px;
+            gap: 3px; padding: 10px 4px;
             background: #f8fafc; border: 1.5px solid #e2e8f0;
-            border-radius: 12px; font-size: 1.2rem; cursor: pointer;
-            transition: all 0.15s;
+            border-radius: 12px; cursor: pointer;
+            transition: all 0.15s; position: relative;
         }
-        .fp-goal-btn span { font-size: 0.7rem; font-weight: 700; color: #64748b; }
-        .fp-goal-btn:hover { border-color: #818cf8; background: #eef2ff; }
-        .fp-goal-active { border-color: #6366f1 !important; background: #eef2ff !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
-        .fp-goal-active span { color: #4338ca !important; }
+        .fp-goal-tile:hover { border-color: #818cf8; background: #eef2ff; }
+        .fp-goal-tile-active { border-color: #6366f1 !important; background: #eef2ff !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+        .fp-goal-tile-active span { color: #4338ca !important; }
+        .fp-goal-tile-check {
+            position: absolute; top: 4px; right: 4px;
+            width: 14px; height: 14px; background: #6366f1; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            font-size: 8px; color: #fff; font-weight: 900; line-height: 1;
+        }
+        .fp-goal-tile-active .fp-goal-tile-check { display: flex; }
+        .fp-goal-card {
+            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            border-radius: 14px; overflow: hidden;
+        }
+        .fp-goal-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; cursor: pointer;
+            background: linear-gradient(90deg, #f8fafc, #fff);
+        }
+        .fp-goal-card-body {
+            padding: 0 12px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .fp-mini-input {
+            width: 100%; padding: 7px 10px; background: #fff;
+            border: 1.5px solid #e2e8f0; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 600; color: #1e293b; outline: none;
+            transition: border-color 0.15s;
+        }
+        .fp-mini-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.1); }
+        .fp-mini-label { font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
         .fp-horizon-btn {
             flex: 1; padding: 10px 4px; background: #f8fafc; border: 1.5px solid #e2e8f0;
             border-radius: 10px; font-size: 0.8rem; font-weight: 700; color: #64748b;
