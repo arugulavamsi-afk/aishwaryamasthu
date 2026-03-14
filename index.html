@@ -57,6 +57,13 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
+        /* ===== REMOVE DIAGONAL GRID OVERLAYS ===== */
+        .diag-overlay { display: none !important; }
+
+        /* ===== GLOBAL GOLDEN CARD BORDERS ===== */
+        .border-slate-100 { border-color: rgba(245, 200, 66, 0.30) !important; }
+        .fp-goal-card { border-color: rgba(245, 200, 66, 0.30) !important; }
+
         /* Tab bar scroll on mobile */
         .tabs-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tabs-scroll::-webkit-scrollbar { display: none; }
@@ -113,6 +120,17 @@
         .card-lift:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 32px rgba(26,82,118,0.13);
+        }
+
+        /* ===== GOLDEN BORDER ON ALL CARDS ===== */
+        .bg-white.rounded-2xl,
+        .bg-white.rounded-xl,
+        [class*="rounded-2xl"].bg-white,
+        [class*="rounded-xl"].bg-white {
+            border-color: rgba(245, 200, 66, 0.35) !important;
+        }
+        .card-lift {
+            border-color: rgba(245, 200, 66, 0.35) !important;
         }
 
         /* ===== TAB ACTIVE BOUNCE ===== */
@@ -535,7 +553,7 @@
     <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-4 flex flex-col lg:flex-row gap-4">
 
         <!-- LEFT PANEL: Parameters -->
-        <div id="growth-left-panel" class="w-full lg:w-1/3 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col lg:self-start lg:sticky lg:top-[4.5rem] card-lift panel-fade overflow-hidden">
+        <div id="growth-left-panel" class="w-full lg:w-1/3 bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 flex flex-col lg:self-start lg:sticky lg:top-[4.5rem] card-lift panel-fade overflow-hidden">
 
             <!-- Growth Calculator Header -->
             <div id="growth-panel-header" class="px-5 py-4 text-white flex-shrink-0" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
@@ -668,7 +686,7 @@
         <div class="w-full lg:w-2/3 flex flex-col gap-4 panel-fade">
 
             <!-- Results Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 card-lift overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 card-lift overflow-hidden">
 
                 <!-- Growth Results Header -->
                 <div id="growth-results-header" class="px-5 py-3 flex items-center gap-3 border-b border-slate-100" style="background: linear-gradient(135deg, #1e3a5f08 0%, #0e665508 100%);">
@@ -730,7 +748,7 @@
             </div>
 
             <!-- Chart Card -->
-            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col card-lift">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-[#f5c842]/30 flex flex-col card-lift">
                 <h3 class="text-sm font-bold text-slate-800 mb-2" id="chart-title">Growth Trajectory</h3>
                 <div class="relative w-full" style="height: 260px;">
                     <canvas id="mainChart"></canvas>
@@ -743,7 +761,7 @@
         <div id="emergency-panel" class="hidden w-full flex flex-col lg:flex-row gap-4">
 
             <!-- LEFT: Expense Input Card -->
-            <div class="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+            <div class="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 flex flex-col overflow-hidden">
                 <div class="px-5 py-4 text-white" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
                     <h2 class="text-white font-black text-lg flex items-center gap-2">Emergency Fund Calculator</h2>
                     <p class="text-blue-200 text-xs mt-0.5">Enter your monthly expenses to calculate the recommended emergency corpus.</p>
@@ -858,7 +876,7 @@
             <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                 <!-- Main Result -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
                     <div class="flex items-start justify-between gap-4 mb-4">
                         <div>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1" id="ef-coverage-label">6-Month Emergency Fund</p>
@@ -884,7 +902,7 @@
 
                     <!-- 3 target scenarios -->
                     <div class="grid grid-cols-3 gap-2 mb-4">
-                        <div class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+                        <div class="bg-slate-50 rounded-xl p-3 text-center border border-[#f5c842]/30">
                             <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">3 Months</div>
                             <div class="text-sm font-black text-slate-600" id="ef-3m">₹0</div>
                         </div>
@@ -911,7 +929,7 @@
                 </div>
 
                 <!-- Breakdown Donut Chart -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+                <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5 flex flex-col">
                     <h3 class="text-sm font-bold text-slate-800 mb-3">Expense Breakdown</h3>
                     <div id="ef-empty-state" class="flex flex-col items-center justify-center py-10 text-slate-400">
                         <div class="text-4xl mb-2">📊</div>
@@ -935,7 +953,7 @@
         <div id="mfkit-panel" class="hidden w-full flex flex-col gap-5">
 
             <!-- Header -->
-            <div class="rounded-2xl px-6 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
+            <div class="rounded-2xl px-6 py-5 text-white" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%); border: 2px solid rgba(245,200,66,0.45); box-shadow: 0 4px 18px rgba(0,0,0,0.25), 0 0 0 1px rgba(245,200,66,0.15);">
                 <div class="flex items-start justify-between flex-wrap gap-3">
                     <div>
                         <h2 class="text-xl font-black flex items-center gap-2">Mutual Fund Kit</h2>
@@ -960,7 +978,7 @@
             <div id="mf-picker-section" class="flex flex-col gap-5">
 
                 <!-- Section Header -->
-                <div class="rounded-2xl px-6 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #0e3460 0%, #1a5276 50%, #117a65 100%);">
+                <div class="rounded-2xl px-6 py-5 text-white" style="background: linear-gradient(135deg, #0e3460 0%, #1a5276 50%, #117a65 100%); border: 2px solid rgba(245,200,66,0.45); box-shadow: 0 4px 18px rgba(0,0,0,0.25), 0 0 0 1px rgba(245,200,66,0.15);">
                     <div class="flex items-start gap-3">
                         <div class="text-3xl mt-0.5">🔬</div>
                         <div>
@@ -974,7 +992,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="mf-metric-cards"></div>
 
                 <!-- Checklist Section -->
-                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-2xl border border-[#f5c842]/30 shadow-sm overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-2" style="background: linear-gradient(135deg, #0e346008 0%, #11796508 100%);">
                         <span class="text-lg">✅</span>
                         <div>
@@ -1003,7 +1021,7 @@
             </div>
 
             <!-- ===== EXAMPLE FUND COMPARISON TABLE ===== -->
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-2xl border border-[#f5c842]/30 shadow-sm overflow-hidden">
                 <!-- Table Header -->
                 <div class="px-5 py-4 border-b border-slate-100" style="background: linear-gradient(135deg, #0e346012 0%, #11796512 100%);">
                     <div class="flex items-start gap-3">
@@ -1338,10 +1356,10 @@
         <!-- =================== END MUTUAL FUND KIT PANEL ================== -->
 
         <!-- ===================== MF DETAIL MODAL ===================== -->
-        <div id="mf-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4" onclick="closeMFModal(event)">
-            <div class="animate-modal bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+        <div id="mf-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4" style="padding-top: env(safe-area-inset-top);" onclick="closeMFModal(event)">
+            <div class="animate-modal bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col" onclick="event.stopPropagation()" style="overflow:hidden; margin-top: auto;">
                 <!-- Modal Header -->
-                <div id="mf-modal-header" class="px-5 pt-5 pb-4 flex items-start justify-between gap-3" style="background:#f5f3ff">
+                <div id="mf-modal-header" class="px-5 pt-5 pb-4 flex items-start justify-between gap-3 flex-shrink-0" style="background:#f5f3ff">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1 flex-wrap">
                             <span id="mf-modal-icon" class="text-2xl"></span>
@@ -1362,7 +1380,7 @@
                     <button onclick="document.getElementById('mf-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none mt-0.5 flex-shrink-0">✕</button>
                 </div>
                 <!-- Risk Meter -->
-                <div class="px-5 pt-3 pb-2 border-b border-slate-100">
+                <div class="px-5 pt-3 pb-2 border-b border-slate-100 flex-shrink-0">
                     <div class="flex items-center justify-between mb-1">
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</span>
                         <span id="mf-modal-risk-label" class="text-xs font-bold"></span>
@@ -1370,7 +1388,7 @@
                     <div class="flex items-center gap-1.5" id="mf-modal-risk-dots"></div>
                 </div>
                 <!-- Body -->
-                <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1">
+                <div class="px-5 py-4 space-y-4 flex-1" style="overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;">
                     <div>
                         <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">What is it?</p>
                         <p id="mf-modal-what" class="text-sm text-slate-700 leading-relaxed"></p>
@@ -1396,7 +1414,7 @@
         <div id="healthscore-panel" class="hidden w-full flex flex-col gap-5">
 
             <!-- Header -->
-            <div class="hs-header rounded-2xl px-6 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
+            <div class="hs-header rounded-2xl px-6 py-5 text-white" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%); border: 2px solid rgba(245,200,66,0.45); box-shadow: 0 4px 18px rgba(0,0,0,0.25), 0 0 0 1px rgba(245,200,66,0.15);">
                 <div class="flex items-start justify-between flex-wrap gap-3">
                     <div>
                         <h2 class="text-xl font-black flex items-center gap-2">Financial Health Score</h2>
@@ -1419,7 +1437,7 @@
                 <div class="w-full lg:w-[420px] flex-shrink-0 flex flex-col gap-4">
 
                     <!-- Income & Expenses Card -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
                         <h3 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2">💰 Income & Cash Flow</h3>
                         <div class="space-y-3">
                             <div>
@@ -1481,7 +1499,7 @@
                     </div>
 
                     <!-- Protection Card -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
                         <h3 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2">🛡️ Protection & Reserves</h3>
                         <div class="space-y-3">
                             <div>
@@ -1535,7 +1553,7 @@
                 <div class="flex-1 flex flex-col gap-4">
 
                     <!-- Score Card -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5" id="hs-result-card">
+                    <div class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5" id="hs-result-card">
                         <div id="hs-empty-state" class="flex flex-col items-center justify-center py-10 text-slate-400">
                             <div class="text-5xl mb-3 animate-bounce">📝</div>
                             <p class="text-sm font-bold text-slate-500">Fill in your details on the left</p>
@@ -1573,7 +1591,7 @@
                     <div class="flex flex-col sm:flex-row gap-4">
 
                         <!-- Pie Chart: Cash Flow -->
-                        <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                        <div class="flex-1 bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
                             <h3 class="text-sm font-black text-slate-700 mb-1">💸 Where Your Money Goes</h3>
                             <p class="text-[10px] text-slate-400 mb-3 font-medium">Monthly income allocation breakdown</p>
                             <div id="hs-pie-empty" class="flex flex-col items-center justify-center py-8 text-slate-300">
@@ -1589,7 +1607,7 @@
                         </div>
 
                         <!-- Action Plan -->
-                        <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+                        <div class="flex-1 bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5 flex flex-col">
                             <h3 class="text-sm font-black text-slate-700 mb-1">🎯 Action Plan</h3>
                             <p class="text-[10px] text-slate-400 mb-3 font-medium">Top things to fix right now</p>
                             <div id="hs-actions-empty" class="flex flex-col items-center justify-center py-8 text-slate-300 flex-1">
@@ -1634,9 +1652,9 @@
         <div id="finplan-panel" class="hidden w-full flex flex-col gap-5">
 
             <!-- Header Banner -->
-            <div class="rounded-2xl overflow-hidden shadow-sm" style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
+            <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%); border: 2px solid rgba(245,200,66,0.45); box-shadow: 0 4px 18px rgba(0,0,0,0.25), 0 0 0 1px rgba(245,200,66,0.15);">
                 <div class="px-6 py-5 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-5" style="background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:20px 20px;"></div>
+                    
                     <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
                             <h2 class="text-white font-black text-xl flex items-center gap-2">Financial Plan Builder</h2>
@@ -1662,7 +1680,7 @@
                 <div class="w-full lg:w-1/2">
 
                     <!-- STEP 1: Personal Profile -->
-                    <div id="fp-step-1" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div id="fp-step-1" class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
                         <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3" style="background:linear-gradient(90deg,#f0fdf4,#fff);">
                             <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-sm">1</div>
                             <div>
@@ -1712,7 +1730,7 @@
                     </div>
 
                     <!-- STEP 2: Goals -->
-                    <div id="fp-step-2" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div id="fp-step-2" class="hidden bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
                         <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3" style="background:linear-gradient(90deg,#eff6ff,#fff);">
                             <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-sm">2</div>
                             <div>
@@ -1794,7 +1812,7 @@
                     </div>
 
                     <!-- STEP 3: Risk Questions -->
-                    <div id="fp-step-3" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div id="fp-step-3" class="hidden bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
                         <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3" style="background:linear-gradient(90deg,#fff7ed,#fff);">
                             <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-sm">3</div>
                             <div>
@@ -1818,7 +1836,7 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                     <!-- Live Profile Snapshot (steps 1-3) -->
-                    <div id="fp-snapshot-card" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <div id="fp-snapshot-card" class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
                         <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-3">📋 Your Profile Snapshot</h3>
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between">
@@ -1859,10 +1877,10 @@
                     </div>
 
                     <!-- RESULTS CARD (Step 4 output) -->
-                    <div id="fp-results-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div id="fp-results-card" class="hidden bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
                         <!-- Profile Badge -->
                         <div id="fp-result-header" class="px-5 py-5 text-white relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-10" style="background-image:repeating-linear-gradient(-45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:16px 16px;"></div>
+                            
                             <div class="relative z-10">
                                 <div class="text-xs font-bold uppercase tracking-widest opacity-80 mb-1" id="fp-result-greeting"></div>
                                 <div class="text-2xl font-black mb-0.5" id="fp-result-profile-label"></div>
@@ -1933,7 +1951,7 @@
                     </div>
 
                     <!-- Placeholder when no results yet -->
-                    <div id="fp-results-placeholder" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 flex flex-col items-center justify-center text-center">
+                    <div id="fp-results-placeholder" class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-8 flex flex-col items-center justify-center text-center">
                         <div class="text-5xl mb-3">📐</div>
                         <p class="text-sm font-bold text-slate-600 mb-1">Your Plan Will Appear Here</p>
                         <p class="text-xs text-slate-400">Complete the 3 steps on the left to generate your personalized portfolio strategy.</p>
@@ -2579,7 +2597,7 @@
                 }
 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="invest-card border border-slate-100 rounded-xl p-3 bg-white cursor-pointer group relative overflow-hidden" style="border-left: 3px solid ${color};" onclick="openInvestModal(${idx}, ${years < 7 ? 0 : 1})">
+                    <div class="invest-card border border-[#f5c842]/30 rounded-xl p-3 bg-white cursor-pointer group relative overflow-hidden" style="border-left: 3px solid ${color};" onclick="openInvestModal(${idx}, ${years < 7 ? 0 : 1})">
                         <div class="flex items-start justify-between gap-2 mb-1.5">
                             <div class="font-bold text-sm text-slate-800">${inv.icon} ${inv.name}</div>
                             <div class="text-xs font-black shrink-0" style="color:${color}">${inv.returns}</div>
@@ -3394,24 +3412,25 @@
                 const goodStart = Math.round((c.good / total) * 100);
                 const goodEnd   = c.cap ? Math.round((c.cap / total) * 100) : 100;
                 const goodWidth = goodEnd - goodStart;
+                const alertText = c.cap ? `>₹${c.cap>=1000 ? c.cap/1000+'K' : c.cap}Cr ⚠️` : '✅ flexible';
                 return `
                 <div class="flex items-center gap-2">
-                    <span class="text-sm w-4 flex-shrink-0">${c.icon}</span>
-                    <span class="text-[10px] font-bold text-slate-600 w-20 flex-shrink-0 leading-tight">${c.label}</span>
-                    <div class="flex-1 relative h-4 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="absolute h-full rounded-full opacity-80" style="left:${goodStart}%;width:${goodWidth}%;background:${c.color};"></div>
-                        <div class="absolute inset-0 flex items-center pl-1">
-                            <span class="text-[8px] font-black text-slate-500" style="margin-left:${goodStart}%;">${c.goodLabel}</span>
+                    <span class="text-base w-5 flex-shrink-0">${c.icon}</span>
+                    <span class="text-[10px] font-bold text-slate-700 w-20 flex-shrink-0 leading-tight">${c.label}</span>
+                    <div class="flex-1 flex flex-col gap-0.5">
+                        <div class="relative h-4 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="absolute h-full rounded-full" style="left:${goodStart}%;width:${goodWidth}%;background:${c.color};"></div>
                         </div>
+                        <span style="font-size:9px;font-weight:700;color:${c.color};padding-left:${goodStart}%;">${c.goodLabel}</span>
                     </div>
-                    <span class="text-[8px] text-rose-500 font-bold w-16 flex-shrink-0 text-right leading-tight">${c.cap ? `>₹${c.cap>=1000?c.cap/1000+'K':''}Cr ⚠️` : '✅ flexible'}</span>
+                    <span style="font-size:9px;font-weight:700;color:#e11d48;width:60px;flex-shrink:0;text-align:right;line-height:1.2;">${alertText}</span>
                 </div>`;
             }).join('');
             return `
-            <div class="px-4 py-3 flex flex-col gap-2.5">
+            <div class="px-4 py-3 flex flex-col gap-3">
                 <p class="text-[11px] text-slate-500 leading-relaxed">Each bar shows the <span class="font-bold text-emerald-700">green zone</span> (ideal AUM range). Anything to the right of the green zone = too large; fund behaviour changes.</p>
-                <div class="flex flex-col gap-2">${rows}</div>
-                <div class="flex items-center gap-3 mt-1">
+                <div class="flex flex-col gap-3">${rows}</div>
+                <div class="flex items-center gap-3 mt-1 flex-wrap">
                     <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span><span class="text-[9px] text-slate-500 font-bold">Sweet spot</span></div>
                     <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-200 inline-block"></span><span class="text-[9px] text-slate-500 font-bold">Caution zone</span></div>
                     <div class="flex items-center gap-1.5"><span class="text-rose-500 text-[9px] font-black">⚠️</span><span class="text-[9px] text-slate-500 font-bold">Too large — changes mandate</span></div>
@@ -3457,7 +3476,7 @@
                     <div class="px-4 py-3 space-y-2.5">
                         <p class="text-[11px] text-slate-600 leading-relaxed">${m.description}</p>
                         <!-- Tax table -->
-                        <div class="rounded-xl overflow-hidden border border-slate-100">
+                        <div class="rounded-xl overflow-hidden border border-[#f5c842]/30">
                             <div class="grid grid-cols-3 bg-slate-100 text-[8px] font-black text-slate-500 uppercase tracking-wide">
                                 <div class="px-2 py-1.5">Fund Type</div>
                                 <div class="px-2 py-1.5 text-center">Holding</div>
@@ -3517,7 +3536,7 @@
                                 <div class="text-[9px] font-black text-blue-700 uppercase tracking-wider mb-0.5">💡 Pro Tip</div>
                                 <p class="text-[10px] text-blue-800 leading-relaxed">${m.tip}</p>
                             </div>
-                            <div class="bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5">
+                            <div class="bg-slate-50 border border-[#f5c842]/30 rounded-lg px-2.5 py-1.5">
                                 <div class="text-[9px] font-black text-slate-500 uppercase tracking-wider mb-0.5">📖 Indian Example</div>
                                 <p class="text-[10px] text-slate-700 leading-relaxed">${m.example}</p>
                             </div>
@@ -3528,7 +3547,7 @@
                 const newBadge  = isNewCard ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 uppercase tracking-wide">Must Know</span>` : '';
 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="bg-white border border-[#f5c842]/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div class="px-4 pt-4 pb-3 border-b border-slate-100" style="background: linear-gradient(135deg, ${m.goodColor}0d 0%, ${m.goodColor}05 100%);">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
                                 <span class="text-xl">${m.icon}</span>
@@ -3555,7 +3574,7 @@
             checklist.innerHTML = '';
             MF_CHECKLIST.forEach((item, i) => {
                 checklist.insertAdjacentHTML('beforeend', `
-                    <div class="flex flex-col gap-1.5 bg-slate-50 border border-slate-100 rounded-xl p-3 h-full">
+                    <div class="flex flex-col gap-1.5 bg-slate-50 border border-[#f5c842]/30 rounded-xl p-3 h-full">
                         <div class="flex items-start gap-2">
                             <span class="text-base flex-shrink-0 mt-0.5">${item.icon}</span>
                             <span class="text-xs font-black text-slate-800 leading-snug">${item.question}</span>
@@ -3601,7 +3620,7 @@
                     dots += `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d <= fund.risk ? riskColor : '#e2e8f0'};flex-shrink:0;"></span>`;
                 }
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="mf-tile flip-card bg-white border border-slate-100 rounded-2xl relative"
+                    <div class="mf-tile flip-card bg-white border border-[#f5c842]/30 rounded-2xl relative"
                          data-category="${fund.category}" data-id="${fund.id}"
                          onclick="toggleMFFlip(this, ${idx})" style="border-top: 3px solid ${c.color}; min-height:200px;">
                       <div class="flip-card-inner rounded-2xl">
@@ -3714,7 +3733,16 @@
             document.getElementById('mf-modal-example').innerText = fund.example;
             const modal = document.getElementById('mf-modal');
             modal.classList.remove('hidden');
+            const nav = document.querySelector('nav');
+            const navH = nav ? nav.offsetHeight : 0;
             const card = modal.querySelector('.animate-modal');
+            card.style.maxHeight = `calc(100vh - ${navH + 16}px)`;
+            // On desktop (sm+), centre vertically below the nav
+            if (window.innerWidth >= 640) {
+                modal.style.paddingTop = (navH + 8) + 'px';
+            } else {
+                modal.style.paddingTop = '0';
+            }
             card.style.animation = 'none';
             requestAnimationFrame(() => { card.style.animation = ''; });
         }
@@ -4961,7 +4989,7 @@
                 redeemSection.style.display = '';
                 var liqLabel = { instant:'🟢 Instant', high:'🟡 1–3 days', medium:'🟠 3–7 days', low:'🔴 Lock-in applies' };
                 redeemCards.innerHTML = redeemPlan.map(function(g) {
-                    return '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                    return '<div class="rounded-2xl border border-[#f5c842]/30 overflow-hidden">' +
                         '<div class="flex items-center justify-between px-4 py-3" style="background:' + g.color + '0c;">' +
                             '<div class="flex items-center gap-2">' +
                                 '<span class="text-lg">' + g.emoji + '</span>' +
@@ -5391,7 +5419,7 @@
         .fp-goal-tile {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 3px; padding: 10px 4px;
-            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            background: #f8fafc; border: 1.5px solid rgba(245,200,66,0.35);
             border-radius: 12px; cursor: pointer;
             transition: all 0.15s; position: relative;
         }
@@ -5406,7 +5434,7 @@
         }
         .fp-goal-tile-active .fp-goal-tile-check { display: flex; }
         .fp-goal-card {
-            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            background: #f8fafc; border: 1.5px solid rgba(245,200,66,0.35);
             border-radius: 14px; overflow: hidden;
         }
         .fp-goal-card-header {
@@ -5426,14 +5454,14 @@
         .fp-mini-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.1); }
         .fp-mini-label { font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
         .fp-horizon-btn {
-            flex: 1; padding: 10px 4px; background: #f8fafc; border: 1.5px solid #e2e8f0;
+            flex: 1; padding: 10px 4px; background: #f8fafc; border: 1.5px solid rgba(245,200,66,0.35);
             border-radius: 10px; font-size: 0.8rem; font-weight: 700; color: #64748b;
             cursor: pointer; text-align: center; transition: all 0.15s;
         }
         .fp-horizon-btn:hover { border-color: #0d9488; color: #0d9488; background: #f0fdfa; }
         .fp-horizon-active { border-color: #0d9488 !important; background: #f0fdfa !important; color: #0d9488 !important; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
         .fp-existing-btn {
-            padding: 8px 6px; background: #f8fafc; border: 1.5px solid #e2e8f0;
+            padding: 8px 6px; background: #f8fafc; border: 1.5px solid rgba(245,200,66,0.35);
             border-radius: 10px; font-size: 0.7rem; font-weight: 700; color: #64748b;
             cursor: pointer; transition: all 0.15s; text-align: center;
         }
