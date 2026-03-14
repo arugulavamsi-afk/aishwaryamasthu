@@ -18,19 +18,19 @@
             border: none;
         }
         .tab-inactive {
-            color: #64748b;
+            color: #1a5276;
             font-weight: 500;
-            background: #f1f5f9;
+            background: linear-gradient(135deg, rgba(26,82,118,0.10) 0%, rgba(13,148,136,0.10) 100%);
             border-radius: 999px;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid rgba(26,82,118,0.22);
             transition: all 0.18s ease;
         }
         .tab-inactive:hover {
-            background: #e2e8f0;
-            color: #334155;
-            border-color: #cbd5e1;
+            background: linear-gradient(135deg, rgba(26,82,118,0.20) 0%, rgba(13,148,136,0.20) 100%);
+            color: #0e6655;
+            border-color: rgba(13,148,136,0.45);
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 8px rgba(13,148,136,0.15);
         }
         .num-word { font-size: 0.65rem; color: #64748b; font-weight: 600; text-transform: capitalize; margin-top: 2px; }
 
@@ -518,13 +518,13 @@
 
             <!-- Growth Calculator Header -->
             <div id="growth-panel-header" class="px-5 py-4 text-white flex-shrink-0" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
-                <h2 class="font-black text-lg flex items-center gap-2">📈 Growth Calculator</h2>
+                <h2 class="font-black text-lg flex items-center gap-2">Growth Calculator</h2>
                 <p class="text-blue-200 text-xs mt-0.5">Project how your money grows over time with compound interest.</p>
             </div>
 
             <!-- Goal Planner Header (hidden by default) -->
             <div id="goal-panel-header" class="hidden px-5 py-4 text-white flex-shrink-0" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
-                <h2 class="font-black text-lg flex items-center gap-2">🎯 Goal Planner</h2>
+                <h2 class="font-black text-lg flex items-center gap-2">Goal Planner</h2>
                 <p class="text-blue-200 text-xs mt-0.5">Calculate how much to invest monthly to reach your financial goals.</p>
             </div>
 
@@ -532,13 +532,13 @@
             <div class="space-y-4 flex-1 overflow-y-auto">
                 <!-- Goal Type selector (only visible in Goal mode) -->
                 <div id="goal-type-container" class="hidden">
-                    <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">🎯 What's Your Goal?</label>
+                    <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1.5">What's Your Goal?</label>
                     <select id="goal-type" onchange="onGoalTypeChange()" class="w-full px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold text-sm outline-none text-emerald-900">
-                        <option value="vehicle">🚗 Buy a Vehicle</option>
-                        <option value="marriage">💍 Marriage</option>
-                        <option value="education">🎓 Child's Education</option>
-                        <option value="retirement">🏖️ Retirement</option>
-                        <option value="custom">✏️ Custom Goal</option>
+                        <option value="vehicle">Buy a Vehicle</option>
+                        <option value="marriage">Marriage</option>
+                        <option value="education">Child's Education</option>
+                        <option value="retirement">Retirement</option>
+                        <option value="custom">Write your goal</option>
                     </select>
                     <div id="custom-goal-input" class="hidden mt-2">
                         <input type="text" id="custom-goal-text" placeholder="Describe your goal..." class="w-full px-3 py-2.5 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm outline-none font-medium text-slate-700" oninput="calculate()">
@@ -692,7 +692,7 @@
                 <div id="goal-results" class="hidden">
                     <div class="flex items-center gap-2 mb-3 flex-wrap">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest" id="goal-subtitle">Required Investment to Reach Target</h3>
-                        <span class="goal-badge" id="goal-type-badge">🎯 Goal</span>
+                        <span class="goal-badge" id="goal-type-badge">Goal</span>
                     </div>
                     <div class="flex flex-wrap gap-3" id="goal-cards-container"></div>
 
@@ -917,7 +917,7 @@
             <div class="rounded-2xl px-6 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #1e3a5f 0%, #1a5276 40%, #0e6655 100%);">
                 <div class="flex items-start justify-between flex-wrap gap-3">
                     <div>
-                        <h2 class="text-xl font-black flex items-center gap-2">📦 Mutual Fund Kit</h2>
+                        <h2 class="text-xl font-black flex items-center gap-2">Mutual Fund Kit</h2>
                         <p class="text-blue-200 text-xs mt-1 max-w-xl">Tap any fund type to learn what it is, when to use it, and see a real-world Indian example. Build your financial vocabulary one card at a time.</p>
                     </div>
                     <div class="flex gap-2 flex-wrap" id="mf-filter-btns">
@@ -961,7 +961,7 @@
                             <div class="text-[11px] text-slate-400 font-medium">Before investing, run any fund through these 6 questions</div>
                         </div>
                     </div>
-                    <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3" id="mf-checklist"></div>
+                    <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch" id="mf-checklist"></div>
                 </div>
 
                 <!-- Benchmark Tip -->
@@ -1618,7 +1618,7 @@
                     <div class="absolute inset-0 opacity-5" style="background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:20px 20px;"></div>
                     <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
-                            <h2 class="text-white font-black text-xl flex items-center gap-2">🧭 Financial Plan Builder</h2>
+                            <h2 class="text-white font-black text-xl flex items-center gap-2">Financial Plan Builder</h2>
                             <p class="text-slate-300 text-xs mt-1">Answer a few questions. Get a personalised portfolio allocation built for you.</p>
                         </div>
                         <div id="fp-step-badge" class="flex items-center gap-2">
@@ -3534,19 +3534,19 @@
             checklist.innerHTML = '';
             MF_CHECKLIST.forEach((item, i) => {
                 checklist.insertAdjacentHTML('beforeend', `
-                    <div class="flex flex-col gap-1.5 bg-slate-50 border border-slate-100 rounded-xl p-3">
-                        <div class="flex items-center gap-2">
-                            <span class="text-base">${item.icon}</span>
-                            <span class="text-xs font-black text-slate-800">${item.question}</span>
+                    <div class="flex flex-col gap-1.5 bg-slate-50 border border-slate-100 rounded-xl p-3 h-full">
+                        <div class="flex items-start gap-2">
+                            <span class="text-base flex-shrink-0 mt-0.5">${item.icon}</span>
+                            <span class="text-xs font-black text-slate-800 leading-snug">${item.question}</span>
                         </div>
-                        <div class="flex flex-col gap-1 pl-1">
+                        <div class="flex flex-col gap-1 pl-1 flex-1 justify-end">
                             <div class="flex items-start gap-1.5">
-                                <span class="text-[10px] font-black text-green-600 mt-0.5 flex-shrink-0">✓ YES:</span>
-                                <span class="text-[10px] text-green-700">${item.pass}</span>
+                                <span class="text-[10px] font-black text-green-600 flex-shrink-0">✓ YES:</span>
+                                <span class="text-[10px] text-green-700 leading-snug">${item.pass}</span>
                             </div>
                             <div class="flex items-start gap-1.5">
-                                <span class="text-[10px] font-black text-red-500 mt-0.5 flex-shrink-0">✗ NO:</span>
-                                <span class="text-[10px] text-red-700">${item.fail}</span>
+                                <span class="text-[10px] font-black text-red-500 flex-shrink-0">✗ NO:</span>
+                                <span class="text-[10px] text-red-700 leading-snug">${item.fail}</span>
                             </div>
                         </div>
                     </div>
@@ -4413,6 +4413,13 @@
             var raw = (input.value || '').replace(/,/g, '').replace(/[^\d]/g, '');
             var num = parseInt(raw) || 0;
             fpState.existingAmounts[key] = num;
+            // Re-format with Indian comma separators while preserving cursor
+            var formatted = raw.length > 0 ? Number(raw).toLocaleString('en-IN') : '';
+            var cursorFromEnd = input.value.length - input.selectionEnd;
+            input.value = formatted;
+            var newCursor = formatted.length - cursorFromEnd;
+            if (newCursor < 0) newCursor = 0;
+            input.setSelectionRange(newCursor, newCursor);
             fpLiveUpdate();
         }
 
