@@ -795,6 +795,21 @@
             document.getElementById('welcome-greeting').textContent =
                 `Welcome back, ${session.fname}! 👋`;
             welcomePanel.style.display = 'flex';
+
+            // Show user bar immediately (no need to wait for animation)
+            const bar   = document.getElementById('user-bar');
+            const greet = document.getElementById('nav-user-greeting');
+            if (bar && greet) {
+                greet.textContent = '👋 ' + session.fname + ' ' + session.lname;
+                bar.classList.remove('hidden');
+                bar.style.display = 'flex';
+            }
+
+            // Restore saved data — delay 150ms so the main script block's
+            // initialisation code (calculate, fpGoStep, etc.) has fully run first.
+            setTimeout(function() {
+                if (typeof loadUserData === 'function') loadUserData();
+            }, 150);
         } else {
             // Not logged in — show auth form
             authPanel.style.display = 'block';
@@ -5588,6 +5603,8 @@
 
         // ==================== PER-USER PERSISTENT STORAGE ====================
 
+        let _restoring = false; // guard: prevent save-during-restore
+
         function getUserDataKey() {
             const s = getSession();
             return s ? 'am_data_' + s.email : null;
@@ -5595,6 +5612,7 @@
 
         /** Collect state from all calculators and save to localStorage */
         function saveUserData() {
+            if (_restoring) return; // never overwrite during a restore pass
             const key = getUserDataKey();
             if (!key) return;
 
@@ -5655,88 +5673,101 @@
             if (!key) return;
             let data;
             try { data = JSON.parse(localStorage.getItem(key) || 'null'); }
-            catch { return; }
+            catch(e) { return; }
             if (!data) return;
 
-            // --- Restore Growth / Goal tab state ---
-            if (data.growth) Object.assign(tabState.growth, data.growth);
-            if (data.goal)   Object.assign(tabState.goal,   data.goal);
+            _restoring = true;
+            try {
+                // --- Restore Growth / Goal tab state ---
+                try {
+                    if (data.growth) Object.assign(tabState.growth, data.growth);
+                    if (data.goal)   Object.assign(tabState.goal,   data.goal);
+                    restoreTabState(currentMode === 'goal' ? 'goal' : 'growth');
+                    calculate();
+                } catch(e) { console.warn('loadUserData: growth/goal restore failed', e); }
 
-            // Trigger UI restore for active tab
-            restoreTabState(currentMode === 'goal' ? 'goal' : 'growth');
-            calculate();
-
-            // --- Restore Emergency Fund ---
-            if (data.emergency) {
-                const ef = data.emergency;
-                if (ef.months) setMonths(ef.months);
-                if (ef.fixedExpenses) {
-                    document.querySelectorAll('#expense-rows .expense-row').forEach(row => {
-                        const cat = row.getAttribute('data-category');
-                        const inp = row.querySelector('.ef-input');
-                        if (!inp || !cat || ef.fixedExpenses[cat] === undefined) return;
-                        const val = parseInt(ef.fixedExpenses[cat], 10);
-                        if (val > 0) {
-                            inp.value = new Intl.NumberFormat('en-IN').format(val);
-                            inp.classList.remove('text-slate-400');
+                // --- Restore Emergency Fund ---
+                try {
+                    if (data.emergency) {
+                        const ef = data.emergency;
+                        if (ef.months) setMonths(parseInt(ef.months, 10) || 6);
+                        if (ef.fixedExpenses) {
+                            document.querySelectorAll('#expense-rows .expense-row').forEach(function(row) {
+                                const cat = row.getAttribute('data-category');
+                                const inp = row.querySelector('.ef-input');
+                                if (!inp || !cat || ef.fixedExpenses[cat] === undefined) return;
+                                const val = parseInt(ef.fixedExpenses[cat], 10);
+                                if (val > 0) {
+                                    inp.value = new Intl.NumberFormat('en-IN').format(val);
+                                    inp.classList.remove('text-slate-400');
+                                }
+                            });
                         }
-                    });
-                }
-                if (ef.customRows && ef.customRows.length > 0) {
-                    ef.customRows.forEach(r => {
-                        addCustomExpense();
-                        const rows = document.querySelectorAll('#custom-expense-rows .expense-row');
-                        const lastRow = rows[rows.length - 1];
-                        if (!lastRow) return;
-                        const nameInp = lastRow.querySelector('input[type="text"]');
-                        const valInp  = lastRow.querySelector('.ef-input');
-                        if (nameInp) {
-                            nameInp.value = r.category;
-                            lastRow.setAttribute('data-category', r.category);
+                        if (ef.customRows && ef.customRows.length > 0) {
+                            ef.customRows.forEach(function(r) {
+                                addCustomExpense();
+                                const rows = document.querySelectorAll('#custom-expense-rows .expense-row');
+                                const lastRow = rows[rows.length - 1];
+                                if (!lastRow) return;
+                                const nameInp = lastRow.querySelector('input[type="text"]');
+                                const valInp  = lastRow.querySelector('.ef-input');
+                                if (nameInp) {
+                                    nameInp.value = r.category;
+                                    lastRow.setAttribute('data-category', r.category);
+                                }
+                                const val = parseInt(r.value, 10);
+                                if (valInp && val > 0) {
+                                    valInp.value = new Intl.NumberFormat('en-IN').format(val);
+                                    valInp.classList.remove('text-slate-400');
+                                }
+                            });
                         }
-                        const val = parseInt(r.value, 10);
-                        if (valInp && val > 0) {
-                            valInp.value = new Intl.NumberFormat('en-IN').format(val);
-                            valInp.classList.remove('text-slate-400');
-                        }
-                    });
-                }
-                calcEmergency();
-            }
+                        calcEmergency();
+                    }
+                } catch(e) { console.warn('loadUserData: emergency fund restore failed', e); }
 
-            // --- Restore Health Score ---
-            if (data.healthScore) {
-                Object.entries(data.healthScore).forEach(([id, val]) => {
-                    const el = document.getElementById(id);
-                    if (!el || val === '' || val === undefined) return;
-                    el.value = val;
-                    if (val && val !== '0') el.classList.remove('text-slate-400');
-                });
-                calcHealthScore();
-            }
+                // --- Restore Health Score ---
+                try {
+                    if (data.healthScore) {
+                        Object.entries(data.healthScore).forEach(function(entry) {
+                            var id = entry[0], val = entry[1];
+                            const el = document.getElementById(id);
+                            if (!el || val === '' || val === undefined || val === null) return;
+                            el.value = val;
+                            if (val && val !== '0') el.classList.remove('text-slate-400');
+                        });
+                        calcHealthScore();
+                    }
+                } catch(e) { console.warn('loadUserData: health score restore failed', e); }
 
-            // --- Restore Financial Plan ---
-            if (data.finplan) {
-                const fp = data.finplan;
-                Object.assign(fpState, {
-                    step:            1,
-                    goals:           fp.goals           || [],
-                    existing:        fp.existing         || [],
-                    existingAmounts: fp.existingAmounts  || {},
-                    existingCustom:  fp.existingCustom   || '',
-                    answers:         fp.answers          || {},
-                    planGenerated:   fp.planGenerated    || false
-                });
-                ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el && fp[id]) el.value = fp[id];
-                });
-                fpGoStep(1);
-                fpLiveUpdate();
+                // --- Restore Financial Plan ---
+                try {
+                    if (data.finplan) {
+                        const fp = data.finplan;
+                        Object.assign(fpState, {
+                            step:            1,
+                            goals:           fp.goals           || [],
+                            existing:        fp.existing         || [],
+                            existingAmounts: fp.existingAmounts  || {},
+                            existingCustom:  fp.existingCustom   || '',
+                            answers:         fp.answers          || {},
+                            planGenerated:   fp.planGenerated    || false
+                        });
+                        ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id) {
+                            const el = document.getElementById(id);
+                            if (el && fp[id]) el.value = fp[id];
+                        });
+                        fpGoStep(1);
+                        fpLiveUpdate();
+                    }
+                } catch(e) { console.warn('loadUserData: finplan restore failed', e); }
+
+            } finally {
+                _restoring = false;
             }
         }
 
-        // ==================== END PER-USER PERSISTENT STORAGE ====================
+                // ==================== END PER-USER PERSISTENT STORAGE ====================
 
     </script>
     <!-- Investment Detail Modal -->
