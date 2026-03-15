@@ -805,11 +805,10 @@
                 bar.style.display = 'flex';
             }
 
-            // Restore saved data — delay 150ms so the main script block's
-            // initialisation code (calculate, fpGoStep, etc.) has fully run first.
-            setTimeout(function() {
-                if (typeof loadUserData === 'function') loadUserData();
-            }, 150);
+            // Restore saved data on refresh.
+            // loadUserData is defined in this same script block so it's always available.
+            // window.onload ensures the second script block (calculator functions) is ready.
+            window.addEventListener('load', function() { loadUserData(); }, { once: true });
         } else {
             // Not logged in — show auth form
             authPanel.style.display = 'block';
@@ -990,6 +989,171 @@
                 : '0 1px 3px rgba(0,0,0,0.06)';
         }
     }, { passive: true });
+
+    // ============================================================
+    //  PER-USER PERSISTENT STORAGE
+    //  Defined here (first script block) so DOMContentLoaded and
+    //  dismissSplash can call loadUserData() reliably.
+    // ============================================================
+
+    let _restoring = false; // guard: prevent save-during-restore
+
+    function getUserDataKey() {
+        const s = getSession();
+        return s ? 'am_data_' + s.email : null;
+    }
+
+    function saveUserData() {
+        if (_restoring) return;
+        const key = getUserDataKey();
+        if (!key) return;
+        // tabState / efMonths / fpState are in the second script block —
+        // they exist by the time any user interaction triggers saveUserData.
+        try {
+            const fixedExpenses = {};
+            document.querySelectorAll('#expense-rows .expense-row').forEach(function(row) {
+                const cat = row.getAttribute('data-category') || 'Other';
+                const inp = row.querySelector('.ef-input');
+                fixedExpenses[cat] = inp ? inp.value.replace(/,/g,'') : '0';
+            });
+            const customRows = [];
+            document.querySelectorAll('#custom-expense-rows .expense-row').forEach(function(row) {
+                const cat = row.getAttribute('data-category') || 'Custom';
+                const inp = row.querySelector('.ef-input');
+                customRows.push({ category: cat, value: inp ? inp.value.replace(/,/g,'') : '0' });
+            });
+            const hsFields = ['hs-income','hs-emi','hs-expenses','hs-savings','hs-health-ins','hs-term-ins','hs-efund','hs-age'];
+            const healthScore = {};
+            hsFields.forEach(function(id) {
+                const el = document.getElementById(id);
+                healthScore[id] = el ? el.value : '';
+            });
+            const fpSaveObj = window._fpState ? {
+                step: window._fpState.step,
+                goals: window._fpState.goals,
+                existing: window._fpState.existing,
+                existingAmounts: window._fpState.existingAmounts,
+                existingCustom: window._fpState.existingCustom,
+                answers: window._fpState.answers,
+                planGenerated: window._fpState.planGenerated
+            } : {};
+            ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id) {
+                const el = document.getElementById(id);
+                fpSaveObj[id] = el ? el.value : '';
+            });
+            const data = {
+                growth:    window._tabState ? Object.assign({}, window._tabState.growth) : {},
+                goal:      window._tabState ? Object.assign({}, window._tabState.goal)   : {},
+                emergency: { months: window._efMonths || 6, fixedExpenses: fixedExpenses, customRows: customRows },
+                healthScore: healthScore,
+                finplan:   fpSaveObj
+            };
+            localStorage.setItem(key, JSON.stringify(data));
+        } catch(e) { console.warn('saveUserData failed:', e); }
+    }
+
+    function loadUserData() {
+        const key = getUserDataKey();
+        if (!key) return;
+        let data;
+        try { data = JSON.parse(localStorage.getItem(key) || 'null'); }
+        catch(e) { return; }
+        if (!data) return;
+
+        _restoring = true;
+        try {
+            // Growth / Goal
+            try {
+                if (data.growth && window._tabState) Object.assign(window._tabState.growth, data.growth);
+                if (data.goal   && window._tabState) Object.assign(window._tabState.goal,   data.goal);
+                if (typeof restoreTabState === 'function') {
+                    restoreTabState(window._currentMode === 'goal' ? 'goal' : 'growth');
+                }
+                if (typeof calculate === 'function') calculate();
+            } catch(e) { console.warn('loadUserData growth/goal:', e); }
+
+            // Emergency Fund
+            try {
+                if (data.emergency) {
+                    const ef = data.emergency;
+                    if (typeof setMonths === 'function' && ef.months) setMonths(parseInt(ef.months, 10) || 6);
+                    if (ef.fixedExpenses) {
+                        document.querySelectorAll('#expense-rows .expense-row').forEach(function(row) {
+                            const cat = row.getAttribute('data-category');
+                            const inp = row.querySelector('.ef-input');
+                            if (!inp || !cat || ef.fixedExpenses[cat] === undefined) return;
+                            const val = parseInt(ef.fixedExpenses[cat], 10);
+                            if (val > 0) {
+                                inp.value = new Intl.NumberFormat('en-IN').format(val);
+                                inp.classList.remove('text-slate-400');
+                            }
+                        });
+                    }
+                    if (ef.customRows && ef.customRows.length > 0 && typeof addCustomExpense === 'function') {
+                        ef.customRows.forEach(function(r) {
+                            addCustomExpense();
+                            const rows = document.querySelectorAll('#custom-expense-rows .expense-row');
+                            const lastRow = rows[rows.length - 1];
+                            if (!lastRow) return;
+                            const nameInp = lastRow.querySelector('input[type="text"]');
+                            const valInp  = lastRow.querySelector('.ef-input');
+                            if (nameInp) { nameInp.value = r.category; lastRow.setAttribute('data-category', r.category); }
+                            const val = parseInt(r.value, 10);
+                            if (valInp && val > 0) {
+                                valInp.value = new Intl.NumberFormat('en-IN').format(val);
+                                valInp.classList.remove('text-slate-400');
+                            }
+                        });
+                    }
+                    if (typeof calcEmergency === 'function') calcEmergency();
+                }
+            } catch(e) { console.warn('loadUserData emergency:', e); }
+
+            // Health Score
+            try {
+                if (data.healthScore) {
+                    Object.entries(data.healthScore).forEach(function(entry) {
+                        const id = entry[0], val = entry[1];
+                        const el = document.getElementById(id);
+                        if (!el || val === '' || val === undefined || val === null) return;
+                        el.value = val;
+                        if (val && val !== '0') el.classList.remove('text-slate-400');
+                    });
+                    if (typeof calcHealthScore === 'function') calcHealthScore();
+                }
+            } catch(e) { console.warn('loadUserData health score:', e); }
+
+            // Financial Plan
+            try {
+                if (data.finplan && window._fpState) {
+                    const fp = data.finplan;
+                    Object.assign(window._fpState, {
+                        step: 1,
+                        goals:           fp.goals           || [],
+                        existing:        fp.existing        || [],
+                        existingAmounts: fp.existingAmounts || {},
+                        existingCustom:  fp.existingCustom  || '',
+                        answers:         fp.answers         || {},
+                        planGenerated:   fp.planGenerated   || false
+                    });
+                    ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id) {
+                        const el = document.getElementById(id);
+                        if (el && fp[id]) el.value = fp[id];
+                    });
+                    if (typeof fpGoStep === 'function') fpGoStep(1);
+                    if (typeof fpLiveUpdate === 'function') fpLiveUpdate();
+                }
+            } catch(e) { console.warn('loadUserData finplan:', e); }
+
+        } finally {
+            _restoring = false;
+        }
+    }
+
+    // ============================================================
+    //  END PER-USER PERSISTENT STORAGE
+    // ============================================================
+
     </script>
 
     <!-- NAV -->
@@ -2476,6 +2640,11 @@
             goal:   { invType: 'lumpsum', amount: '', years: '', goalType: 'vehicle', customGoalText: '', customRate: '' }
         };
 
+        // Expose to window so the first-script persistence functions can access them
+        window._tabState    = tabState;
+        Object.defineProperty(window, '_currentMode', { get: function(){ return currentMode; } });
+
+
         function saveTabState(mode) {
             if (mode === 'growth' || mode === 'inflation') {
                 tabState.growth.invType  = document.getElementById('inv-type').value;
@@ -3313,6 +3482,7 @@
 
         // ============= EMERGENCY FUND FUNCTIONS =============
         let efMonths = 6;
+        Object.defineProperty(window, '_efMonths', { get: function(){ return efMonths; } });
         let efChartInstance = null;
         let customExpenseCount = 0;
 
@@ -4638,6 +4808,7 @@
             answers: {},
             planGenerated: false
         };
+        window._fpState = fpState;
         let fpDonutChart = null;
 
         const FP_GOAL_META = {
@@ -5600,174 +5771,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') document.getElementById('invest-modal').classList.add('hidden');
         });
-
-        // ==================== PER-USER PERSISTENT STORAGE ====================
-
-        let _restoring = false; // guard: prevent save-during-restore
-
-        function getUserDataKey() {
-            const s = getSession();
-            return s ? 'am_data_' + s.email : null;
-        }
-
-        /** Collect state from all calculators and save to localStorage */
-        function saveUserData() {
-            if (_restoring) return; // never overwrite during a restore pass
-            const key = getUserDataKey();
-            if (!key) return;
-
-            // --- Collect Emergency Fund fixed expense values ---
-            const fixedExpenses = {};
-            document.querySelectorAll('#expense-rows .expense-row').forEach(row => {
-                const cat = row.getAttribute('data-category') || 'Other';
-                const inp = row.querySelector('.ef-input');
-                fixedExpenses[cat] = inp ? inp.value.replace(/,/g,'') : '0';
-            });
-
-            // --- Collect Emergency Fund custom rows ---
-            const customRows = [];
-            document.querySelectorAll('#custom-expense-rows .expense-row').forEach(row => {
-                const cat = row.getAttribute('data-category') || 'Custom';
-                const inp = row.querySelector('.ef-input');
-                customRows.push({ category: cat, value: inp ? inp.value.replace(/,/g,'') : '0' });
-            });
-
-            // --- Collect Health Score inputs ---
-            const hsFields = ['hs-income','hs-emi','hs-expenses','hs-savings','hs-health-ins','hs-term-ins','hs-efund','hs-age'];
-            const healthScore = {};
-            hsFields.forEach(id => {
-                const el = document.getElementById(id);
-                healthScore[id] = el ? el.value : '';
-            });
-
-            // --- Collect Financial Plan state ---
-            const fpSave = {
-                step: fpState.step,
-                goals: fpState.goals,
-                existing: fpState.existing,
-                existingAmounts: fpState.existingAmounts,
-                existingCustom: fpState.existingCustom,
-                answers: fpState.answers,
-                planGenerated: fpState.planGenerated
-            };
-            ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(id => {
-                const el = document.getElementById(id);
-                fpSave[id] = el ? el.value : '';
-            });
-
-            const data = {
-                growth:      { ...tabState.growth },
-                goal:        { ...tabState.goal },
-                emergency:   { months: efMonths, fixedExpenses, customRows },
-                healthScore,
-                finplan:     fpSave
-            };
-
-            try { localStorage.setItem(key, JSON.stringify(data)); }
-            catch(e) { console.warn('saveUserData failed:', e); }
-        }
-
-        /** Restore all calculator state for the logged-in user */
-        function loadUserData() {
-            const key = getUserDataKey();
-            if (!key) return;
-            let data;
-            try { data = JSON.parse(localStorage.getItem(key) || 'null'); }
-            catch(e) { return; }
-            if (!data) return;
-
-            _restoring = true;
-            try {
-                // --- Restore Growth / Goal tab state ---
-                try {
-                    if (data.growth) Object.assign(tabState.growth, data.growth);
-                    if (data.goal)   Object.assign(tabState.goal,   data.goal);
-                    restoreTabState(currentMode === 'goal' ? 'goal' : 'growth');
-                    calculate();
-                } catch(e) { console.warn('loadUserData: growth/goal restore failed', e); }
-
-                // --- Restore Emergency Fund ---
-                try {
-                    if (data.emergency) {
-                        const ef = data.emergency;
-                        if (ef.months) setMonths(parseInt(ef.months, 10) || 6);
-                        if (ef.fixedExpenses) {
-                            document.querySelectorAll('#expense-rows .expense-row').forEach(function(row) {
-                                const cat = row.getAttribute('data-category');
-                                const inp = row.querySelector('.ef-input');
-                                if (!inp || !cat || ef.fixedExpenses[cat] === undefined) return;
-                                const val = parseInt(ef.fixedExpenses[cat], 10);
-                                if (val > 0) {
-                                    inp.value = new Intl.NumberFormat('en-IN').format(val);
-                                    inp.classList.remove('text-slate-400');
-                                }
-                            });
-                        }
-                        if (ef.customRows && ef.customRows.length > 0) {
-                            ef.customRows.forEach(function(r) {
-                                addCustomExpense();
-                                const rows = document.querySelectorAll('#custom-expense-rows .expense-row');
-                                const lastRow = rows[rows.length - 1];
-                                if (!lastRow) return;
-                                const nameInp = lastRow.querySelector('input[type="text"]');
-                                const valInp  = lastRow.querySelector('.ef-input');
-                                if (nameInp) {
-                                    nameInp.value = r.category;
-                                    lastRow.setAttribute('data-category', r.category);
-                                }
-                                const val = parseInt(r.value, 10);
-                                if (valInp && val > 0) {
-                                    valInp.value = new Intl.NumberFormat('en-IN').format(val);
-                                    valInp.classList.remove('text-slate-400');
-                                }
-                            });
-                        }
-                        calcEmergency();
-                    }
-                } catch(e) { console.warn('loadUserData: emergency fund restore failed', e); }
-
-                // --- Restore Health Score ---
-                try {
-                    if (data.healthScore) {
-                        Object.entries(data.healthScore).forEach(function(entry) {
-                            var id = entry[0], val = entry[1];
-                            const el = document.getElementById(id);
-                            if (!el || val === '' || val === undefined || val === null) return;
-                            el.value = val;
-                            if (val && val !== '0') el.classList.remove('text-slate-400');
-                        });
-                        calcHealthScore();
-                    }
-                } catch(e) { console.warn('loadUserData: health score restore failed', e); }
-
-                // --- Restore Financial Plan ---
-                try {
-                    if (data.finplan) {
-                        const fp = data.finplan;
-                        Object.assign(fpState, {
-                            step:            1,
-                            goals:           fp.goals           || [],
-                            existing:        fp.existing         || [],
-                            existingAmounts: fp.existingAmounts  || {},
-                            existingCustom:  fp.existingCustom   || '',
-                            answers:         fp.answers          || {},
-                            planGenerated:   fp.planGenerated    || false
-                        });
-                        ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id) {
-                            const el = document.getElementById(id);
-                            if (el && fp[id]) el.value = fp[id];
-                        });
-                        fpGoStep(1);
-                        fpLiveUpdate();
-                    }
-                } catch(e) { console.warn('loadUserData: finplan restore failed', e); }
-
-            } finally {
-                _restoring = false;
-            }
-        }
-
-                // ==================== END PER-USER PERSISTENT STORAGE ====================
 
     </script>
     <!-- Investment Detail Modal -->
