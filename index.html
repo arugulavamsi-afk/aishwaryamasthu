@@ -929,7 +929,28 @@
         const splash = document.getElementById('splash');
         if (!splash || splash.classList.contains('fade-out')) return;
         splash.classList.add('fade-out');
-        splash.addEventListener('animationend', () => splash.remove(), { once: true });
+        splash.addEventListener('animationend', () => {
+            splash.remove();
+            // Show user bar in nav
+            const session = getSession();
+            const bar = document.getElementById('user-bar');
+            const greet = document.getElementById('nav-user-greeting');
+            if (session && bar && greet) {
+                greet.textContent = '👋 ' + session.fname + ' ' + session.lname;
+                bar.classList.remove('hidden');
+                bar.style.display = 'flex';
+            }
+            // Restore this user's saved data after splash is gone
+            if (typeof loadUserData === 'function') loadUserData();
+        }, { once: true });
+    }
+
+    /** Wipe all saved calculator data for the current user (with confirmation) */
+    function confirmResetAllData() {
+        if (!confirm('Reset all your saved numbers?\n\nThis clears Growth, Goal, Emergency Fund, Health Score, and Financial Plan data. Your login stays safe.')) return;
+        const key = typeof getUserDataKey === 'function' ? getUserDataKey() : null;
+        if (key) localStorage.removeItem(key);
+        location.reload();
     }
 
     // Allow Enter key to submit forms
@@ -984,6 +1005,26 @@
                 <span class="brand-tagline text-sm" style="color: rgba(232,213,163,0.75);">GROW AND MAKE INDIA GROW</span>
             </div>
         </div>
+
+        <!-- ===== USER BAR (shown when logged in) ===== -->
+        <div id="user-bar" class="hidden flex-none flex items-center justify-between px-3 py-2 rounded-xl"
+            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(245,200,66,0.2);">
+            <span id="nav-user-greeting" class="text-xs font-semibold" style="color:rgba(232,213,163,0.75);"></span>
+            <div class="flex items-center gap-2">
+                <button onclick="confirmResetAllData()"
+                    class="text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all"
+                    style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:rgba(248,113,113,0.85);"
+                    title="Clear all your saved numbers">
+                    🗑 Reset My Data
+                </button>
+                <button onclick="doLogout()"
+                    class="text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all"
+                    style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:rgba(232,213,163,0.5);">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
         <!-- Mobile Dropdown (sm and below only) -->
         <div class="sm:hidden relative" id="mobile-tab-dropdown">
             <button onclick="toggleMobileDropdown()" id="mobile-tab-btn"
@@ -2531,6 +2572,7 @@
             infEl.value = '0'; infEl.classList.add('text-slate-400'); infEl.classList.remove('text-rose-900');
             currentMode = 'growth';
             calculate();
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function resetGoalPlanner() {
@@ -2552,6 +2594,7 @@
             goalCalculateClicked = false;
             document.getElementById('invest-suggestions').classList.add('hidden');
             calculate();
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         const quotes = [
@@ -2955,6 +2998,8 @@
             } else {
                 calcGoal(amount, years, type);
             }
+            saveTabState(currentMode);
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function calcGrowthOrInflation(amount, rate, years, type) {
@@ -3335,6 +3380,7 @@
             // Reset months to default 6
             setMonths(6);
             calcEmergency();
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function calcEmergency() {
@@ -3384,6 +3430,7 @@
                 document.getElementById('ef-chart-container').classList.remove('hidden');
                 renderEFDonutChart(categories, values);
             }
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function renderEFDonutChart(labels, data) {
@@ -4248,6 +4295,7 @@
             document.getElementById('hs-actions-list').classList.add('hidden');
             document.getElementById('hs-stats-strip').classList.add('hidden');
             if (hsChartInstance) { hsChartInstance.destroy(); hsChartInstance = null; }
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function calcHealthScore() {
@@ -4560,6 +4608,7 @@
             if (shown === 0) {
                 actList.innerHTML = `<div class="text-center py-6 text-emerald-500 font-bold text-sm">🎉 You're crushing it! No urgent actions needed.</div>`;
             }
+            if (typeof saveUserData === 'function') saveUserData();
         }
         // ==================== END FINANCIAL HEALTH SCORE ====================
 
@@ -5014,6 +5063,7 @@
             }
             var hLabels = { 3:'Short-term (<5 yrs)', 8:'Medium-term (5–10 yrs)', 15:'Long-term (>10 yrs)' };
             if (document.getElementById('fp-snap-horizon')) document.getElementById('fp-snap-horizon').textContent = hLabels[fpState.horizon] || '—';
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         function fpFormatMoney(el, wordsId) {
@@ -5526,6 +5576,7 @@
             var rc=document.getElementById('fp-results-card'); if(rc) rc.classList.add('hidden');
             var rp=document.getElementById('fp-results-placeholder'); if(rp) rp.classList.remove('hidden');
             fpLiveUpdate();
+            if (typeof saveUserData === 'function') saveUserData();
         }
 
         // ==================== END FINANCIAL PLAN ====================
@@ -5534,6 +5585,159 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') document.getElementById('invest-modal').classList.add('hidden');
         });
+
+        // ==================== PER-USER PERSISTENT STORAGE ====================
+
+        function getUserDataKey() {
+            const s = getSession();
+            return s ? 'am_data_' + s.email : null;
+        }
+
+        /** Collect state from all calculators and save to localStorage */
+        function saveUserData() {
+            const key = getUserDataKey();
+            if (!key) return;
+
+            // --- Collect Emergency Fund fixed expense values ---
+            const fixedExpenses = {};
+            document.querySelectorAll('#expense-rows .expense-row').forEach(row => {
+                const cat = row.getAttribute('data-category') || 'Other';
+                const inp = row.querySelector('.ef-input');
+                fixedExpenses[cat] = inp ? inp.value.replace(/,/g,'') : '0';
+            });
+
+            // --- Collect Emergency Fund custom rows ---
+            const customRows = [];
+            document.querySelectorAll('#custom-expense-rows .expense-row').forEach(row => {
+                const cat = row.getAttribute('data-category') || 'Custom';
+                const inp = row.querySelector('.ef-input');
+                customRows.push({ category: cat, value: inp ? inp.value.replace(/,/g,'') : '0' });
+            });
+
+            // --- Collect Health Score inputs ---
+            const hsFields = ['hs-income','hs-emi','hs-expenses','hs-savings','hs-health-ins','hs-term-ins','hs-efund','hs-age'];
+            const healthScore = {};
+            hsFields.forEach(id => {
+                const el = document.getElementById(id);
+                healthScore[id] = el ? el.value : '';
+            });
+
+            // --- Collect Financial Plan state ---
+            const fpSave = {
+                step: fpState.step,
+                goals: fpState.goals,
+                existing: fpState.existing,
+                existingAmounts: fpState.existingAmounts,
+                existingCustom: fpState.existingCustom,
+                answers: fpState.answers,
+                planGenerated: fpState.planGenerated
+            };
+            ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(id => {
+                const el = document.getElementById(id);
+                fpSave[id] = el ? el.value : '';
+            });
+
+            const data = {
+                growth:      { ...tabState.growth },
+                goal:        { ...tabState.goal },
+                emergency:   { months: efMonths, fixedExpenses, customRows },
+                healthScore,
+                finplan:     fpSave
+            };
+
+            try { localStorage.setItem(key, JSON.stringify(data)); }
+            catch(e) { console.warn('saveUserData failed:', e); }
+        }
+
+        /** Restore all calculator state for the logged-in user */
+        function loadUserData() {
+            const key = getUserDataKey();
+            if (!key) return;
+            let data;
+            try { data = JSON.parse(localStorage.getItem(key) || 'null'); }
+            catch { return; }
+            if (!data) return;
+
+            // --- Restore Growth / Goal tab state ---
+            if (data.growth) Object.assign(tabState.growth, data.growth);
+            if (data.goal)   Object.assign(tabState.goal,   data.goal);
+
+            // Trigger UI restore for active tab
+            restoreTabState(currentMode === 'goal' ? 'goal' : 'growth');
+            calculate();
+
+            // --- Restore Emergency Fund ---
+            if (data.emergency) {
+                const ef = data.emergency;
+                if (ef.months) setMonths(ef.months);
+                if (ef.fixedExpenses) {
+                    document.querySelectorAll('#expense-rows .expense-row').forEach(row => {
+                        const cat = row.getAttribute('data-category');
+                        const inp = row.querySelector('.ef-input');
+                        if (!inp || !cat || ef.fixedExpenses[cat] === undefined) return;
+                        const val = parseInt(ef.fixedExpenses[cat], 10);
+                        if (val > 0) {
+                            inp.value = new Intl.NumberFormat('en-IN').format(val);
+                            inp.classList.remove('text-slate-400');
+                        }
+                    });
+                }
+                if (ef.customRows && ef.customRows.length > 0) {
+                    ef.customRows.forEach(r => {
+                        addCustomExpense();
+                        const rows = document.querySelectorAll('#custom-expense-rows .expense-row');
+                        const lastRow = rows[rows.length - 1];
+                        if (!lastRow) return;
+                        const nameInp = lastRow.querySelector('input[type="text"]');
+                        const valInp  = lastRow.querySelector('.ef-input');
+                        if (nameInp) {
+                            nameInp.value = r.category;
+                            lastRow.setAttribute('data-category', r.category);
+                        }
+                        const val = parseInt(r.value, 10);
+                        if (valInp && val > 0) {
+                            valInp.value = new Intl.NumberFormat('en-IN').format(val);
+                            valInp.classList.remove('text-slate-400');
+                        }
+                    });
+                }
+                calcEmergency();
+            }
+
+            // --- Restore Health Score ---
+            if (data.healthScore) {
+                Object.entries(data.healthScore).forEach(([id, val]) => {
+                    const el = document.getElementById(id);
+                    if (!el || val === '' || val === undefined) return;
+                    el.value = val;
+                    if (val && val !== '0') el.classList.remove('text-slate-400');
+                });
+                calcHealthScore();
+            }
+
+            // --- Restore Financial Plan ---
+            if (data.finplan) {
+                const fp = data.finplan;
+                Object.assign(fpState, {
+                    step:            1,
+                    goals:           fp.goals           || [],
+                    existing:        fp.existing         || [],
+                    existingAmounts: fp.existingAmounts  || {},
+                    existingCustom:  fp.existingCustom   || '',
+                    answers:         fp.answers          || {},
+                    planGenerated:   fp.planGenerated    || false
+                });
+                ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && fp[id]) el.value = fp[id];
+                });
+                fpGoStep(1);
+                fpLiveUpdate();
+            }
+        }
+
+        // ==================== END PER-USER PERSISTENT STORAGE ====================
+
     </script>
     <!-- Investment Detail Modal -->
     <div id="invest-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="closeModal(event)">
