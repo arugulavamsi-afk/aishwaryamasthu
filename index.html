@@ -5472,14 +5472,31 @@
             return 'aggressive';
         }
 
+        // ---- FIX: Return the appropriate projected return rate for a goal
+        //  based on its type and time horizon. Long-term goals use the full
+        //  portfolio blended rate; short-term and safe goals use realistic
+        //  debt/liquid rates so corpus projections are not inflated.
+        function fpGoalRate(type, years, profileBlendedReturn) {
+            if (type === 'emergency') return 6.8;   // liquid/debt only — must be safe
+            if (years <= 2)          return 7.0;    // very short: FD / liquid / short-debt
+            if (years <= 4)          return 7.5;    // short: debt funds / RD
+            if (years <= 7)          return Math.min(9.0, profileBlendedReturn); // medium: debt-heavy blend
+            return profileBlendedReturn;             // long-term: full portfolio rate
+        }
+
         // Blend base portfolio with goal-horizon nudges
         function fpBlendPortfolio(baseKey, goals) {
             var base = fpPortfolios[baseKey];
             var allocs = base.allocations.map(function(a){ return Object.assign({}, a); });
 
-            // Compute weighted average horizon from goals (weight by target amount if available, else equal)
+            // FIX: Exclude Emergency Fund from horizon calc — its 1-yr default
+            // would drag avgHorizon below 5, falsely triggering the short-horizon
+            // equity-cut nudge even when the main goal is a 10-yr Retirement.
+            var goalsForHorizon = goals.filter(function(g){ return g.type !== 'emergency'; });
+            if (goalsForHorizon.length === 0) goalsForHorizon = goals;
+
             var totalWt = 0, weightedYrs = 0;
-            goals.forEach(function(g) {
+            goalsForHorizon.forEach(function(g) {
                 var wt = parseFloat((g.targetAmt+'').replace(/,/g,'')) || 1;
                 weightedYrs += g.years * wt;
                 totalWt += wt;
@@ -5491,12 +5508,12 @@
                 allocs.forEach(function(a) {
                     if (a.name.includes('Small Cap')) a.pct = Math.max(0, a.pct - 8);
                     if (a.name.includes('Mid Cap'))   a.pct = Math.max(0, a.pct - 5);
-                    if (a.name.includes('Debt') || a.name.includes('FD'))  a.pct += 8;
+                    if (a.name.includes('Debt') || a.name.includes('FD')) a.pct += 8;
                     if (a.name.includes('Liquid'))    a.pct += 5;
                 });
             }
 
-            // Emergency fund goal → boost liquid allocation
+            // Emergency fund among goals → boost liquid allocation
             var hasEmergency = goals.some(function(g){ return g.type === 'emergency'; });
             if (hasEmergency) {
                 allocs.forEach(function(a) {
@@ -5504,7 +5521,7 @@
                 });
             }
 
-            // Home buy goal with short timeline → more debt
+            // Home buy with short timeline → more debt, less small/mid cap
             var homeGoal = goals.find(function(g){ return g.type === 'home'; });
             if (homeGoal && homeGoal.years <= 7) {
                 allocs.forEach(function(a) {
@@ -5517,63 +5534,237 @@
             var total = allocs.reduce(function(s,a){ return s + a.pct; }, 0);
             allocs = allocs.filter(function(a){ return a.pct > 0; });
             allocs.forEach(function(a){ a.pct = Math.round(a.pct / total * 100); });
-            // Fix rounding
-            var diff = 100 - allocs.reduce(function(s,a){ return s + a.pct; },0);
-            if (allocs.length > 0) allocs[0].pct += diff;
+            // FIX: Apply rounding correction to the LARGEST allocation (not always index 0)
+            var diff = 100 - allocs.reduce(function(s,a){ return s + a.pct; }, 0);
+            if (diff !== 0 && allocs.length > 0) {
+                var maxIdx = allocs.reduce(function(mi, a, i){ return a.pct > allocs[mi].pct ? i : mi; }, 0);
+                allocs[maxIdx].pct += diff;
+            }
 
             return allocs;
         }
 
-        // Build goal-specific SIP allocation table
         // SIP FV formula: P × [((1+r)^n − 1)/r] × (1+r)  where r = monthly rate, n = months
         function fpSipCorpus(monthlyAmt, annualRate, years) {
             if (!monthlyAmt || monthlyAmt <= 0) return 0;
             var r = (annualRate / 100) / 12;
             var n = years * 12;
+            if (r === 0) return Math.round(monthlyAmt * n);
             return Math.round(monthlyAmt * ((Math.pow(1+r,n)-1)/r) * (1+r));
+        }
+
+        // FV factor helper (avoids division-by-zero; used for requiredSIP calc)
+        function fpFvFactor(annualRate, years) {
+            var r = (annualRate / 100) / 12;
+            var n = Math.max(years * 12, 1);
+            if (r === 0) return n;
+            return ((Math.pow(1+r, n) - 1) / r) * (1+r);
         }
 
         function fpBuildGoalSIPs(goals, monthlyInvest, blendedRate) {
             if (!monthlyInvest || goals.length === 0) return null;
-            var weights = goals.map(function(g){ return 1 / Math.max(g.years, 1); });
+
+            // FIX: Assign a horizon-appropriate rate per goal so corpus projections
+            // are realistic (not projecting a 1-yr Emergency Fund at 12.5%).
+            var rates = goals.map(function(g) {
+                return fpGoalRate(g.type, g.years, blendedRate);
+            });
+
+            // FIX: Weight by required monthly SIP (= target ÷ FV-factor), not by
+            // 1/years. This ensures larger / nearer goals get the budget they
+            // actually need instead of the old formula giving 96% of budget to a
+            // 1-year Emergency Fund vs a 25-year Retirement.
+            //
+            // Goals without a target → use the average required SIP of goals that
+            // DO have targets, so they get a fair equal share of remaining budget.
+            var requiredSIPs = goals.map(function(g, i) {
+                var target = parseInt((g.targetAmt+'').replace(/,/g,'')) || 0;
+                if (target <= 0) return null; // no target set
+                return Math.max(target / fpFvFactor(rates[i], g.years), 1);
+            });
+
+            var withTargetSIPs = requiredSIPs.filter(function(w){ return w !== null; });
+            var avgRequired = withTargetSIPs.length > 0
+                ? withTargetSIPs.reduce(function(s,w){ return s+w; }, 0) / withTargetSIPs.length
+                : monthlyInvest / goals.length; // fallback: equal share
+
+            var weights = requiredSIPs.map(function(w){ return w !== null ? w : avgRequired; });
             var wTotal  = weights.reduce(function(s,w){ return s+w; }, 0);
+
+            // Compute raw SIP amounts
+            var rawAmts = weights.map(function(w){ return (w / wTotal) * monthlyInvest; });
+
+            // FIX: Round SIP amounts to nearest ₹100 and then fix the total so
+            // all goal SIPs sum exactly to monthlyInvest.
+            var amts = rawAmts.map(function(a){ return Math.max(Math.round(a / 100) * 100, 0); });
+            var amtDiff = monthlyInvest - amts.reduce(function(s,a){ return s+a; }, 0);
+            if (amtDiff !== 0) {
+                // Add diff to the goal with the highest raw allocation
+                var maxRawIdx = rawAmts.reduce(function(mi,a,i){ return a > rawAmts[mi] ? i : mi; }, 0);
+                amts[maxRawIdx] += amtDiff;
+            }
+
+            // Compute weightPct and fix rounding so it sums to 100
+            var rawPcts = weights.map(function(w){ return (w / wTotal) * 100; });
+            var pcts    = rawPcts.map(function(p){ return Math.round(p); });
+            var pctDiff = 100 - pcts.reduce(function(s,p){ return s+p; }, 0);
+            if (pctDiff !== 0) {
+                var maxPctIdx = rawPcts.reduce(function(mi,p,i){ return p > rawPcts[mi] ? i : mi; }, 0);
+                pcts[maxPctIdx] += pctDiff;
+            }
+
             return goals.map(function(g, i) {
-                var share      = Math.round((weights[i]/wTotal) * monthlyInvest / 100) * 100;
-                var corpus     = fpSipCorpus(share, blendedRate, g.years);
-                var target     = parseInt((g.targetAmt+'').replace(/,/g,'')) || 0;
-                var gap        = target > 0 ? target - corpus : null;
-                // Extra SIP needed to close a shortfall
-                var r = (blendedRate/100)/12, n = g.years*12;
-                var extraSIP   = (gap > 0) ? Math.ceil(gap / (((Math.pow(1+r,n)-1)/r)*(1+r)) / 100)*100 : 0;
+                var rate   = rates[i];
+                var share  = amts[i];
+                var corpus = fpSipCorpus(share, rate, g.years);
+                var target = parseInt((g.targetAmt+'').replace(/,/g,'')) || 0;
+                var gap    = target > 0 ? target - corpus : null;
+                var extraSIP = (gap > 0) ? Math.ceil(gap / fpFvFactor(rate, g.years) / 100) * 100 : 0;
                 return {
-                    label: g.emoji + ' ' + (g.customName || g.label),
+                    label:     g.emoji + ' ' + (g.customName || g.label),
                     goalLabel: g.customName || g.label,
                     emoji: g.emoji, years: g.years, amt: share,
                     corpus: corpus, target: target, gap: gap, extraSIP: extraSIP,
                     color: FP_GOAL_META[g.type].color,
                     type: g.type,
-                    weightPct: Math.round((weights[i]/wTotal)*100)
+                    rate: rate,             // goal-specific rate — used downstream
+                    weightPct: pcts[i]      // guaranteed to sum to 100
                 };
             });
         }
 
-        // For each goal: which portfolio assets to redeem, in what order (most liquid → least)
-        function fpBuildRedemptionPlan(goals, allocs) {
-            var liqRank = { instant:0, high:1, medium:2, low:3 };
-            var sorted  = allocs.slice().sort(function(a,b){ return (liqRank[a.liquid]||1)-(liqRank[b.liquid]||1); });
-            return goals.map(function(g) {
-                // Filter assets suitable for this goal's horizon
-                var suitable = sorted.filter(function(a){
-                    if (g.years <= 3)  return a.liquid === 'instant' || a.liquid === 'high';
-                    if (g.years <= 7)  return a.liquid !== 'low';
-                    return true;
+        // ── Secondary redemption priority within same liquidity tier ──────────
+        // Lower = redeem first (safest / most liquid / least compounding impact)
+        function fpRedeemPriority(name) {
+            if (/Liquid/i.test(name))                              return 0;
+            if (/FD|RD|Fixed Deposit/i.test(name))                return 1;
+            if (/Short.{0,10}Debt|Ultra.{0,10}Short/i.test(name)) return 2;
+            if (/Debt|Hybrid/i.test(name))                        return 3;
+            if (/Gold/i.test(name))                               return 4;
+            if (/Large.*Cap|Index/i.test(name))                   return 5;
+            if (/Direct.*Stock|Sectoral/i.test(name))             return 6;
+            if (/Flexi.*Cap|Multi.*Cap/i.test(name))              return 7;
+            if (/Mid.*Cap/i.test(name))                           return 8;
+            if (/ELSS/i.test(name))                               return 9;
+            if (/Small.*Cap/i.test(name))                         return 10;
+            if (/International/i.test(name))                      return 11;
+            if (/NPS/i.test(name))                                return 12;
+            if (/PPF|Sukanya/i.test(name))                        return 13;
+            return 6;
+        }
+
+        // Goal + horizon-aware redemption instruction per asset
+        function fpRedeemDesc(assetName, goalYears, goalType) {
+            if (/Liquid/i.test(assetName))
+                return 'Redeem first — same/next business day. Always the primary emergency layer.';
+            if (/FD|RD/i.test(assetName))
+                return goalYears <= 3
+                    ? 'Redeem after liquid fund. Premature-break penalty is small; use when needed.'
+                    : 'Plan exit 4–6 weeks before goal to avoid premature-break penalty.';
+            if (/Short.{0,10}Debt|Ultra.{0,10}Short/i.test(assetName))
+                return 'Redeem 7–10 business days before goal. Low exit cost and quick settlement.';
+            if (/Debt|Hybrid/i.test(assetName))
+                return goalYears <= 5
+                    ? 'Redeem 2–4 weeks before goal. Check exit load (usually 0–1%).'
+                    : 'Begin a Systematic Transfer Plan (STP) to a liquid fund 6–9 months before goal.';
+            if (/Gold/i.test(assetName))
+                return 'Redeem after debt/liquid layers are used. Sell during market hours at live NAV.';
+            if (/Large.*Cap|Index/i.test(assetName))
+                return goalYears <= 7
+                    ? 'Start STP to debt funds 2 years before goal. Never redeem equity in one shot.'
+                    : 'Begin systematic transfer to debt 3 years before goal to lock in gains gradually.';
+            if (/Direct.*Stock|Sectoral/i.test(assetName))
+                return 'Plan exit in tranches over 3–6 months before goal. Start early to avoid forced selling.';
+            if (/Flexi.*Cap|Multi.*Cap/i.test(assetName))
+                return 'Start STP to debt 3 years before goal. Flexi/multi-cap can be volatile at exit.';
+            if (/Mid.*Cap/i.test(assetName))
+                return 'Begin moving to large cap/debt 3–4 years before goal. Higher volatility at exit.';
+            if (/Small.*Cap/i.test(assetName))
+                return 'Start switching to safer assets 4–5 years before goal. Liquidity can be thin in downturns.';
+            if (/ELSS/i.test(assetName))
+                return 'Each SIP instalment has its own 3-year lock-in date. Redeem instalment-by-instalment after unlock.';
+            if (/NPS/i.test(assetName))
+                return goalType === 'retirement'
+                    ? 'Accessible at age 60: 60% as tax-free lump sum; 40% must purchase an annuity.'
+                    : 'Partial withdrawal only for specific reasons. Plan other assets for this goal first.';
+            if (/PPF|Sukanya/i.test(assetName))
+                return (goalType === 'retirement' || goalType === 'education')
+                    ? 'Matures in 15 years; extendable in 5-yr blocks. Partial withdrawal allowed from year 7.'
+                    : 'PPF has a 15-year lock-in. Ensure your goal date aligns with the maturity window.';
+            return 'Verify exit load, STCG/LTCG tax, and settlement timeline before redeeming.';
+        }
+
+        // Build per-goal redemption plan using enriched goalSIPs data
+        function fpBuildRedemptionPlan(enrichedGoals, allocs) {
+            var liqRank = { instant: 0, high: 1, medium: 2, low: 3 };
+
+            // Sort: primary = liquidity tier, secondary = redemption priority within tier
+            var sorted = allocs.slice().sort(function(a, b) {
+                var td = (liqRank[a.liquid] || 1) - (liqRank[b.liquid] || 1);
+                if (td !== 0) return td;
+                return fpRedeemPriority(a.name) - fpRedeemPriority(b.name);
+            });
+
+            return enrichedGoals.map(function(g) {
+                var yrs         = g.years;
+                var isEmergency = g.type === 'emergency';
+
+                // Asset suitability: goal-type + horizon aware
+                var suitable = sorted.filter(function(a) {
+                    if (isEmergency)
+                        return a.liquid === 'instant' || /FD|RD/i.test(a.name);
+                    if (yrs <= 1)
+                        return a.liquid === 'instant';
+                    if (yrs <= 3) {
+                        if (a.liquid === 'low') return false;
+                        if (/Large.*Cap|Mid.*Cap|Small.*Cap|Direct.*Stock|Sectoral|ELSS|International|Flexi|Multi/i.test(a.name)) return false;
+                        return a.liquid === 'instant' || a.liquid === 'high';
+                    }
+                    if (yrs <= 7) {
+                        if (a.liquid === 'low') return false;
+                        if (/Mid.*Cap|Small.*Cap|Direct.*Stock|Sectoral|International/i.test(a.name)) return false;
+                        return true;
+                    }
+                    if (yrs < 15) {
+                        if (g.type !== 'retirement' && /NPS/i.test(a.name)) return false;
+                        if (!/retirement|education/.test(g.type) && /PPF|Sukanya/i.test(a.name)) return false;
+                        return true;
+                    }
+                    return true; // 15+ yrs: all assets suitable
                 });
-                var top = suitable.slice(0, Math.min(3, suitable.length));
+
+                // Attach redemption-context descriptions
+                var assets = suitable.map(function(a) {
+                    return Object.assign({}, a, { redeemDesc: fpRedeemDesc(a.name, yrs, g.type) });
+                });
+
+                // De-risking timeline (when to start STP equity → debt)
+                var hasEquity = assets.some(function(a) { return a.liquid === 'medium'; });
+                var deRiskNote = null;
+                if (!isEmergency && hasEquity) {
+                    var startIn = yrs <= 2  ? 0
+                                : yrs <= 5  ? yrs - 2
+                                : yrs <= 10 ? yrs - 3
+                                :             yrs - 4;
+                    deRiskNote = startIn === 0
+                        ? 'Goal is within 2 years — start moving equity to debt/liquid now.'
+                        : 'Start STP from equity → debt/liquid in ~' + startIn + ' year' +
+                          (startIn !== 1 ? 's' : '') + ' (' + (yrs - startIn) + ' year' +
+                          (yrs - startIn !== 1 ? 's' : '') + ' before goal). Shift gradually to reduce timing risk.';
+                }
+
                 return {
-                    label: g.customName || g.label, emoji: g.emoji,
-                    years: g.years, color: FP_GOAL_META[g.type].color,
-                    assets: top,
-                    hasLocked: top.some(function(a){ return a.liquid === 'low'; })
+                    label:       g.goalLabel || g.label || '',
+                    emoji:       g.emoji,
+                    years:       yrs,
+                    color:       g.color || FP_GOAL_META[g.type].color,
+                    type:        g.type,
+                    corpus:      g.corpus  || 0,
+                    target:      g.target  || 0,
+                    assets:      assets,
+                    hasLocked:   assets.some(function(a) { return a.liquid === 'low'; }),
+                    deRiskNote:  deRiskNote,
+                    isEmergency: isEmergency
                 };
             });
         }
@@ -5639,7 +5830,17 @@
             var allocs     = fpBlendPortfolio(profileKey, fpState.goals);
             var goalSIPs   = fpBuildGoalSIPs(fpState.goals, monthlyInvest, profile.blendedReturn);
             var roadmap    = fpBuildGoalRoadmap(fpState.goals, profile.roadmap);
-            var redeemPlan = (fpState.goals.length > 0) ? fpBuildRedemptionPlan(fpState.goals, allocs) : [];
+            // Pass enriched goalSIPs so redemption plan has corpus/target/rate.
+            // Fallback when no invest amount entered: enrich raw goals minimally.
+            var redeemInput = goalSIPs || fpState.goals.map(function(g) {
+                return {
+                    goalLabel: g.label, label: g.label,
+                    emoji: g.emoji, years: g.years, type: g.type,
+                    corpus: 0, target: parseInt((g.targetAmt||'').replace(/,/g,''))||0,
+                    color: FP_GOAL_META[g.type].color
+                };
+            });
+            var redeemPlan = redeemInput.length > 0 ? fpBuildRedemptionPlan(redeemInput, allocs) : [];
 
             fpState.planGenerated = true;
             var fmt = function(n){ return new Intl.NumberFormat('en-IN').format(Math.round(n)); };
@@ -5803,18 +6004,23 @@
             var sipDiv = document.getElementById('fp-sip-breakdown');
             if (goalSIPs && monthlyInvest > 0) {
                 var reasonLines = goalSIPs.map(function(g) {
-                    var urgency = g.years <= 4 ? 'highest urgency — very little compounding time'
-                                : g.years <= 8 ? 'medium urgency — moderate compounding window'
-                                : 'long runway — compounding does the heavy lifting';
+                    var rateNote = g.type === 'emergency' ? 'safe 6.8% (liquid/debt — must be instantly accessible)'
+                                 : g.years <= 2           ? 'conservative 7.0% (short horizon — capital safety first)'
+                                 : g.years <= 4           ? 'conservative 7.5% (short horizon — debt-focused)'
+                                 : g.years <= 7           ? 'moderate ~9% (medium horizon — debt-equity blend)'
+                                 :                          (g.rate || profile.blendedReturn).toFixed(1) + '% (long horizon — full portfolio rate)';
+                    var weightNote = g.target > 0
+                        ? 'needs ₹' + fmt(g.amt) + '/mo to reach ₹' + fmt(g.target) + ' target in ' + g.years + ' yrs'
+                        : 'no target set — receives equal share';
                     return '<div class="flex items-start gap-2 text-[11px] text-slate-500 leading-relaxed">' +
                         '<span style="color:' + g.color + ';font-weight:900;flex-shrink:0;">' + g.emoji + '</span>' +
-                        '<span><strong style="color:#374151;">' + g.weightPct + '%</strong> → ' + g.goalLabel + ' (' + g.years + '-yr goal): ' + urgency + '.</span></div>';
+                        '<span><strong style="color:#374151;">' + g.weightPct + '%</strong> → ' + g.goalLabel + ': ' + weightNote + '. Projected at ' + rateNote + '.</span></div>';
                 }).join('');
                 sipDiv.innerHTML =
                     '<div class="rounded-xl border border-blue-100 p-3 mb-3" style="background:#eff6ff;">' +
                         '<div class="text-[10px] font-black text-blue-600 uppercase tracking-wider mb-1.5">💡 Why this split?</div>' +
                         '<div class="space-y-1">' + reasonLines + '</div>' +
-                        '<div class="text-[10px] text-blue-400 mt-2 pt-2 border-t border-blue-100">Sooner goals receive a larger share because they have less time to compound. Distant goals need a smaller monthly input to reach the same corpus.</div>' +
+                        '<div class="text-[10px] text-blue-400 mt-2 pt-2 border-t border-blue-100">Each goal receives the SIP amount it actually needs to hit its target. Goals without a target get an equal share. Short-term goals use conservative rates; long-term goals use your full portfolio return.</div>' +
                     '</div>' +
                     '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">SIP split by goal</div>' +
                     goalSIPs.map(function(g) {
@@ -5850,8 +6056,12 @@
                 // Distribute existing future value proportionally across goals by weight
                 var totalWeight = goalSIPs.reduce(function(s,g){ return s + g.weightPct; }, 0) || 1;
                 corpusCards.innerHTML = goalSIPs.map(function(g) {
-                    // Existing corpus share for this goal (proportional by SIP weight)
-                    var goalExistingFV = hasExisting ? existingFutureVal * (g.weightPct / totalWeight) : 0;
+                    // FIX: Project the existing corpus to THIS GOAL's own horizon,
+                    // not to yearsToRetire. A 2-yr Travel goal should not show the
+                    // existing corpus compounded for 25 years.
+                    var goalExistingFV = hasExisting
+                        ? existingCorpus * Math.pow(1 + existingReturn / 100, g.years) * (g.weightPct / totalWeight)
+                        : 0;
                     var effectiveCorpus = g.corpus + goalExistingFV;
                     var onTrack     = g.gap !== null && (effectiveCorpus >= g.target || g.gap <= 0);
                     var noTarget    = g.target <= 0;
@@ -5859,7 +6069,10 @@
                     var statusIcon  = noTarget ? '📊' : (onTrack ? '✅' : '⚠️');
                     var progressPct = (!noTarget && effectiveCorpus > 0) ? Math.min(100, Math.round((effectiveCorpus / g.target) * 100)) : 100;
                     var gap         = noTarget ? 0 : Math.max(0, g.target - effectiveCorpus);
-                    var extraSIP    = (gap > 0 && g.years > 0) ? Math.ceil((gap / (((Math.pow(1 + profile.blendedReturn/1200, g.years*12)-1)/(profile.blendedReturn/1200))*(1+profile.blendedReturn/1200))) / 500) * 500 : 0;
+                    // FIX: Use each goal's own rate (stored on the SIP object),
+                    // not the hardcoded profile.blendedReturn for every goal.
+                    var goalRate    = g.rate || profile.blendedReturn;
+                    var extraSIP    = (gap > 0 && g.years > 0) ? Math.ceil(gap / fpFvFactor(goalRate, g.years) / 500) * 500 : 0;
                     var statusMsg   = noTarget ? 'No target set — showing projected corpus' :
                                      onTrack  ? 'On track! Projected ₹' + fmt(effectiveCorpus) + ' vs target ₹' + fmt(g.target) :
                                                 'Shortfall of ₹' + fmt(gap) + ' — add ₹' + fmt(extraSIP) + '/mo to close the gap';
@@ -5927,40 +6140,72 @@
             var redeemCards   = document.getElementById('fp-redemption-cards');
             if (redeemPlan.length > 0) {
                 redeemSection.style.display = '';
-                var liqLabel = { instant:'🟢 Instant', high:'🟡 1–3 days', medium:'🟠 3–7 days', low:'🔴 Lock-in applies' };
+                var liqLabel = { instant:'🟢 Same day', high:'🟡 1–3 days', medium:'🟠 3–7 days', low:'🔴 Lock-in' };
                 redeemCards.innerHTML = redeemPlan.map(function(g) {
-                    return '<div class="rounded-2xl border border-[#f5c842]/30 overflow-hidden">' +
-                        '<div class="flex items-center justify-between px-4 py-3" style="background:' + g.color + '0c;">' +
-                            '<div class="flex items-center gap-2">' +
-                                '<span class="text-lg">' + g.emoji + '</span>' +
-                                '<div>' +
-                                    '<div class="text-xs font-black text-slate-700">' + g.label + '</div>' +
-                                    '<div class="text-[10px] text-slate-400">Needed in ' + g.years + ' years · Redeem in this order ↓</div>' +
-                                '</div>' +
-                            '</div>' +
-                            '<div class="text-[9px] font-bold px-2 py-1 rounded-full text-white" style="background:' + g.color + '">' +
-                                (g.years <= 4 ? 'Short-term' : g.years <= 10 ? 'Medium-term' : 'Long-term') +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="px-4 py-3 space-y-2.5">' +
-                            g.assets.map(function(a, idx) {
-                                return '<div class="flex items-start gap-3">' +
-                                    '<div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0 mt-0.5" style="background:' + a.color + '">' + (idx+1) + '</div>' +
-                                    '<div class="flex-1 min-w-0">' +
-                                        '<div class="text-xs font-bold text-slate-700">' + a.icon + ' ' + a.name + '</div>' +
-                                        '<div class="flex items-center flex-wrap gap-x-2 gap-y-0.5 mt-0.5">' +
-                                            '<span class="text-[10px] text-slate-500">' + (liqLabel[a.liquid]||'—') + '</span>' +
-                                            '<span class="text-[10px] text-slate-300">·</span>' +
-                                            '<span class="text-[10px] font-semibold text-slate-500">Est. ' + a.rate + '% p.a.</span>' +
-                                            '<span class="text-[10px] text-slate-300">·</span>' +
-                                            '<span class="text-[10px] italic text-slate-400">' + (a.when||'') + '</span>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>';
-                            }).join('') +
-                            (g.hasLocked ? '<div class="text-[10px] font-semibold text-amber-600 pt-2 border-t border-slate-100 mt-1">⚠️ One or more assets above have lock-in periods. Begin exit planning at least 6–12 months before the goal date.</div>' : '') +
-                        '</div>' +
-                    '</div>';
+                    var hTag  = g.years <= 3 ? 'Short-term'  : g.years <= 7 ? 'Medium-term' : 'Long-term';
+                    var hClr  = g.years <= 3 ? '#ef4444'     : g.years <= 7 ? '#f59e0b'     : '#10b981';
+
+                    var corpusStrip = (g.corpus > 0)
+                        ? '<div class="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 border-b border-slate-100" style="background:#f8fafc;">'
+                            + '<div><div class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Projected Corpus</div>'
+                            + '<div class="text-sm font-black text-slate-800">₹' + fmt(g.corpus) + '</div></div>'
+                            + (g.target > 0
+                                ? '<div><div class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Your Target</div>'
+                                  + '<div class="text-sm font-black text-slate-600">₹' + fmt(g.target) + '</div></div>'
+                                : '')
+                            + '</div>'
+                        : '';
+
+                    var emergencyNote = g.isEmergency
+                        ? '<div class="mx-4 mt-3 mb-1 px-3 py-2 rounded-xl text-[10px] leading-relaxed font-semibold text-amber-800 border border-amber-200" style="background:#fffbeb;">'
+                            + '🛡️ Emergency corpus must stay in instant-access instruments <strong>at all times</strong>. Never allocate it to equity or locked instruments.'
+                          + '</div>'
+                        : '';
+
+                    var deRiskBanner = g.deRiskNote
+                        ? '<div class="mx-4 mt-3 mb-1 px-3 py-2 rounded-xl text-[10px] leading-relaxed font-semibold text-blue-700 border border-blue-100" style="background:#eff6ff;">'
+                            + '📅 <strong>De-risk plan:</strong> ' + g.deRiskNote
+                          + '</div>'
+                        : '';
+
+                    var assetRows = g.assets.map(function(a, idx) {
+                        var chip = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style="background:' + a.color + '18;color:' + a.color + ';">' + (liqLabel[a.liquid] || '—') + '</span>';
+                        return '<div class="flex items-start gap-3">'
+                            + '<div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-black text-white mt-0.5" style="background:' + a.color + '">' + (idx + 1) + '</div>'
+                            + '<div class="flex-1 min-w-0">'
+                                + '<div class="flex items-center flex-wrap gap-x-2 gap-y-0.5 mb-0.5">'
+                                    + '<span class="text-xs font-bold text-slate-700">' + a.icon + ' ' + a.name + '</span>'
+                                    + chip
+                                    + '<span class="text-[10px] text-slate-400">~' + a.rate + '% p.a.</span>'
+                                + '</div>'
+                                + '<div class="text-[10px] text-slate-500 leading-relaxed">' + a.redeemDesc + '</div>'
+                            + '</div>'
+                        + '</div>';
+                    }).join('');
+
+                    var lockedWarn = g.hasLocked
+                        ? '<div class="mx-4 mt-1 mb-3 px-3 py-2 rounded-xl text-[10px] font-semibold text-amber-600 border border-amber-100" style="background:#fffbeb;">'
+                            + '⚠️ One or more assets have lock-in periods. Check exact maturity/unlock dates and start exit planning 6–12 months early.'
+                          + '</div>'
+                        : '';
+
+                    return '<div class="rounded-2xl border border-slate-200 overflow-hidden">'
+                        + '<div class="flex items-center justify-between px-4 py-3" style="background:' + g.color + '12;">'
+                            + '<div class="flex items-center gap-2">'
+                                + '<span class="text-lg">' + g.emoji + '</span>'
+                                + '<div>'
+                                    + '<div class="text-xs font-black text-slate-700">' + g.label + '</div>'
+                                    + '<div class="text-[10px] text-slate-400">Needed in ' + g.years + ' year' + (g.years !== 1 ? 's' : '') + ' · Redeem in order shown ↓</div>'
+                                + '</div>'
+                            + '</div>'
+                            + '<span class="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style="background:' + hClr + '">' + hTag + '</span>'
+                        + '</div>'
+                        + corpusStrip
+                        + emergencyNote
+                        + deRiskBanner
+                        + '<div class="px-4 py-3 space-y-3">' + assetRows + '</div>'
+                        + lockedWarn
+                    + '</div>';
                 }).join('');
             } else {
                 redeemSection.style.display = 'none';
@@ -6202,14 +6447,18 @@
         }
         .mf-tile:hover { box-shadow: 0 8px 28px rgba(26,82,118,0.15); border-color: #0d9488 !important; }
 
-        /* ===== GOAL TILE FLIP PULSE ===== */
-        @keyframes goalFlip {
-            0%   { transform: rotateY(0deg) scale(1); }
-            40%  { transform: rotateY(90deg) scale(0.92); }
-            70%  { transform: rotateY(-8deg) scale(1.06); }
-            100% { transform: rotateY(0deg) scale(1); }
+        /* ===== GOAL TILE SPRING-PRESS SELECT ===== */
+        @keyframes goalSpringPress {
+            0%   { transform: scale(1);    filter: brightness(1); }
+            18%  { transform: scale(0.88); filter: brightness(0.95); }
+            52%  { transform: scale(1.11); filter: brightness(1.12); }
+            72%  { transform: scale(0.97); filter: brightness(1.04); }
+            88%  { transform: scale(1.03); filter: brightness(1.02); }
+            100% { transform: scale(1);    filter: brightness(1); }
         }
-        .fp-goal-tile.flip-anim { animation: goalFlip 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .fp-goal-tile.flip-anim {
+            animation: goalSpringPress 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
 
         /* ===== RESULT CARD FLIP ===== */
         @keyframes resultReveal {
