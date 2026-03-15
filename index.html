@@ -432,6 +432,181 @@
             animation: taglineReveal 0.5s 1.8s ease-out forwards;
         }
 
+        /* ===== AUTH PANEL ===== */
+        .auth-panel {
+            position: relative;
+            z-index: 2;
+            width: min(420px, 92vw);
+            margin-top: 28px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(245,200,66,0.28);
+            border-radius: 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+            opacity: 0;
+            transform: translateY(22px) scale(0.97);
+            animation: authReveal 0.75s cubic-bezier(0.22,1,0.36,1) 1.4s forwards;
+            overflow: hidden;
+        }
+        @keyframes authReveal {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .auth-tab-bar {
+            display: flex;
+            border-bottom: 1px solid rgba(245,200,66,0.18);
+        }
+        .auth-tab-btn {
+            flex: 1;
+            padding: 14px 0;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            position: relative;
+        }
+        .auth-tab-btn.active {
+            color: #f5c842;
+            background: rgba(245,200,66,0.06);
+        }
+        .auth-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 20%; right: 20%;
+            height: 2px;
+            border-radius: 2px 2px 0 0;
+            background: linear-gradient(90deg, #f5c842, #e8a44a);
+        }
+        .auth-tab-btn:not(.active) {
+            color: rgba(232,213,163,0.4);
+        }
+        .auth-tab-btn:not(.active):hover { color: rgba(232,213,163,0.75); }
+
+        .auth-form {
+            padding: 22px 24px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .auth-field-label {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: rgba(232,213,163,0.5);
+            margin-bottom: 5px;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 11px;
+            color: #e8d5a3;
+            font-size: 0.875rem;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+        .auth-input::placeholder { color: rgba(232,213,163,0.3); }
+        .auth-input:focus {
+            border-color: rgba(245,200,66,0.55);
+            background: rgba(255,255,255,0.09);
+            box-shadow: 0 0 0 3px rgba(245,200,66,0.1);
+        }
+        .auth-submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(130deg, #e8d5a3 0%, #f5c842 40%, #e8a44a 70%, #c97f3a 100%);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #071e22;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(245,200,66,0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s;
+            margin-top: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+        .auth-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(245,200,66,0.45); }
+        .auth-submit-btn:active { transform: translateY(0); }
+        .auth-error {
+            display: none;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #f87171;
+            background: rgba(248,113,113,0.1);
+            border: 1px solid rgba(248,113,113,0.25);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .auth-success {
+            display: none;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #34d399;
+            background: rgba(52,211,153,0.1);
+            border: 1px solid rgba(52,211,153,0.25);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .auth-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Welcome greeting on splash when already logged in */
+        .auth-welcome {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            animation: authReveal 0.75s cubic-bezier(0.22,1,0.36,1) 1.4s forwards;
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .auth-enter-btn {
+            padding: 13px 44px;
+            background: linear-gradient(130deg, #e8d5a3 0%, #f5c842 40%, #e8a44a 70%, #c97f3a 100%);
+            border: none; border-radius: 999px;
+            font-size: 0.875rem; font-weight: 800; letter-spacing: 0.06em;
+            color: #071e22; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(245,200,66,0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .auth-enter-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,200,66,0.5); }
+        .auth-logout-btn {
+            font-size: 0.68rem; font-weight: 600; letter-spacing: 0.07em;
+            color: rgba(232,213,163,0.35); background: none; border: none;
+            cursor: pointer; text-transform: uppercase;
+            transition: color 0.15s; font-family: 'Inter', sans-serif;
+        }
+        .auth-logout-btn:hover { color: rgba(232,213,163,0.65); }
+
+        /* Password strength indicator */
+        .pwd-strength-bar {
+            height: 3px; border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 6px; overflow: hidden;
+        }
+        .pwd-strength-fill {
+            height: 100%; border-radius: 3px;
+            width: 0%; transition: width 0.3s ease, background 0.3s ease;
+        }
+
         /* Risk meter dots */
         .risk-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .risk-dot.filled-1 { background: #22c55e; }
@@ -455,7 +630,7 @@
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
     <!-- ===== SPLASH SCREEN ===== -->
-    <div id="splash" onclick="dismissSplash()" title="Click anywhere to enter">
+    <div id="splash">
         <div class="grid-bg"></div>
 
         <div class="orb orb-1"></div>
@@ -479,8 +654,7 @@
         <!-- Main content -->
         <h1 class="splash-title">Aishwaryamasthu</h1>
         <div class="splash-divider"></div>
-
-		<p class="splash-tagline">Indian Wealth Generation Calculator</p>
+        <p class="splash-tagline">Indian Wealth Generation Calculator</p>
 
         <!-- Ticker strip -->
         <div class="splash-ticker">
@@ -491,10 +665,77 @@
             <span class="ticker-item">GROW</span>
         </div>
 
-        <span class="splash-skip">tap anywhere to enter &rarr;</span>
+        <!-- ===== AUTH PANEL (shown when not logged in) ===== -->
+        <div id="auth-panel" class="auth-panel" style="display:none;">
+            <!-- Tab switcher -->
+            <div class="auth-tab-bar">
+                <button class="auth-tab-btn active" id="auth-tab-login" onclick="switchAuthTab('login')">🔑 &nbsp;Login</button>
+                <button class="auth-tab-btn" id="auth-tab-signup" onclick="switchAuthTab('signup')">✨ &nbsp;Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div id="auth-login-form" class="auth-form">
+                <div>
+                    <label class="auth-field-label">Email Address</label>
+                    <input class="auth-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
+                </div>
+                <div>
+                    <label class="auth-field-label">Password</label>
+                    <input class="auth-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+                </div>
+                <div id="login-error" class="auth-error"></div>
+                <button class="auth-submit-btn" onclick="doLogin()">Enter the Dashboard &rarr;</button>
+                <p style="text-align:center; font-size:0.68rem; color:rgba(232,213,163,0.35); margin-top:2px;">
+                    New here? <button onclick="switchAuthTab('signup')" style="background:none;border:none;color:rgba(245,200,66,0.65);font-weight:700;cursor:pointer;font-size:0.68rem;font-family:'Inter',sans-serif;">Create an account</button>
+                </p>
+            </div>
+
+            <!-- SIGNUP FORM -->
+            <div id="auth-signup-form" class="auth-form" style="display:none;">
+                <div class="auth-row-2col">
+                    <div>
+                        <label class="auth-field-label">First Name</label>
+                        <input class="auth-input" type="text" id="signup-fname" placeholder="Arjun" autocomplete="given-name" />
+                    </div>
+                    <div>
+                        <label class="auth-field-label">Last Name</label>
+                        <input class="auth-input" type="text" id="signup-lname" placeholder="Sharma" autocomplete="family-name" />
+                    </div>
+                </div>
+                <div>
+                    <label class="auth-field-label">Email Address</label>
+                    <input class="auth-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+                </div>
+                <div>
+                    <label class="auth-field-label">Password</label>
+                    <input class="auth-input" type="password" id="signup-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="updatePwdStrength(this.value)" />
+                    <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwd-strength-fill"></div></div>
+                </div>
+                <div>
+                    <label class="auth-field-label">Confirm Password</label>
+                    <input class="auth-input" type="password" id="signup-confirm" placeholder="Re-enter password" autocomplete="new-password" />
+                </div>
+                <div id="signup-error" class="auth-error"></div>
+                <div id="signup-success" class="auth-success"></div>
+                <button class="auth-submit-btn" onclick="doSignup()">Create My Account &rarr;</button>
+                <p style="text-align:center; font-size:0.68rem; color:rgba(232,213,163,0.35); margin-top:2px;">
+                    Already have an account? <button onclick="switchAuthTab('login')" style="background:none;border:none;color:rgba(245,200,66,0.65);font-weight:700;cursor:pointer;font-size:0.68rem;font-family:'Inter',sans-serif;">Login</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- ===== WELCOME PANEL (shown when already logged in) ===== -->
+        <div id="auth-welcome" class="auth-welcome" style="display:none;">
+            <p id="welcome-greeting" style="font-size:0.9rem; color:rgba(232,213,163,0.75); font-weight:600; letter-spacing:0.02em;"></p>
+            <button class="auth-enter-btn" onclick="dismissSplash()">Enter Dashboard &rarr;</button>
+            <button class="auth-logout-btn" onclick="doLogout()">Not you? Sign out</button>
+        </div>
     </div>
 
     <script>
+    /* ============================================================
+       COIN PARTICLES
+    ============================================================ */
     (function() {
         const container = document.getElementById('coins-container');
         for (let i = 0; i < 16; i++) {
@@ -513,13 +754,196 @@
         }
     })();
 
+    /* ============================================================
+       CREDENTIAL STORAGE (localStorage-based, demo tier)
+       Key: "am_users" → JSON array of { fname, lname, email, pwHash }
+       Key: "am_session" → { email, fname, lname } (current session)
+    ============================================================ */
+
+    /** Lightweight hash (djb2-style) — NOT cryptographic; demo purposes only */
+    function hashPwd(str) {
+        let h = 5381;
+        for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
+        return (h >>> 0).toString(36);
+    }
+
+    function getUsers() {
+        try { return JSON.parse(localStorage.getItem('am_users') || '[]'); }
+        catch { return []; }
+    }
+    function saveUsers(users) {
+        localStorage.setItem('am_users', JSON.stringify(users));
+    }
+    function getSession() {
+        try { return JSON.parse(localStorage.getItem('am_session') || 'null'); }
+        catch { return null; }
+    }
+    function saveSession(data) {
+        localStorage.setItem('am_session', data ? JSON.stringify(data) : 'null');
+    }
+
+    /* ============================================================
+       SPLASH INIT — decide which panel to show
+    ============================================================ */
+    window.addEventListener('DOMContentLoaded', () => {
+        const session = getSession();
+        const authPanel   = document.getElementById('auth-panel');
+        const welcomePanel = document.getElementById('auth-welcome');
+
+        if (session) {
+            // Already logged in — show welcome
+            document.getElementById('welcome-greeting').textContent =
+                `Welcome back, ${session.fname}! 👋`;
+            welcomePanel.style.display = 'flex';
+        } else {
+            // Not logged in — show auth form
+            authPanel.style.display = 'block';
+        }
+    });
+
+    /* ============================================================
+       AUTH TAB SWITCHER
+    ============================================================ */
+    function switchAuthTab(tab) {
+        const loginForm   = document.getElementById('auth-login-form');
+        const signupForm  = document.getElementById('auth-signup-form');
+        const tabLogin    = document.getElementById('auth-tab-login');
+        const tabSignup   = document.getElementById('auth-tab-signup');
+
+        if (tab === 'login') {
+            loginForm.style.display  = 'flex';
+            signupForm.style.display = 'none';
+            tabLogin.classList.add('active');
+            tabSignup.classList.remove('active');
+        } else {
+            loginForm.style.display  = 'none';
+            signupForm.style.display = 'flex';
+            tabSignup.classList.add('active');
+            tabLogin.classList.remove('active');
+        }
+        // Clear errors
+        ['login-error','signup-error','signup-success'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; el.textContent = ''; }
+        });
+    }
+
+    /* ============================================================
+       PASSWORD STRENGTH INDICATOR
+    ============================================================ */
+    function updatePwdStrength(val) {
+        const fill = document.getElementById('pwd-strength-fill');
+        if (!fill) return;
+        let score = 0;
+        if (val.length >= 8)  score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+        const pct   = score * 25;
+        const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
+        fill.style.width      = pct + '%';
+        fill.style.background = colors[score - 1] || 'rgba(255,255,255,0.1)';
+    }
+
+    /* ============================================================
+       SIGNUP
+    ============================================================ */
+    function doSignup() {
+        const fname   = document.getElementById('signup-fname').value.trim();
+        const lname   = document.getElementById('signup-lname').value.trim();
+        const email   = document.getElementById('signup-email').value.trim().toLowerCase();
+        const pwd     = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        const errEl   = document.getElementById('signup-error');
+        const okEl    = document.getElementById('signup-success');
+
+        function showErr(msg) {
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            okEl.style.display  = 'none';
+        }
+
+        errEl.style.display = 'none';
+        okEl.style.display  = 'none';
+
+        if (!fname || !lname)         return showErr('Please enter your full name.');
+        if (!email || !email.includes('@')) return showErr('Enter a valid email address.');
+        if (pwd.length < 8)           return showErr('Password must be at least 8 characters.');
+        if (pwd !== confirm)          return showErr('Passwords do not match.');
+
+        const users = getUsers();
+        if (users.find(u => u.email === email)) return showErr('An account with this email already exists. Please login.');
+
+        users.push({ fname, lname, email, pwHash: hashPwd(pwd) });
+        saveUsers(users);
+        saveSession({ email, fname, lname });
+
+        okEl.textContent = `🎉 Account created! Welcome, ${fname}!`;
+        okEl.style.display = 'block';
+
+        setTimeout(() => dismissSplash(), 1200);
+    }
+
+    /* ============================================================
+       LOGIN
+    ============================================================ */
+    function doLogin() {
+        const email  = document.getElementById('login-email').value.trim().toLowerCase();
+        const pwd    = document.getElementById('login-password').value;
+        const errEl  = document.getElementById('login-error');
+
+        errEl.style.display = 'none';
+        errEl.textContent = '';
+
+        if (!email || !pwd) {
+            errEl.textContent = 'Please enter your email and password.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const users = getUsers();
+        const user  = users.find(u => u.email === email && u.pwHash === hashPwd(pwd));
+
+        if (!user) {
+            errEl.textContent = 'Invalid email or password. Please try again.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        saveSession({ email: user.email, fname: user.fname, lname: user.lname });
+        dismissSplash();
+    }
+
+    /* ============================================================
+       LOGOUT
+    ============================================================ */
+    function doLogout() {
+        saveSession(null);
+        location.reload();
+    }
+
+    /* ============================================================
+       DISMISS SPLASH
+    ============================================================ */
     function dismissSplash() {
         const splash = document.getElementById('splash');
         if (!splash || splash.classList.contains('fade-out')) return;
         splash.classList.add('fade-out');
         splash.addEventListener('animationend', () => splash.remove(), { once: true });
     }
-    // setTimeout(dismissSplash, 3400);
+
+    // Allow Enter key to submit forms
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const splash = document.getElementById('splash');
+        if (!splash) return;
+        const loginForm  = document.getElementById('auth-login-form');
+        const signupForm = document.getElementById('auth-signup-form');
+        const welcome    = document.getElementById('auth-welcome');
+        if (loginForm  && loginForm.style.display  !== 'none') doLogin();
+        else if (signupForm && signupForm.style.display !== 'none') doSignup();
+        else if (welcome && welcome.style.display !== 'none') dismissSplash();
+    });
 
     // Nav shadow on scroll
     window.addEventListener('scroll', () => {
