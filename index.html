@@ -805,10 +805,8 @@
                 bar.style.display = 'flex';
             }
 
-            // Restore saved data on refresh.
-            // loadUserData is defined in this same script block so it's always available.
-            // window.onload ensures the second script block (calculator functions) is ready.
-            window.addEventListener('load', function() { loadUserData(); }, { once: true });
+            // Data restore on refresh is handled inside window.onload (second script block),
+            // where loadUserData() is called BEFORE calculate() to prevent save-before-restore.
         } else {
             // Not logged in — show auth form
             authPanel.style.display = 'block';
@@ -3672,6 +3670,9 @@
             updateWords('inf-rate', 'inf-rate-words');
             // Show inflation toggle on initial growth mode
             document.getElementById('inflation-toggle-container').style.display = 'block';
+            // Restore saved user data BEFORE calculate() so that saveUserData()
+            // (triggered inside calculate) does not overwrite the restored values.
+            if (typeof loadUserData === 'function') loadUserData();
             calculate();
         };
 
