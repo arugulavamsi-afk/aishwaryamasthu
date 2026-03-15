@@ -2318,7 +2318,8 @@
                             <h2 class="text-white font-black text-xl flex items-center gap-2">Financial Plan Builder</h2>
                             <p class="text-slate-300 text-xs mt-1">Answer a few questions. Get a personalised portfolio allocation built for you.</p>
                         </div>
-                        <div id="fp-step-badge" class="flex items-center gap-2">
+                        <!-- Step badge dots (hidden on mobile, used for desktop sync) -->
+                        <div id="fp-step-badge" class="hidden">
                             <div class="fp-step-dot fp-dot-active" data-s="1">1</div>
                             <div class="fp-step-line"></div>
                             <div class="fp-step-dot fp-dot-inactive" data-s="2">2</div>
@@ -2328,14 +2329,36 @@
                             <div class="fp-step-dot fp-dot-inactive" data-s="4">4</div>
                         </div>
                     </div>
+                    <!-- Tab Navigation Bar -->
+                    <div class="flex items-center gap-1 mt-3 flex-wrap" id="fp-tab-nav">
+                        <button onclick="fpNavTab(1)" id="fp-tab-1" class="fp-tab-btn fp-tab-active-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-all">
+                            <span class="fp-tab-dot w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black bg-white/30">1</span>
+                            Personal Profile
+                        </button>
+                        <span class="text-white/25 font-bold text-xs">›</span>
+                        <button onclick="fpNavTab(2)" id="fp-tab-2" class="fp-tab-btn fp-tab-inactive-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-all">
+                            <span class="fp-tab-dot w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black bg-white/20">2</span>
+                            Your Goals
+                        </button>
+                        <span class="text-white/25 font-bold text-xs">›</span>
+                        <button onclick="fpNavTab(3)" id="fp-tab-3" class="fp-tab-btn fp-tab-inactive-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-all">
+                            <span class="fp-tab-dot w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black bg-white/20">3</span>
+                            Risk Profile
+                        </button>
+                        <span class="text-white/25 font-bold text-xs">›</span>
+                        <button onclick="fpNavTab(4)" id="fp-tab-4" class="fp-tab-btn fp-tab-inactive-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-all">
+                            <span class="fp-tab-dot w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black bg-white/20">🧭</span>
+                            Generate Plan
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Step Cards Wrapper -->
-            <div class="flex flex-col lg:flex-row gap-5">
+            <div class="flex flex-col lg:flex-row gap-5" id="fp-columns-wrapper">
 
                 <!-- LEFT: Step Form -->
-                <div class="w-full lg:w-1/2">
+                <div class="w-full lg:w-1/2" id="fp-left-col">
 
                     <!-- STEP 1: Personal Profile -->
                     <div id="fp-step-1" class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
@@ -2471,19 +2494,55 @@
 
                     <!-- STEP 3: Risk Questions -->
                     <div id="fp-step-3" class="hidden bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 overflow-hidden">
-                        <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3" style="background:linear-gradient(90deg,#fff7ed,#fff);">
-                            <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-sm">3</div>
-                            <div>
-                                <div class="font-black text-slate-800 text-sm">Risk Appetite Assessment</div>
-                                <div class="text-[11px] text-slate-400">5 quick questions to understand your comfort with risk</div>
+                        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-3" style="background:linear-gradient(90deg,#fff7ed,#fff);">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-sm">3</div>
+                                <div>
+                                    <div class="font-black text-slate-800 text-sm">Risk Appetite Assessment</div>
+                                    <div class="text-[11px] text-slate-400" id="fp-risk-header-sub">5 quick questions to understand your comfort with risk</div>
+                                </div>
+                            </div>
+                            <!-- Edit toggle — only visible when saved risk exists -->
+                            <button id="fp-risk-edit-toggle-btn" onclick="fpToggleRiskEdit()" class="fp-risk-edit-btn hidden">✏️ Edit</button>
+                        </div>
+
+                        <!-- SAVED RISK PROFILE SUMMARY (shown when score is stored) -->
+                        <div id="fp-risk-saved-view" class="hidden p-5">
+                            <div class="fp-risk-saved-card">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <div class="text-[10px] font-black text-emerald-600 uppercase tracking-wider mb-1">✅ Risk Profile Saved</div>
+                                        <div class="text-base font-black text-slate-800" id="fp-saved-profile-label">—</div>
+                                        <div class="text-xs text-slate-500 mt-0.5" id="fp-saved-profile-sub">—</div>
+                                    </div>
+                                    <div class="text-center flex-shrink-0">
+                                        <div class="text-2xl font-black text-emerald-600" id="fp-saved-score-display">—</div>
+                                        <div class="text-[10px] text-slate-400 font-semibold">/ 15 pts</div>
+                                    </div>
+                                </div>
+                                <!-- Mini score bar -->
+                                <div class="mt-3">
+                                    <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                        <div id="fp-saved-score-bar" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#10b981,#059669);"></div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2.5 leading-relaxed">Your risk profile has been saved from a previous session. You can generate your plan directly, or edit your answers if your situation has changed.</p>
+                                <div class="flex gap-2 mt-3">
+                                    <button onclick="fpToggleRiskEdit()" class="fp-risk-edit-btn flex-1 text-center">✏️ Re-take Assessment</button>
+                                    <button onclick="fpCalculatePlan()" class="fp-next-btn flex-1" style="background:linear-gradient(135deg,#f97316,#ef4444); padding:8px 14px;">🧭 Generate Plan →</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="p-5 space-y-5" id="fp-questions-container">
-                            <!-- Dynamically rendered -->
-                        </div>
-                        <div class="px-5 pb-5 flex gap-2">
-                            <button onclick="fpGoStep(2)" class="fp-back-btn">← Back</button>
-                            <button onclick="fpCalculatePlan()" class="fp-next-btn flex-1" style="background:linear-gradient(135deg,#f97316,#ef4444);">🧭 Generate My Financial Plan →</button>
+
+                        <!-- QUESTIONNAIRE (shown on first visit or when editing) -->
+                        <div id="fp-risk-questions-view">
+                            <div class="p-5 space-y-5" id="fp-questions-container">
+                                <!-- Dynamically rendered -->
+                            </div>
+                            <div class="px-5 pb-5 flex gap-2">
+                                <button onclick="fpGoStep(2)" class="fp-back-btn">← Back</button>
+                                <button onclick="fpCalculatePlan()" class="fp-next-btn flex-1" style="background:linear-gradient(135deg,#f97316,#ef4444);">🧭 Generate My Financial Plan →</button>
+                            </div>
                         </div>
                     </div>
 
@@ -2491,7 +2550,7 @@
                 </div>
 
                 <!-- RIGHT: Live Snapshot + Results -->
-                <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                <div class="w-full lg:w-1/2 flex flex-col gap-4" id="fp-right-col">
 
                     <!-- Live Profile Snapshot (steps 1-3) -->
                     <div id="fp-snapshot-card" class="bg-white rounded-2xl shadow-sm border border-[#f5c842]/30 p-5">
@@ -5218,7 +5277,147 @@
                 var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]'); if (!dot) return;
                 dot.className = 'fp-step-dot ' + (s < n ? 'fp-dot-done' : s === n ? 'fp-dot-active' : 'fp-dot-inactive');
             });
-            if (n === 3) fpInitQuestions();
+            fpUpdateTabNav(n);
+            if (n === 3) fpInitRiskStep();
+        }
+
+        /* ---- Tab Navigation: allows free movement between steps ---- */
+        function fpNavTab(n) {
+            // Going backward: always allow
+            // Going forward: validate required steps
+            if (n > 1) {
+                var age = parseInt(document.getElementById('fp-age').value);
+                var income = document.getElementById('fp-income').value.replace(/,/g,'');
+                if (!age || age < 18 || age > 80 || !income || parseInt(income) < 1000) {
+                    alert('Please complete your Personal Profile first (age + income).'); fpGoStep(1); return;
+                }
+            }
+            if (n >= 3 && fpState.goals.length === 0) {
+                alert('Please select at least one financial goal first.'); fpGoStep(2); return;
+            }
+            if (n === 4) {
+                // Generate plan: must have risk answers OR a saved score
+                var savedRisk = fpLoadRiskScore();
+                var totalAnswerPts = fpQuestions.reduce(function(sum, q){ return sum + (fpState.answers[q.id + '_pts'] || 0); }, 0);
+                var answeredAll = fpQuestions.every(function(q){ return fpState.answers[q.id] !== undefined; });
+                if (!answeredAll && !savedRisk) {
+                    alert('Please complete the Risk Assessment first.'); fpGoStep(3); return;
+                }
+                fpCalculatePlan(); return;
+            }
+            // If results are visible and user clicks step 1/2/3, hide results and go to that step
+            if (fpState.planGenerated) {
+                var rc = document.getElementById('fp-results-card');
+                var rp = document.getElementById('fp-results-placeholder');
+                if (rc) rc.classList.add('hidden');
+                if (rp) rp.classList.remove('hidden');
+                fpState.planGenerated = false;
+                // Restore two-column layout
+                var leftCol  = document.getElementById('fp-left-col');
+                var rightCol = document.getElementById('fp-right-col');
+                if (leftCol)  leftCol.classList.remove('hidden');
+                if (rightCol) { rightCol.classList.add('lg:w-1/2'); rightCol.classList.remove('w-full'); }
+            }
+            fpGoStep(n);
+        }
+
+        function fpUpdateTabNav(n) {
+            [1,2,3].forEach(function(s) {
+                var btn = document.getElementById('fp-tab-' + s);
+                if (!btn) return;
+                btn.className = btn.className.replace(/fp-tab-(active|inactive|done)-pill/g, '');
+                if (s < n) {
+                    btn.classList.add('fp-tab-done-pill');
+                    // Show check in dot
+                    var dot = btn.querySelector('.fp-tab-dot');
+                    if (dot) dot.textContent = '✓';
+                } else if (s === n) {
+                    btn.classList.add('fp-tab-active-pill');
+                    var dot = btn.querySelector('.fp-tab-dot');
+                    if (dot) dot.textContent = s;
+                } else {
+                    btn.classList.add('fp-tab-inactive-pill');
+                    var dot = btn.querySelector('.fp-tab-dot');
+                    if (dot) dot.textContent = s;
+                }
+            });
+            // Tab 4 (Generate) gets active highlight only when plan is generated
+            var tab4 = document.getElementById('fp-tab-4');
+            if (tab4) {
+                tab4.className = tab4.className.replace(/fp-tab-(active|inactive|done)-pill/g, '');
+                tab4.classList.add(fpState.planGenerated ? 'fp-tab-done-pill' : 'fp-tab-inactive-pill');
+            }
+        }
+
+        /* ---- Risk Score Persistence ---- */
+        function fpGetRiskStorageKey() {
+            try {
+                var sess = JSON.parse(localStorage.getItem('am_session') || 'null');
+                return sess && sess.email ? 'am_fp_risk_' + sess.email : 'am_fp_risk_guest';
+            } catch(e) { return 'am_fp_risk_guest'; }
+        }
+
+        function fpSaveRiskScore(answers, score) {
+            try {
+                var data = { answers: answers, score: score, savedAt: new Date().toISOString() };
+                localStorage.setItem(fpGetRiskStorageKey(), JSON.stringify(data));
+            } catch(e) {}
+        }
+
+        function fpLoadRiskScore() {
+            try {
+                var raw = localStorage.getItem(fpGetRiskStorageKey());
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch(e) { return null; }
+        }
+
+        function fpClearRiskScore() {
+            try { localStorage.removeItem(fpGetRiskStorageKey()); } catch(e) {}
+        }
+
+        /* ---- Initialise the Risk Step: show saved profile OR questionnaire ---- */
+        function fpInitRiskStep() {
+            var saved = fpLoadRiskScore();
+            var savedView = document.getElementById('fp-risk-saved-view');
+            var questView = document.getElementById('fp-risk-questions-view');
+            var editBtn   = document.getElementById('fp-risk-edit-toggle-btn');
+            var headerSub = document.getElementById('fp-risk-header-sub');
+
+            if (saved && !fpState._editingRisk) {
+                // Restore answers into fpState so plan can use them
+                fpState.answers = Object.assign({}, saved.answers);
+                // Show the saved summary
+                savedView.classList.remove('hidden');
+                questView.classList.add('hidden');
+                if (editBtn) editBtn.classList.remove('hidden');
+                if (headerSub) headerSub.textContent = 'Your risk profile is saved — generate or edit';
+
+                // Populate saved card UI
+                var profileKey = fpGetRiskProfile(saved.score, parseInt(document.getElementById('fp-age').value) || 30);
+                var profile = fpPortfolios[profileKey];
+                var savedLabel = document.getElementById('fp-saved-profile-label');
+                var savedSub   = document.getElementById('fp-saved-profile-sub');
+                var savedScore = document.getElementById('fp-saved-score-display');
+                var savedBar   = document.getElementById('fp-saved-score-bar');
+                if (savedLabel) savedLabel.textContent = profile ? profile.label : 'Custom Profile';
+                if (savedSub)   savedSub.textContent   = profile ? profile.sub   : '';
+                if (savedScore) savedScore.textContent  = saved.score;
+                if (savedBar)   setTimeout(function(){ savedBar.style.width = Math.round((saved.score / 15) * 100) + '%'; }, 80);
+
+            } else {
+                // Show questionnaire
+                savedView.classList.add('hidden');
+                questView.classList.remove('hidden');
+                if (editBtn) editBtn.classList.add('hidden');
+                if (headerSub) headerSub.textContent = '5 quick questions to understand your comfort with risk';
+                fpInitQuestions();
+            }
+        }
+
+        function fpToggleRiskEdit() {
+            fpState._editingRisk = !fpState._editingRisk;
+            fpInitRiskStep();
         }
 
         // ---- Live snapshot ----
@@ -5402,10 +5601,26 @@
 
         // ---- Generate Plan ----
         function fpCalculatePlan() {
+            // Check if we have all answers (either freshly answered or loaded from saved)
             var answered = fpQuestions.filter(function(q){ return fpState.answers[q.id] !== undefined; }).length;
-            if (answered < fpQuestions.length) { alert('Please answer all 5 questions to generate your plan.'); return; }
+            var savedRisk = fpLoadRiskScore();
+
+            // If not all answered and no saved score, try to use saved
+            if (answered < fpQuestions.length) {
+                if (savedRisk) {
+                    fpState.answers = Object.assign({}, savedRisk.answers);
+                    answered = fpQuestions.filter(function(q){ return fpState.answers[q.id] !== undefined; }).length;
+                }
+                if (answered < fpQuestions.length) {
+                    alert('Please answer all 5 questions to generate your plan.'); fpGoStep(3); return;
+                }
+            }
 
             var totalScore    = fpQuestions.reduce(function(s,q){ return s + (fpState.answers[q.id+'_pts'] || 0); },0);
+
+            // Save the risk score for future sessions
+            fpSaveRiskScore(fpState.answers, totalScore);
+            fpState._editingRisk = false; // reset edit mode
             var age           = parseInt(document.getElementById('fp-age').value) || 30;
             var name          = document.getElementById('fp-name').value.trim() || 'there';
             var monthlyInvest = parseInt(document.getElementById('fp-invest-amt').value.replace(/,/g,'')) || 0;
@@ -5433,6 +5648,32 @@
                 var dot = document.querySelector('#fp-step-badge [data-s="' + s + '"]'); if (!dot) return;
                 dot.className = 'fp-step-dot ' + (s <= 3 ? 'fp-dot-done' : 'fp-dot-active');
             });
+
+            // Update tab pills — all done, generate highlighted
+            [1,2,3].forEach(function(s) {
+                var btn = document.getElementById('fp-tab-' + s);
+                if (!btn) return;
+                btn.className = btn.className.replace(/fp-tab-(active|inactive|done)-pill/g, '');
+                btn.classList.add('fp-tab-done-pill');
+                var dot = btn.querySelector('.fp-tab-dot');
+                if (dot) dot.textContent = '✓';
+            });
+            var tab4 = document.getElementById('fp-tab-4');
+            if (tab4) {
+                tab4.className = tab4.className.replace(/fp-tab-(active|inactive|done)-pill/g, '');
+                tab4.classList.add('fp-tab-active-pill');
+                var d4 = tab4.querySelector('.fp-tab-dot');
+                if (d4) d4.textContent = '🧭';
+            }
+
+            // Hide left column and expand right to full width
+            var leftCol  = document.getElementById('fp-left-col');
+            var rightCol = document.getElementById('fp-right-col');
+            if (leftCol)  leftCol.classList.add('hidden');
+            if (rightCol) { rightCol.classList.remove('lg:w-1/2'); rightCol.classList.add('w-full'); }
+
+            // Hide all step forms when showing results
+            [1,2,3].forEach(function(s){ var el=document.getElementById('fp-step-'+s); if(el) el.classList.add('hidden'); });
 
             document.getElementById('fp-results-placeholder').classList.add('hidden');
             var fpRC = document.getElementById('fp-results-card');
@@ -5736,19 +5977,24 @@
         // ---- Reset ----
         function fpEditPlan() {
             // Go back to step 1, but keep all current state (name, goals, answers)
-            // Hide results and show the steps again
             var rc = document.getElementById('fp-results-card');
             if (rc) rc.classList.add('hidden');
             var rp = document.getElementById('fp-results-placeholder');
             if (rp) rp.classList.remove('hidden');
+            // Restore two-column layout
+            var leftCol  = document.getElementById('fp-left-col');
+            var rightCol = document.getElementById('fp-right-col');
+            if (leftCol)  leftCol.classList.remove('hidden');
+            if (rightCol) { rightCol.classList.add('lg:w-1/2'); rightCol.classList.remove('w-full'); }
             fpGoStep(1);
-            // Scroll to the top of the plan form
+            fpUpdateTabNav(1);
             var planPanel = document.getElementById('finplan-panel');
             if (planPanel) setTimeout(function(){ planPanel.scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
         }
 
         function fpReset() {
-            fpState = { step:1, goals:[], existing:[], existingAmounts:{}, existingCustom:'', answers:{}, planGenerated:false };
+            fpClearRiskScore();
+            fpState = { step:1, goals:[], existing:[], existingAmounts:{}, existingCustom:'', answers:{}, planGenerated:false, _editingRisk:false };
             ['fp-name','fp-age','fp-retire-age','fp-income','fp-invest-amt'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
             ['fp-income-words','fp-invest-words'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent='—'; });
             document.querySelectorAll('.fp-goal-tile').forEach(function(b){ b.classList.remove('fp-goal-tile-active'); });
@@ -5760,6 +6006,21 @@
             var ea = document.getElementById('fp-existing-amounts'); if(ea){ ea.classList.add('hidden'); ea.innerHTML='<p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Current value of each investment ↓</p>'; }
             var es = document.getElementById('fp-existing-section'); if(es) es.innerHTML='';
             fpGoStep(1);
+            fpUpdateTabNav(1);
+            // Reset two-column layout
+            var leftCol  = document.getElementById('fp-left-col');
+            var rightCol = document.getElementById('fp-right-col');
+            if (leftCol)  leftCol.classList.remove('hidden');
+            if (rightCol) { rightCol.classList.add('lg:w-1/2'); rightCol.classList.remove('w-full'); }
+            // Reset tab dots to initial state
+            [1,2,3].forEach(function(s) {
+                var btn = document.getElementById('fp-tab-' + s); if (!btn) return;
+                btn.className = btn.className.replace(/fp-tab-(active|inactive|done)-pill/g, '');
+                btn.classList.add(s === 1 ? 'fp-tab-active-pill' : 'fp-tab-inactive-pill');
+                var dot = btn.querySelector('.fp-tab-dot'); if (dot) dot.textContent = s;
+            });
+            var tab4 = document.getElementById('fp-tab-4');
+            if (tab4) { tab4.className = tab4.className.replace(/fp-tab-(active|inactive|done)-pill/g, ''); tab4.classList.add('fp-tab-inactive-pill'); }
             var rc=document.getElementById('fp-results-card'); if(rc) rc.classList.add('hidden');
             var rp=document.getElementById('fp-results-placeholder'); if(rp) rp.classList.remove('hidden');
             fpLiveUpdate();
@@ -6262,6 +6523,53 @@
             display: flex; align-items: flex-start; gap: 10px;
             padding: 10px 12px; border-radius: 12px; border: 1px solid;
         }
+
+        /* ===== FP TAB NAV PILLS ===== */
+        .fp-tab-active-pill {
+            background: rgba(255,255,255,0.22);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.45);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .fp-tab-inactive-pill {
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.55);
+            border: 1.5px solid rgba(255,255,255,0.12);
+        }
+        .fp-tab-inactive-pill:hover {
+            background: rgba(255,255,255,0.13);
+            color: rgba(255,255,255,0.85);
+            border-color: rgba(255,255,255,0.28);
+        }
+        .fp-tab-done-pill {
+            background: rgba(16,185,129,0.18);
+            color: #6ee7b7;
+            border: 1.5px solid rgba(16,185,129,0.35);
+        }
+        .fp-tab-done-pill:hover {
+            background: rgba(16,185,129,0.28);
+            color: #a7f3d0;
+        }
+
+        /* ===== RISK PROFILE SAVED CARD ===== */
+        .fp-risk-saved-card {
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            border: 1.5px solid rgba(16,185,129,0.35);
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .fp-risk-edit-btn {
+            padding: 7px 14px;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .fp-risk-edit-btn:hover { background: #f9fafb; border-color: #0d9488; color: #0d9488; }
     </style>
 </body>
 </html>
