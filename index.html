@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Aishwaryamasthu - GROW AND MAKE INDIA GROW</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -6570,6 +6570,105 @@
             transition: all 0.15s;
         }
         .fp-risk-edit-btn:hover { background: #f9fafb; border-color: #0d9488; color: #0d9488; }
+
+        /* ===== MOBILE RESPONSIVE: SPLASH & LOGO FIXES =====
+           All rules are scoped to max-width:640px so desktop/tablet
+           layout is completely unaffected.
+        ===================================================== */
+        @media (max-width: 640px) {
+
+            /* --- Splash: safe-area padding (notch / home bar) --- */
+            #splash {
+                padding-top:    env(safe-area-inset-top,    0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+                padding-left:   env(safe-area-inset-left,   0px);
+                padding-right:  env(safe-area-inset-right,  0px);
+            }
+
+            /* --- Splash title: prevent horizontal clipping --- */
+            .splash-title {
+                padding-left:  16px;
+                padding-right: 16px;
+                max-width: 100%;
+                word-break: break-word;
+                /* Tighten the min of clamp so it reads well on ~320px screens */
+                font-size: clamp(1.55rem, 7.5vw, 3rem) !important;
+            }
+
+            /* --- Splash tagline & divider --- */
+            .splash-tagline {
+                padding-left:  16px;
+                padding-right: 16px;
+                text-align: center;
+                word-break: break-word;
+            }
+            .splash-divider {
+                max-width: calc(100vw - 40px);
+            }
+
+            /* --- Splash ticker: wrap gracefully --- */
+            .splash-ticker {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px 16px;
+                padding-left:  16px;
+                padding-right: 16px;
+            }
+
+            /* --- Splash skip button: respect safe area --- */
+            .splash-skip {
+                bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+                right:  calc(16px + env(safe-area-inset-right,  0px));
+            }
+
+            /* --- Auth panel: slightly tighter side margins --- */
+            .auth-panel {
+                width: min(420px, 90vw);
+                margin-top: 14px;
+            }
+            .auth-form {
+                padding: 16px 14px 18px;
+            }
+            .auth-row-2col {
+                grid-template-columns: 1fr;
+            }
+
+            /* --- Nav logo header: smaller logo & text on mobile --- */
+            .logo-header-bg {
+                padding:    10px 10px !important;
+                gap:        8px  !important;
+                border-radius: 12px !important;
+            }
+            /* Logo image shrinks from h-20 w-20 (80px) → 52px */
+            .logo-img {
+                height: 3.25rem !important;
+                width:  3.25rem !important;
+            }
+            /* Brand name shrinks from 2xl/3xl → fits single line */
+            .brand-name {
+                font-size: 1.15rem !important;
+                letter-spacing: 0.01em !important;
+            }
+            /* Tagline tightens */
+            .brand-tagline {
+                font-size: 0.5rem !important;
+                letter-spacing: 0.02em !important;
+            }
+        }
+
+        /* Extra-small screens (320px – 375px) */
+        @media (max-width: 380px) {
+            .brand-name {
+                font-size: 0.95rem !important;
+            }
+            .logo-img {
+                height: 2.75rem !important;
+                width:  2.75rem !important;
+            }
+            .splash-title {
+                font-size: clamp(1.35rem, 8vw, 2rem) !important;
+            }
+        }
     </style>
 </body>
 </html>
