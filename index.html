@@ -576,8 +576,8 @@
                 style="background: linear-gradient(160deg, #071e22 0%, #0d3d42 60%, #162a10 100%); border: 1.5px solid rgba(245,200,66,0.45); box-shadow: 0 12px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);">
                 <div style="padding: 6px;">
                     <button onclick="mobileSwitchMode('growth')" id="mob-tab-growth"
-                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
-                        style="color:#fff; background: linear-gradient(135deg,#0d9488,#10b981); margin-bottom:3px;">
+                        class="mob-dd-item mob-active w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="margin-bottom:3px;">
                         <span style="font-size:1.05rem; width:22px; text-align:center;">📈</span><span>Growth Calculator</span>
                     </button>
                     <button onclick="mobileSwitchMode('goal')" id="mob-tab-goal"
@@ -1426,61 +1426,6 @@
         </div>
         <!-- =================== END MUTUAL FUND KIT PANEL ================== -->
 
-        <!-- ===================== MF DETAIL MODAL ===================== -->
-        <div id="mf-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4" style="padding-top: env(safe-area-inset-top);" onclick="closeMFModal(event)">
-            <div class="animate-modal bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col" onclick="event.stopPropagation()" style="overflow:hidden; margin-top: auto;">
-                <!-- Modal Header -->
-                <div id="mf-modal-header" class="px-5 pt-5 pb-4 flex items-start justify-between gap-3 flex-shrink-0" style="background:#f5f3ff">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1 flex-wrap">
-                            <span id="mf-modal-icon" class="text-2xl"></span>
-                            <span id="mf-modal-name" class="text-base font-black text-slate-800"></span>
-                            <span id="mf-modal-category-badge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wide"></span>
-                        </div>
-                        <div class="flex items-center gap-3 flex-wrap mt-1">
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">Typical Returns</span>
-                                <div id="mf-modal-returns" class="text-xl font-black"></div>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">Min Horizon</span>
-                                <div id="mf-modal-horizon" class="text-xl font-black text-slate-700"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="document.getElementById('mf-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none mt-0.5 flex-shrink-0">✕</button>
-                </div>
-                <!-- Risk Meter -->
-                <div class="px-5 pt-3 pb-2 border-b border-slate-100 flex-shrink-0">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</span>
-                        <span id="mf-modal-risk-label" class="text-xs font-bold"></span>
-                    </div>
-                    <div class="flex items-center gap-1.5" id="mf-modal-risk-dots"></div>
-                </div>
-                <!-- Body -->
-                <div class="px-5 py-4 space-y-4 flex-1" style="overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">What is it?</p>
-                        <p id="mf-modal-what" class="text-sm text-slate-700 leading-relaxed"></p>
-                    </div>
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">✅ When to Use / Best Scenarios</p>
-                        <p id="mf-modal-scenarios" class="text-sm text-slate-700 leading-relaxed"></p>
-                    </div>
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">⚠️ When NOT to Use</p>
-                        <p id="mf-modal-avoid" class="text-sm text-slate-700 leading-relaxed"></p>
-                    </div>
-                    <div class="bg-amber-50 border border-amber-100 rounded-xl p-3">
-                        <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">💡 Real Indian Example</p>
-                        <p id="mf-modal-example" class="text-sm text-amber-900 leading-relaxed"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- =================== END MF DETAIL MODAL ================== -->
-
         <!-- ===================== FINANCIAL HEALTH SCORE PANEL ===================== -->
         <div id="healthscore-panel" class="hidden w-full flex flex-col gap-5">
 
@@ -2313,8 +2258,12 @@
                 if (!el) return;
                 if (m === mode) {
                     el.classList.add('mob-active');
+                    el.style.background = '';
+                    el.style.color = '';
                 } else {
                     el.classList.remove('mob-active');
+                    el.style.background = '';
+                    el.style.color = 'rgba(255,255,255,0.78)';
                 }
             });
         }
@@ -3748,74 +3697,40 @@
                 const riskColor = riskColors[fund.risk];
                 let dots = '';
                 for (let d = 1; d <= 5; d++) {
-                    dots += `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d <= fund.risk ? riskColor : '#e2e8f0'};flex-shrink:0;"></span>`;
+                    dots += `<div style="width:9px;height:9px;border-radius:50%;background:${d <= fund.risk ? riskColor : '#e2e8f0'};flex-shrink:0;"></div>`;
                 }
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="mf-tile flip-card bg-white border border-[#f5c842]/30 rounded-2xl relative"
+                    <div class="mf-tile invest-card border border-[#f5c842]/30 rounded-xl p-3 bg-white cursor-pointer group relative overflow-hidden"
                          data-category="${fund.category}" data-id="${fund.id}"
-                         onclick="toggleMFFlip(this, ${idx})" style="border-top: 3px solid ${c.color}; min-height:200px;">
-                      <div class="flip-card-inner rounded-2xl">
-                        <!-- FRONT -->
-                        <div class="flip-card-front bg-white p-4 flex flex-col gap-2.5 group" style="border-radius:inherit;">
-                            <div class="flex items-start justify-between gap-2">
-                                <span class="text-sm font-black text-slate-800 leading-tight">${fund.name}</span>
-                                <span class="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style="background:${c.badge};color:${c.color}">${fund.categoryLabel}</span>
+                         style="border-left: 3px solid ${c.color};"
+                         onclick="openMFModal(${idx})">
+                        <div class="flex items-start justify-between gap-2 mb-1.5">
+                            <div class="font-bold text-sm text-slate-800 leading-tight">${fund.icon} ${fund.name}</div>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0" style="background:${c.badge};color:${c.color}">${fund.categoryLabel}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mb-2.5 leading-snug">${fund.tagline}</div>
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                            <div class="flex flex-col gap-0.5">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Returns</span>
+                                <span class="text-xs font-black" style="color:${c.color}">${fund.returns}</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-snug flex-1">${fund.tagline}</p>
-                            <div class="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
-                                <div class="flex flex-col">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase">Returns</span>
-                                    <span class="text-xs font-black" style="color:${c.color}">${fund.returns}</span>
-                                </div>
-                                <div class="flex flex-col items-center">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase">Horizon</span>
-                                    <span class="text-xs font-bold text-slate-600">${fund.horizon}</span>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase">Risk</span>
-                                    <div class="flex items-center gap-0.5 mt-0.5">${dots}</div>
-                                    <span class="text-[9px] font-bold mt-0.5" style="color:${riskColor}">${fund.riskLabel}</span>
-                                </div>
+                            <div class="flex flex-col items-center gap-0.5">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Horizon</span>
+                                <span class="text-xs font-bold text-slate-600">${fund.horizon}</span>
                             </div>
-                            <div class="pt-0.5 flex items-center gap-1">
-                                <span class="text-[10px] font-semibold text-slate-400 group-hover:text-violet-500 transition-colors">Flip for insights</span>
-                                <span class="text-[10px] text-slate-300">↻</span>
+                            <div class="flex flex-col items-end gap-0.5">
+                                <div class="flex items-center gap-0.5">${dots}</div>
+                                <span class="text-[9px] font-bold" style="color:${riskColor}">${fund.riskLabel} Risk</span>
                             </div>
                         </div>
-                        <!-- BACK -->
-                        <div class="flip-card-back mf-tile-back" style="border-top: 3px solid ${c.color}; border-radius: inherit;">
-                            <!-- What it is -->
-                            <p class="back-what">${fund.what.length > 115 ? fund.what.slice(0, 115).replace(/\s\S*$/, '') + '…' : fund.what}</p>
-
-                            <!-- Best for / Avoid -->
-                            <div class="back-signals">
-                                <div class="back-signal-row back-signal-good">
-                                    <span class="back-signal-icon">✓</span>
-                                    <span>${fund.scenarios.length > 72 ? fund.scenarios.slice(0, 72).replace(/\s\S*$/, '') + '…' : fund.scenarios}</span>
-                                </div>
-                                <div class="back-signal-row back-signal-bad">
-                                    <span class="back-signal-icon">✗</span>
-                                    <span>${fund.avoid.length > 60 ? fund.avoid.slice(0, 60).replace(/\s\S*$/, '') + '…' : fund.avoid}</span>
-                                </div>
-                            </div>
-
-                            <!-- Footer: Deep Dive CTA -->
-                            <div class="back-footer">
-                                <span class="back-flip-hint">Tap card to flip back ↩</span>
-                                <button onclick="event.stopPropagation(); openMFModal(${idx})" class="back-cta-btn">
-                                    Deep Dive →
-                                </button>
-                            </div>
+                        <div class="flex items-center justify-end mt-2">
+                            <span class="text-[10px] font-semibold text-slate-400 group-hover:text-emerald-600 transition-colors flex items-center gap-0.5">Details <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                         </div>
-                      </div>
+                        <div class="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-emerald-300 transition-all pointer-events-none"></div>
                     </div>
                 `);
             });
             renderMFPickerSection();
-        }
-
-        function toggleMFFlip(el, idx) {
-            el.classList.toggle('flipped');
         }
 
         function filterMF(category) {
@@ -3864,23 +3779,15 @@
             document.getElementById('mf-modal-example').innerText = fund.example;
             const modal = document.getElementById('mf-modal');
             modal.classList.remove('hidden');
-            const nav = document.querySelector('nav');
-            const navH = nav ? nav.offsetHeight : 0;
             const card = modal.querySelector('.animate-modal');
-            card.style.maxHeight = `calc(100vh - ${navH + 16}px)`;
-            // On desktop (sm+), centre vertically below the nav
-            if (window.innerWidth >= 640) {
-                modal.style.paddingTop = (navH + 8) + 'px';
-            } else {
-                modal.style.paddingTop = '0';
-            }
             card.style.animation = 'none';
             requestAnimationFrame(() => { card.style.animation = ''; });
         }
 
         function closeMFModal(event) {
-            if (event.target === document.getElementById('mf-modal')) {
-                document.getElementById('mf-modal').classList.add('hidden');
+            const modal = document.getElementById('mf-modal');
+            if (event.target === modal || event.target === modal.querySelector('.absolute.inset-0')) {
+                modal.classList.add('hidden');
             }
         }
         // ==================== FINANCIAL HEALTH SCORE ====================
@@ -5267,6 +5174,62 @@
             </div>
         </div>
     </div>
+
+    <!-- ===================== MF DETAIL MODAL ===================== -->
+    <div id="mf-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="closeMFModal(event)">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-lg mx-auto flex flex-col animate-modal" style="max-height:92vh;">
+            <!-- Header -->
+            <div id="mf-modal-header" class="px-5 py-4 flex items-start justify-between gap-3 flex-shrink-0 rounded-t-2xl" style="background:#f5f3ff">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <span id="mf-modal-icon" class="text-2xl flex-shrink-0"></span>
+                        <span id="mf-modal-name" class="text-base font-black text-slate-800"></span>
+                        <span id="mf-modal-category-badge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wide flex-shrink-0"></span>
+                    </div>
+                    <div class="flex items-center gap-4 mt-1 flex-wrap">
+                        <div>
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Typical Returns</div>
+                            <div id="mf-modal-returns" class="text-2xl font-black"></div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Min Horizon</div>
+                            <div id="mf-modal-horizon" class="text-2xl font-black text-slate-700"></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('mf-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none mt-0.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors">✕</button>
+            </div>
+            <!-- Risk meter -->
+            <div class="px-5 pt-3 pb-3 border-b border-slate-100 flex-shrink-0">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</span>
+                    <span id="mf-modal-risk-label" class="text-xs font-bold"></span>
+                </div>
+                <div class="flex items-center gap-1.5" id="mf-modal-risk-dots"></div>
+            </div>
+            <!-- Scrollable Body -->
+            <div class="px-5 py-4 space-y-4 overflow-y-auto flex-1" style="-webkit-overflow-scrolling:touch;">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">What is it?</p>
+                    <p id="mf-modal-what" class="text-sm text-slate-700 leading-relaxed"></p>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">✅ When to Use / Best Scenarios</p>
+                    <p id="mf-modal-scenarios" class="text-sm text-slate-700 leading-relaxed"></p>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">⚠️ When NOT to Use</p>
+                    <p id="mf-modal-avoid" class="text-sm text-slate-700 leading-relaxed"></p>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                    <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1">💡 Real Indian Example</p>
+                    <p id="mf-modal-example" class="text-sm text-amber-900 leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- =================== END MF DETAIL MODAL ================== -->
 
     <style>
         @keyframes modal-in {
