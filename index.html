@@ -1125,9 +1125,20 @@
             try {
                 if (data.finplan && window._fpState) {
                     const fp = data.finplan;
+
+                    // Deduplicate saved goals by type — prevents duplicates from
+                    // older sessions accumulating on every toggle.
+                    const rawGoals = fp.goals || [];
+                    const seenTypes = {};
+                    const dedupedGoals = rawGoals.filter(function(g) {
+                        if (!g || !g.type || seenTypes[g.type]) return false;
+                        seenTypes[g.type] = true;
+                        return true;
+                    });
+
                     Object.assign(window._fpState, {
                         step: 1,
-                        goals:           fp.goals           || [],
+                        goals:           dedupedGoals,
                         existing:        fp.existing        || [],
                         existingAmounts: fp.existingAmounts || {},
                         existingCustom:  fp.existingCustom  || '',
@@ -1139,6 +1150,8 @@
                         if (el && fp[id]) el.value = fp[id];
                     });
                     if (typeof fpGoStep === 'function') fpGoStep(1);
+                    // Restore tile visual state after DOM is ready
+                    if (typeof fpRestoreGoalTiles === 'function') fpRestoreGoalTiles();
                     if (typeof fpLiveUpdate === 'function') fpLiveUpdate();
                 }
             } catch(e) { console.warn('loadUserData finplan:', e); }
@@ -5250,7 +5263,24 @@
         };
 
         // ---- Multi-goal tile toggle ----
-        function fpToggleGoalTile(btn, type, emoji, label) {
+        // Restore goal tile visual state from fpState.goals after a page reload.
+        // Called by loadUserData once the state has been re-applied to window._fpState.
+        function fpRestoreGoalTiles() {
+            // 1. Clear all active visual states first
+            document.querySelectorAll('.fp-goal-tile').forEach(function(btn) {
+                btn.classList.remove('fp-goal-tile-active');
+            });
+            // 2. Re-apply active state for every goal that was saved
+            if (!window._fpState) return;
+            window._fpState.goals.forEach(function(g) {
+                var tile = document.querySelector('.fp-goal-tile[data-goal="' + g.type + '"]');
+                if (tile) tile.classList.add('fp-goal-tile-active');
+            });
+            // 3. Rebuild the goal detail cards (target amounts, horizons, custom names)
+            if (typeof fpRenderGoalCards === 'function') fpRenderGoalCards();
+        }
+
+                function fpToggleGoalTile(btn, type, emoji, label) {
             var meta = FP_GOAL_META[type];
             var isActive = btn.classList.contains('fp-goal-tile-active');
             // Flip animation
@@ -5263,7 +5293,11 @@
                 fpState.goals = fpState.goals.filter(function(g){ return g.type !== type; });
             } else {
                 btn.classList.add('fp-goal-tile-active');
-                fpState.goals.push({ type: type, emoji: meta.emoji, label: meta.label, targetAmt: '', years: meta.defaultYrs });
+                // Guard: only push if this type isn't already in the list (prevents
+                // duplicates if tiles somehow get clicked while state is out of sync)
+                if (!fpState.goals.some(function(g){ return g.type === type; })) {
+                    fpState.goals.push({ type: type, emoji: meta.emoji, label: meta.label, targetAmt: '', years: meta.defaultYrs });
+                }
             }
             fpRenderGoalCards();
             fpLiveUpdate();
