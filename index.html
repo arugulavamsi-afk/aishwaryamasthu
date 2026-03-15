@@ -64,9 +64,13 @@
         .border-slate-100 { border-color: rgba(245, 200, 66, 0.30) !important; }
         .fp-goal-card { border-color: rgba(245, 200, 66, 0.30) !important; }
 
-        /* Tab bar scroll on mobile */
+        /* Tab bar scroll on desktop */
         .tabs-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tabs-scroll::-webkit-scrollbar { display: none; }
+
+        /* Mobile dropdown item hover */
+        .mob-dd-item:hover { background: rgba(245,200,66,0.13) !important; color: #f5c842 !important; }
+        .mob-dd-item.mob-active { background: linear-gradient(135deg,#0d9488,#10b981) !important; color: #fff !important; }
         @media (min-width: 768px) {
             .tabs-scroll { justify-content: center; }
         }
@@ -556,8 +560,57 @@
                 <span class="brand-tagline text-sm" style="color: rgba(232,213,163,0.75);">GROW AND MAKE INDIA GROW</span>
             </div>
         </div>
-        <!-- Tabs - scrollable on mobile -->
-        <div class="tabs-scroll flex items-center gap-2 px-4 py-2" style="background: linear-gradient(135deg, #071e22 0%, #0d3d42 50%, #162a10 100%); border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06); border: 1px solid rgba(245,200,66,0.25);">
+        <!-- Mobile Dropdown (sm and below only) -->
+        <div class="sm:hidden relative" id="mobile-tab-dropdown">
+            <button onclick="toggleMobileDropdown()" id="mobile-tab-btn"
+                class="w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl text-sm font-bold"
+                style="background: linear-gradient(130deg, #e8d5a3 0%, #f5c842 35%, #e8a44a 60%, #c97f3a 80%, #e8d5a3 100%); color: #162a10; box-shadow: 0 4px 14px rgba(245,200,66,0.35);">
+                <div class="flex items-center gap-2">
+                    <span id="mobile-tab-icon" style="font-size:1.1rem;">📈</span>
+                    <span id="mobile-tab-label" style="font-family:'Inter',sans-serif; font-weight:700;">Growth Calculator</span>
+                </div>
+                <svg id="mobile-dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); flex-shrink:0;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <!-- Dropdown Panel -->
+            <div id="mobile-dropdown-menu" class="hidden absolute left-0 right-0 z-50 mt-2 rounded-2xl overflow-hidden"
+                style="background: linear-gradient(160deg, #071e22 0%, #0d3d42 60%, #162a10 100%); border: 1.5px solid rgba(245,200,66,0.45); box-shadow: 0 12px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);">
+                <div style="padding: 6px;">
+                    <button onclick="mobileSwitchMode('growth')" id="mob-tab-growth"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:#fff; background: linear-gradient(135deg,#0d9488,#10b981); margin-bottom:3px;">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">📈</span><span>Growth Calculator</span>
+                    </button>
+                    <button onclick="mobileSwitchMode('goal')" id="mob-tab-goal"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78); margin-bottom:3px;">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">🎯</span><span>Goal Planner</span>
+                    </button>
+                    <button onclick="mobileSwitchMode('emergency')" id="mob-tab-emergency"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78); margin-bottom:3px;">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">🛡️</span><span>Emergency Fund</span>
+                    </button>
+                    <button onclick="mobileSwitchMode('mfkit')" id="mob-tab-mfkit"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78); margin-bottom:3px;">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">💼</span><span>MF Kit</span>
+                    </button>
+                    <button onclick="mobileSwitchMode('healthscore')" id="mob-tab-healthscore"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78); margin-bottom:3px;">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">💗</span><span>Fin Health Score</span>
+                    </button>
+                    <button onclick="mobileSwitchMode('finplan')" id="mob-tab-finplan"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78);">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">📋</span><span>Financial Plan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs - scrollable on desktop (hidden on mobile) -->
+        <div class="tabs-scroll hidden sm:flex items-center gap-2 px-4 py-2" style="background: linear-gradient(135deg, #071e22 0%, #0d3d42 50%, #162a10 100%); border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06); border: 1px solid rgba(245,200,66,0.25);">
             <button onclick="switchMode('growth')" id="tab-growth" class="tab-active transition-all text-sm whitespace-nowrap px-4 py-1.5">Growth Calculator</button>
             <button onclick="switchMode('goal')" id="tab-goal" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Goal Planner</button>
             <button onclick="switchMode('emergency')" id="tab-emergency" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Emergency Fund</button>
@@ -2214,7 +2267,67 @@
             requestAnimationFrame(step);
         }
 
+        /* ===== MOBILE DROPDOWN HELPERS ===== */
+        const _mobTabMeta = {
+            growth:      { label: 'Growth Calculator', icon: '📈' },
+            goal:        { label: 'Goal Planner',       icon: '🎯' },
+            emergency:   { label: 'Emergency Fund',     icon: '🛡️' },
+            mfkit:       { label: 'MF Kit',             icon: '💼' },
+            healthscore: { label: 'Fin Health Score',   icon: '💗' },
+            finplan:     { label: 'Financial Plan',     icon: '📋' }
+        };
+
+        function toggleMobileDropdown() {
+            const menu    = document.getElementById('mobile-dropdown-menu');
+            const chevron = document.getElementById('mobile-dropdown-chevron');
+            const isOpen  = !menu.classList.contains('hidden');
+            if (isOpen) {
+                closeMobileDropdown();
+            } else {
+                menu.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function closeMobileDropdown() {
+            const menu    = document.getElementById('mobile-dropdown-menu');
+            const chevron = document.getElementById('mobile-dropdown-chevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+
+        function mobileSwitchMode(mode) {
+            switchMode(mode);
+            closeMobileDropdown();
+        }
+
+        function updateMobileDropdown(mode) {
+            const meta  = _mobTabMeta[mode];
+            const label = document.getElementById('mobile-tab-label');
+            const icon  = document.getElementById('mobile-tab-icon');
+            if (label && meta) label.textContent = meta.label;
+            if (icon  && meta) icon.textContent  = meta.icon;
+            // Update active class on dropdown items
+            Object.keys(_mobTabMeta).forEach(m => {
+                const el = document.getElementById('mob-tab-' + m);
+                if (!el) return;
+                if (m === mode) {
+                    el.classList.add('mob-active');
+                } else {
+                    el.classList.remove('mob-active');
+                }
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('mobile-tab-dropdown');
+            if (dd && !dd.contains(e.target)) closeMobileDropdown();
+        });
+
         function switchMode(mode) {
+            // Sync mobile dropdown label & active state
+            updateMobileDropdown(mode);
             // Save current tab state before switching
             saveTabState(currentMode);
 
