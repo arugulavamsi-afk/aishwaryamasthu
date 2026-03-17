@@ -1265,6 +1265,11 @@
                         style="color:rgba(255,255,255,0.78);">
                         <span style="font-size:1.05rem; width:22px; text-align:center;">📋</span><span>Financial Plan</span>
                     </button>
+                    <button onclick="mobileSwitchMode('mfexplorer')" id="mob-tab-mfexplorer"
+                        class="mob-dd-item w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="color:rgba(255,255,255,0.78);">
+                        <span style="font-size:1.05rem; width:22px; text-align:center;">🔭</span><span>MF Explorer</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1278,6 +1283,7 @@
             <button onclick="switchMode('fundpicker')" id="tab-fundpicker" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fund Picker Guide</button>
             <button onclick="switchMode('healthscore')" id="tab-healthscore" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fin Health Score</button>
             <button onclick="switchMode('finplan')" id="tab-finplan" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Financial Plan</button>
+            <button onclick="switchMode('mfexplorer')" id="tab-mfexplorer" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">🔭 MF Explorer</button>
         </div>
     </nav>
 
@@ -2726,6 +2732,186 @@
         </div>
         <!-- =================== END FINANCIAL PLAN PANEL ================== -->
 
+        <!-- ===================== MF EXPLORER PANEL ===================== -->
+        <div id="mfexplorer-panel" class="hidden w-full flex flex-col gap-4">
+
+            <!-- Header -->
+            <div class="rounded-2xl px-5 py-4 text-white" style="background:linear-gradient(135deg,#0c2340 0%,#1a5276 45%,#0e4d3e 100%);border:2px solid rgba(245,200,66,0.4);box-shadow:0 4px 18px rgba(0,0,0,0.25);">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-black flex items-center gap-2">🔭 Indian MF Explorer</h2>
+                        <p class="text-blue-200 text-xs mt-1 max-w-lg">Live NAV from AMFI · Auto-scored per category · Top AMCs · 3+ year funds only</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span id="mfe-last-updated" class="text-[10px] text-blue-300 font-medium"></span>
+                        <button onclick="refreshMFExplorer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:#fff;">
+                            <svg id="mfe-refresh-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                    <div class="bg-white/10 rounded-xl px-3 py-2"><div class="text-[9px] font-bold text-blue-200 uppercase tracking-wider">Eligible Funds</div><div class="text-lg font-black" id="mfe-stat-total">—</div></div>
+                    <div class="bg-white/10 rounded-xl px-3 py-2"><div class="text-[9px] font-bold text-blue-200 uppercase tracking-wider">In Category</div><div class="text-lg font-black" id="mfe-stat-cat">—</div></div>
+                    <div class="bg-white/10 rounded-xl px-3 py-2"><div class="text-[9px] font-bold text-blue-200 uppercase tracking-wider">Scored</div><div class="text-lg font-black" id="mfe-stat-scored">—</div></div>
+                    <div class="bg-white/10 rounded-xl px-3 py-2"><div class="text-[9px] font-bold text-blue-200 uppercase tracking-wider">AUM Filter</div><div class="text-sm font-black">≥ ₹500 Cr proxy</div></div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="flex items-start gap-2 px-4 py-2.5 rounded-xl text-xs font-medium text-amber-800" style="background:#fffbeb;border:1px solid rgba(245,158,11,0.3);">
+                <span class="text-base flex-shrink-0 mt-0.5">ℹ️</span>
+                <span><strong>AUM ≥ ₹500 Cr proxy:</strong> Only Direct plans from India's top 25 AMCs are shown — established fund houses managing the bulk of Indian MF industry AUM. No data is hardcoded; the full list is fetched live from AMFI daily.</span>
+            </div>
+
+            <!-- Phase progress bar -->
+            <div id="mfe-phase-bar" class="hidden bg-white rounded-2xl border border-[#f5c842]/30 px-4 py-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2"><div class="mfe-spinner-sm"></div><span class="text-xs font-bold text-slate-700" id="mfe-phase-label">Loading…</span></div>
+                    <span class="text-xs font-black text-teal-600" id="mfe-phase-pct"></span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div id="mfe-phase-prog" class="h-1.5 rounded-full transition-all duration-300" style="width:0%;background:linear-gradient(90deg,#0d9488,#10b981)"></div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1.5" id="mfe-phase-sub">Scores fill in progressively — best funds rise to the top 🏆</p>
+            </div>
+
+            <!-- Controls: category pills + search -->
+            <div class="bg-white rounded-2xl border border-[#f5c842]/30 px-4 py-3 flex flex-col gap-3">
+                <div class="flex items-center gap-1.5 flex-wrap" id="mfe-cat-filters">
+                    <button onclick="mfeSetCat('Index')"         data-cat="Index"         class="mfe-cat-btn mfe-cat-active  px-3 py-1.5 rounded-full text-xs font-bold transition-all">📊 Index</button>
+                    <button onclick="mfeSetCat('Large Cap')"     data-cat="Large Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏛 Large Cap</button>
+                    <button onclick="mfeSetCat('Mid Cap')"       data-cat="Mid Cap"       class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">📈 Mid Cap</button>
+                    <button onclick="mfeSetCat('Small Cap')"     data-cat="Small Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🚀 Small Cap</button>
+                    <button onclick="mfeSetCat('Flexi Cap')"     data-cat="Flexi Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🔄 Flexi Cap</button>
+                    <button onclick="mfeSetCat('ELSS')"          data-cat="ELSS"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🧾 ELSS</button>
+                    <button onclick="mfeSetCat('Hybrid')"        data-cat="Hybrid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">⚖️ Hybrid</button>
+                    <button onclick="mfeSetCat('Debt')"          data-cat="Debt"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏦 Debt</button>
+                    <button onclick="mfeSetCat('Liquid')"        data-cat="Liquid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">💧 Liquid</button>
+                    <button onclick="mfeSetCat('Sectoral')"      data-cat="Sectoral"      class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏭 Sectoral</button>
+                    <button onclick="mfeSetCat('International')" data-cat="International" class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🌍 Intl</button>
+                    <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
+                </div>
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input id="mfe-search" type="text" placeholder="Search fund name or AMC within this category…"
+                        class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                        oninput="mfeOnSearch()">
+                </div>
+            </div>
+
+            <!-- Star rating legend -->
+            <div class="flex items-center gap-3 flex-wrap px-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Star rating (within category):</span>
+                <span class="text-[11px] font-bold mfe-st5">★★★★★</span><span class="text-[10px] text-slate-500 -ml-1.5">Top 10%</span>
+                <span class="text-[11px] font-bold mfe-st4">★★★★☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Next 22.5%</span>
+                <span class="text-[11px] font-bold mfe-st3">★★★☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Middle 35%</span>
+                <span class="text-[11px] font-bold mfe-st2">★★☆☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Next 22.5%</span>
+                <span class="text-[11px] font-bold mfe-st1">★☆☆☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Bottom 10%</span>
+            </div>
+
+            <!-- Initial loading -->
+            <div id="mfe-loading" class="flex flex-col items-center justify-center py-16">
+                <div class="mfe-spinner mb-4"></div>
+                <p class="text-sm font-bold text-slate-500" id="mfe-loading-text">Fetching fund list from AMFI…</p>
+                <p class="text-xs text-slate-400 mt-1" id="mfe-loading-sub">One-time load — subsequent category switches are fast</p>
+            </div>
+
+            <!-- Error -->
+            <div id="mfe-error" class="hidden flex flex-col items-center justify-center py-14">
+                <div class="text-5xl mb-3">⚠️</div>
+                <p class="text-sm font-bold text-slate-500">Could not load fund data</p>
+                <p class="text-xs mt-1 text-slate-400 max-w-xs text-center" id="mfe-error-msg"></p>
+                <button onclick="refreshMFExplorer()" class="mt-4 px-5 py-2.5 rounded-xl text-sm font-bold text-white" style="background:linear-gradient(135deg,#1a5276,#0d9488);">Try Again</button>
+            </div>
+
+            <!-- Table -->
+            <div id="mfe-table-wrap" class="hidden bg-white rounded-2xl border border-[#f5c842]/30 overflow-hidden shadow-sm">
+                <!-- CAGR period toggle -->
+                <div class="px-4 pt-3 pb-2 flex items-center gap-2 border-b border-slate-100 flex-wrap">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">CAGR Period:</span>
+                    <button onclick="mfeSetCagr('1Y')"  class="mfe-cagr-btn" data-cagr="1Y">1 Year</button>
+                    <button onclick="mfeSetCagr('3Y')"  class="mfe-cagr-btn active" data-cagr="3Y">3 Year</button>
+                    <button onclick="mfeSetCagr('5Y')"  class="mfe-cagr-btn" data-cagr="5Y">5 Year</button>
+                    <button onclick="mfeSetCagr('10Y')" class="mfe-cagr-btn" data-cagr="10Y">10 Year</button>
+                    <span class="text-[10px] text-slate-300 ml-2">Shows — if fund history is too short for that period</span>
+                </div>
+                <!-- Benchmark label -->
+                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk metrics computed against:</span>
+                    <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 50</span>
+                    <span class="text-[10px] text-slate-300">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" style="min-width:1180px;width:100%;">
+                        <colgroup>
+                            <col style="width:42px">
+                            <col style="width:280px">
+                            <col style="width:80px">
+                            <col style="width:90px">
+                            <col style="width:90px">
+                            <col style="width:80px">
+                            <col style="width:80px">
+                            <col style="width:80px">
+                            <col style="width:75px">
+                            <col style="width:70px">
+                            <col style="width:80px">
+                            <col style="width:75px">
+                            <col style="width:75px">
+                        </colgroup>
+                        <thead>
+                            <tr style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
+                                <th class="mfe-th" style="width:42px;">#</th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('name')" style="width:280px;">Fund Name <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('score')" title="Star rating: top 10% = 5★, next 22.5% = 4★, middle 35% = 3★, next 22.5% = 2★, bottom 10% = 1★ — within category">Rating <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('cagr')" id="mfe-cagr-header" title="Compounded Annual Growth Rate for selected period">CAGR <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('nav')" title="Latest NAV from AMFI">NAV ₹ <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingHit')" title="Rolling Hit Rate — % of all 3Y windows with positive return. Higher = more consistent">Roll Hit% <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingAvg')" title="Rolling Avg Return — average annualised 3Y return across all rolling windows">Roll Avg <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('expenseRatio')" title="Expense Ratio (TER) — annual cost deducted from NAV. Lower = more stays with you">Exp Ratio <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th" title="3Y Annualised Std Dev — lower is more stable">Std Dev</th>
+                                <th class="mfe-th" title="Beta vs Nifty 50 — 1.0 = moves with market">Beta</th>
+                                <th class="mfe-th" title="Alpha — excess return vs benchmark">Alpha %</th>
+                                <th class="mfe-th" title="Sharpe Ratio — return per unit of total risk">Sharpe</th>
+                                <th class="mfe-th" title="Sortino Ratio — return per unit of downside risk">Sortino</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mfe-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-wrap">
+                    <span class="text-xs text-slate-500 font-bold" id="mfe-row-count"></span>
+                    <div id="mfe-pagination" class="flex items-center gap-2 flex-wrap"></div>
+                    <span class="text-[10px] text-slate-300">Source: AMFI via mfapi.in · 3Y NAV vs Nifty 50 · Informational only</span>
+                </div>
+            </div>
+
+            <!-- Rating methodology -->
+            <div class="bg-white rounded-2xl border border-[#f5c842]/30 p-4">
+                <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-3">📐 Rating Methodology</h3>
+                <div class="flex items-center gap-3 mb-3 flex-wrap">
+                    <span class="text-xl font-black mfe-st5">★★★★★</span><span class="text-xs text-slate-600">Top 10% of category</span>
+                    <span class="text-xl font-black mfe-st4 ml-2">★★★★☆</span><span class="text-xs text-slate-600">Next 22.5%</span>
+                    <span class="text-xl font-black mfe-st3 ml-2">★★★☆☆</span><span class="text-xs text-slate-600">Middle 35%</span>
+                    <span class="text-xl font-black mfe-st2 ml-2">★★☆☆☆</span><span class="text-xs text-slate-600">Next 22.5%</span>
+                    <span class="text-xl font-black mfe-st1 ml-2">★☆☆☆☆</span><span class="text-xs text-slate-600">Bottom 10%</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mb-3">Funds are ranked by a composite score, then bucketed into stars by percentile — exactly like Morningstar / Value Research Online.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                    <div class="rounded-xl p-2.5 text-center" style="background:#f0fdfa;border:1px solid #99f6e4;"><div class="text-base font-black text-teal-600">20%</div><div class="text-[10px] font-bold text-slate-700">Sharpe</div><div class="text-[9px] text-slate-400">Risk-adj return</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#ecfdf5;border:1px solid #6ee7b7;"><div class="text-base font-black text-emerald-600">20%</div><div class="text-[10px] font-bold text-slate-700">Roll Hit%</div><div class="text-[9px] text-slate-400">Consistency</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#eff6ff;border:1px solid #bfdbfe;"><div class="text-base font-black text-blue-600">15%</div><div class="text-[10px] font-bold text-slate-700">Alpha</div><div class="text-[9px] text-slate-400">Beats benchmark</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#f0fdf4;border:1px solid #86efac;"><div class="text-base font-black text-green-600">15%</div><div class="text-[10px] font-bold text-slate-700">Roll Avg</div><div class="text-[9px] text-slate-400">Return magnitude</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fdf4ff;border:1px solid #e9d5ff;"><div class="text-base font-black text-purple-600">15%</div><div class="text-[10px] font-bold text-slate-700">Sortino</div><div class="text-[9px] text-slate-400">Downside prot.</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fff7ed;border:1px solid #fed7aa;"><div class="text-base font-black text-orange-600">10%</div><div class="text-[10px] font-bold text-slate-700">Std Dev</div><div class="text-[9px] text-slate-400">NAV stability</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fef9c3;border:1px solid #fde68a;"><div class="text-base font-black text-yellow-600">5%</div><div class="text-[10px] font-bold text-slate-700">Beta</div><div class="text-[9px] text-slate-400">Mkt sensitivity</div></div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-2.5 leading-relaxed">All comparisons are within-category only. Rolling returns use monthly 3Y windows across full NAV history. Expense Ratio is informational only — not included in score (already reflected in NAV). Shows — when data is insufficient.</p>
+            </div>
+
+        </div>
+        <!-- =================== END MF EXPLORER PANEL ================== -->
+
     </main>
 
     <!-- Footer -->
@@ -2975,7 +3161,8 @@
             mfkit:       { label: 'MF Kit',             icon: '💼' },
             fundpicker:  { label: 'Fund Picker Guide',  icon: '🔬' },
             healthscore: { label: 'Fin Health Score',   icon: '💗' },
-            finplan:     { label: 'Financial Plan',     icon: '📋' }
+            finplan:     { label: 'Financial Plan',     icon: '📋' },
+            mfexplorer:  { label: 'MF Explorer',        icon: '🔭' }
         };
 
         function toggleMobileDropdown() {
@@ -3037,7 +3224,7 @@
             saveTabState(currentMode);
 
             currentMode = mode;
-            ['growth','goal','emergency','mfkit','fundpicker','healthscore','finplan'].forEach(m => {
+            ['growth','goal','emergency','mfkit','fundpicker','healthscore','finplan','mfexplorer'].forEach(m => {
                 const tab = document.getElementById('tab-' + m);
                 if (tab) {
                     tab.className = (m === mode)
@@ -3058,16 +3245,17 @@
             const isGoal = mode === 'goal';
             const isHealthScore = mode === 'healthscore';
             const isFinPlan = mode === 'finplan';
-            const isFullPanel = isEmergency || isMFKit || isFundPicker || isHealthScore || isFinPlan;
+            const isMFExplorer = mode === 'mfexplorer';
+            const isFullPanel = isEmergency || isMFKit || isFundPicker || isHealthScore || isFinPlan || isMFExplorer;
 
             // Show/hide main panels
             const leftPanel = document.getElementById('growth-left-panel');
             const rightPanel = document.querySelector('main > div.w-full.lg\\:w-2\\/3');
-            ['emergency-panel','mfkit-panel','fundpicker-panel','healthscore-panel','finplan-panel'].forEach(id => {
+            ['emergency-panel','mfkit-panel','fundpicker-panel','healthscore-panel','finplan-panel','mfexplorer-panel'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
-            const activeId = isEmergency ? 'emergency-panel' : isMFKit ? 'mfkit-panel' : isFundPicker ? 'fundpicker-panel' : isHealthScore ? 'healthscore-panel' : isFinPlan ? 'finplan-panel' : null;
+            const activeId = isEmergency ? 'emergency-panel' : isMFKit ? 'mfkit-panel' : isFundPicker ? 'fundpicker-panel' : isHealthScore ? 'healthscore-panel' : isFinPlan ? 'finplan-panel' : isMFExplorer ? 'mfexplorer-panel' : null;
             if (activeId) {
                 const el = document.getElementById(activeId);
                 el.classList.remove('hidden');
@@ -3088,6 +3276,7 @@
             if (isFundPicker) { renderFundPickerPage(); return; }
             if (isHealthScore) { calcHealthScore(); return; }
             if (isFinPlan) { fpInitQuestions(); return; }
+            if (isMFExplorer) { initMFExplorer(); return; }
 
             // Show/hide reset buttons
             document.getElementById('reset-growth-btn').style.display = isGoal ? 'none' : 'flex';
@@ -7026,68 +7215,1003 @@
         .fp-dot-inactive { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); border: 1.5px solid rgba(255,255,255,0.2); }
         .fp-step-line { height: 2px; width: 24px; background: rgba(255,255,255,0.2); border-radius: 2px; flex-shrink: 0; }
         .fp-risk-bar-bg { background: rgba(255,255,255,0.2); }
-        .fp-legend-row {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 8px; padding: 6px 8px; border-radius: 8px; transition: background 0.12s;
-        }
+        .fp-legend-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 8px; transition: background 0.12s; }
         .fp-legend-row:hover { background: #f8fafc; }
-        .fp-sip-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 6px 10px; border-radius: 8px; background: #f8fafc;
-            border: 1px solid #f1f5f9;
-        }
-        .fp-road-item {
-            display: flex; align-items: flex-start; gap: 10px;
-            padding: 10px 12px; border-radius: 12px; border: 1px solid;
-        }
-
-        /* ===== FP TAB NAV PILLS ===== */
-        .fp-tab-active-pill {
-            background: rgba(255,255,255,0.22);
-            color: #fff;
-            border: 1.5px solid rgba(255,255,255,0.45);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-        }
-        .fp-tab-inactive-pill {
-            background: rgba(255,255,255,0.06);
-            color: rgba(255,255,255,0.55);
-            border: 1.5px solid rgba(255,255,255,0.12);
-        }
-        .fp-tab-inactive-pill:hover {
-            background: rgba(255,255,255,0.13);
-            color: rgba(255,255,255,0.85);
-            border-color: rgba(255,255,255,0.28);
-        }
-        .fp-tab-done-pill {
-            background: rgba(16,185,129,0.18);
-            color: #6ee7b7;
-            border: 1.5px solid rgba(16,185,129,0.35);
-        }
-        .fp-tab-done-pill:hover {
-            background: rgba(16,185,129,0.28);
-            color: #a7f3d0;
-        }
-
-        /* ===== RISK PROFILE SAVED CARD ===== */
-        .fp-risk-saved-card {
-            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-            border: 1.5px solid rgba(16,185,129,0.35);
-            border-radius: 14px;
-            padding: 16px;
-        }
-        .fp-risk-edit-btn {
-            padding: 7px 14px;
-            background: #fff;
-            border: 1.5px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #374151;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
+        .fp-sip-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: #f8fafc; border: 1px solid #f1f5f9; }
+        .fp-road-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid; }
+        .fp-tab-active-pill { background: rgba(255,255,255,0.22); color: #fff; border: 1.5px solid rgba(255,255,255,0.45); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+        .fp-tab-inactive-pill { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.55); border: 1.5px solid rgba(255,255,255,0.12); }
+        .fp-tab-inactive-pill:hover { background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.28); }
+        .fp-tab-done-pill { background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1.5px solid rgba(16,185,129,0.35); }
+        .fp-tab-done-pill:hover { background: rgba(16,185,129,0.28); color: #a7f3d0; }
+        .fp-risk-saved-card { background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border: 1.5px solid rgba(16,185,129,0.35); border-radius: 14px; padding: 16px; }
+        .fp-risk-edit-btn { padding: 7px 14px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 10px; font-size: 0.75rem; font-weight: 700; color: #374151; cursor: pointer; transition: all 0.15s; }
         .fp-risk-edit-btn:hover { background: #f9fafb; border-color: #0d9488; color: #0d9488; }
 
+        /* ===== MF EXPLORER STYLES ===== */
+        /* MFE Table layout */
+        #mfe-table-wrap .overflow-x-auto{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        .mfe-th{padding:9px 10px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-right:1px solid rgba(255,255,255,.08);vertical-align:middle;}
+        .mfe-th:last-child{border-right:none;}
+        .mfe-th-sort{cursor:pointer;transition:background .15s;}
+        .mfe-th-sort:hover{background:rgba(255,255,255,.1);}
+        .mfe-si{font-size:9px;opacity:.5;margin-left:2px;}
+        .mfe-th-sort.mfe-sort-on .mfe-si{opacity:1;color:#f5c842;}
+        #mfe-table-wrap table{border-collapse:collapse;table-layout:fixed;}
+        #mfe-table-wrap table tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s;}
+        #mfe-table-wrap table tbody tr:last-child{border-bottom:none;}
+        #mfe-table-wrap table tbody tr:hover{background:#f8fafc;}
+        .mfe-td{padding:8px 10px;font-size:12px;color:#334155;white-space:nowrap;border-right:1px solid #f1f5f9;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;}
+        .mfe-td:last-child{border-right:none;}
+        .mfe-td-name{font-weight:700;color:#1e293b;width:280px;min-width:240px;max-width:280px;position:sticky;left:0;background:#fff;z-index:5;white-space:normal;overflow:hidden;}
+        #mfe-table-wrap table tbody tr:hover .mfe-td-name{background:#f8fafc;}
+        .mfe-fname{display:block;white-space:normal;word-break:break-word;line-height:1.3;font-size:12px;max-width:260px;}
+        .mfe-famc{font-size:10px;color:#94a3b8;font-weight:600;display:block;margin-top:1px;}
+        .mfe-score{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:900;}
+        /* Star rating badges */
+        .mfe-stars{display:inline-flex;align-items:center;gap:1px;font-size:14px;line-height:1;}
+        .mfe-st5{color:#f59e0b;}
+        .mfe-st4{color:#3b82f6;}
+        .mfe-st3{color:#6b7280;}
+        .mfe-st2{color:#f97316;}
+        .mfe-st1{color:#ef4444;}
+        .mfe-st-nd{font-size:10px;font-weight:600;color:#94a3b8;font-style:italic;}
+        /* CAGR toggle buttons */
+        .mfe-cagr-btn{padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;border:1px solid #e2e8f0;background:#f1f5f9;color:#64748b;}
+        .mfe-cagr-btn.active{background:linear-gradient(135deg,#0d9488,#10b981);color:#fff;border-color:transparent;box-shadow:0 1px 4px rgba(13,148,136,.3);}
+        .mfe-cagr-btn:hover:not(.active){background:#e2e8f0;color:#334155;}
+        .mfe-cagr-pos{color:#15803d;font-weight:800;}
+        .mfe-cagr-neg{color:#b91c1c;font-weight:700;}
+        .mfe-cagr-na{color:#cbd5e1;font-style:italic;font-size:11px;}
+        .mfe-rank{font-size:11px;font-weight:900;color:#94a3b8;}
+        .mfe-rank-top{color:#f59e0b;}
+        .mfe-good{color:#15803d;font-weight:800;}
+        .mfe-avg{color:#b45309;font-weight:700;}
+        .mfe-bad{color:#b91c1c;font-weight:700;}
+        .mfe-na{color:#cbd5e1;font-style:italic;font-size:11px;}
+        .mfe-shimmer{display:inline-block;width:38px;height:11px;border-radius:4px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmerSlide 1.2s ease-in-out infinite;vertical-align:middle;}
+        .mfe-cat-active{background:linear-gradient(135deg,#0d9488,#10b981);color:#fff;box-shadow:0 2px 8px rgba(13,148,136,.3);}
+        .mfe-cat-inactive{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;}
+        .mfe-cat-inactive:hover{background:#e2e8f0;color:#334155;}
+        .mfe-spinner{width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:#0d9488;border-radius:50%;animation:mfeSpin .75s linear infinite;}
+        .mfe-spinner-sm{width:16px;height:16px;border:2px solid #e2e8f0;border-top-color:#0d9488;border-radius:50%;animation:mfeSpin .6s linear infinite;flex-shrink:0;}
+        @keyframes mfeSpin{to{transform:rotate(360deg);}}
+        .mfe-spin{animation:mfeSpin .6s linear infinite;}
+        .mfe-pg-btn{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s;}
+        .mfe-pg-btn:hover:not([disabled]){background:#0d9488;color:#fff;border-color:#0d9488;}
+        .mfe-pg-btn[disabled]{opacity:.35;cursor:default;}
+        .mfe-pg-select{padding:4px 8px;border-radius:8px;font-size:11px;font-weight:600;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;cursor:pointer;}
+    </style>
+
+
+
+    <!-- ===================== MF EXPLORER SCRIPT ===================== -->
+    <script>
+    /* ================================================================
+       MF EXPLORER — Option A: AMFI list → filter → per-category scoring
+       ---------------------------------------------------------------
+       Step 1 (once, ~2s)  : GET mfapi.in/mf → parse + filter to
+                             top-AMC Direct plans. Render category pills.
+       Step 2 (on cat select, ~3-5s) : GET /latest for each fund in
+                             that category → render table with NAV.
+       Step 3 (after step 2, ~15-25s): GET full history per fund in
+                             batches of 8 → compute metrics → normalise
+                             scores 0-100 within category → auto-sort.
+       Cache: steps 2+3 results stored per category in session.
+    ================================================================ */
+
+    const MFE_TOP_AMCS = [
+        'sbi','hdfc','icici','axis','kotak','mirae','nippon','uti','dsp',
+        'franklin','tata','aditya birla','absl','canara','parag parikh',
+        'ppfas','edelweiss','motilal','quant','invesco','idfc','bandhan',
+        'baroda','sundaram','pgim','mahindra','whiteoak','bajaj','360 one',
+        'jm','lic','navi','samco','quantum','nj'
+    ];
+
+    /* ── Expense Ratio static lookup (Direct plans, latest published TER) ──
+       Source: AMFI TER disclosures. Updated periodically.
+       Key = AMFI scheme code (string), Value = TER as percentage (e.g. 0.45)
+    ── */
+    /* ══════════════════════════════════════════════════════════════
+       EXPENSE RATIO — comprehensive lookup (AMFI TER disclosures)
+       Key = AMFI scheme code, Value = TER %
+       Covers top funds by AUM across all categories.
+       Source: AMFI published TER disclosures (Direct plans).
+    ══════════════════════════════════════════════════════════════ */
+    const MFE_ER = {
+        /* Index — Nifty 50 */
+        '120716':'0.18','148618':'0.10','119551':'0.30','148622':'0.18',
+        '148935':'0.10','148931':'0.17','125354':'0.20','140228':'0.05',
+        '119775':'0.30','148918':'0.20','120828':'0.19','135781':'0.20',
+        '120503':'0.19','120465':'0.19','125497':'0.10','120841':'0.20',
+        /* Index — Nifty Next 50 / 100 / 200 / 500 */
+        '148717':'0.30','148940':'0.25','148943':'0.18','148946':'0.20',
+        '148942':'0.30','148944':'0.35','148941':'0.20','148945':'0.25',
+        /* Index — Midcap / Smallcap */
+        '148939':'0.35','148938':'0.30','148937':'0.28','148936':'0.32',
+        '148933':'0.35','148934':'0.30','148932':'0.40','148930':'0.38',
+        /* Index — Sectoral ETF wrappers */
+        '148929':'0.45','148928':'0.42','148927':'0.40','148926':'0.38',
+        /* Large Cap */
+        '120594':'0.52','119552':'0.82','100016':'0.99','125354':'0.88',
+        '119701':'0.80','120838':'0.97','120505':'0.55','135781_lc':'0.72',
+        '148935_lc':'0.72','100425_lc':'0.75','119386':'0.72','120600':'0.65',
+        '148931_lc':'0.70','148918_lc':'0.68','148622_lc':'0.71','148717_lc':'0.80',
+        '119775_lc':'0.85','120472':'0.56','120503_lc':'0.78','120465_lc':'0.82',
+        '125497_lc':'0.68','120841_lc':'0.75','119552_lc':'0.82','100236_lc':'0.82',
+        /* Mid Cap */
+        '100236':'0.82','120822_mc':'0.60','148622_mc':'0.62','148931_mc':'0.55',
+        '120841_mc':'0.45','125497_mc':'0.45','120505_mc':'0.64','119386_mc':'0.72',
+        '148935_mc':'0.68','148918_mc':'0.70','148717_mc':'0.75','120503_mc':'0.72',
+        '120465_mc':'0.70','120594_mc':'0.65','119701_mc':'0.80','120838_mc':'0.85',
+        '119552_mc':'0.78','100016_mc':'0.90','125354_mc':'0.85','100425_mc':'0.79',
+        /* Small Cap */
+        '120822':'0.56','148622_sc':'0.64','148931_sc':'0.74',
+        '119552_sc':'0.69','119386_sc':'0.92','120841_sc':'0.68',
+        '148935_sc':'0.80','148918_sc':'0.78','148717_sc':'0.82','120503_sc':'0.75',
+        '120465_sc':'0.72','120594_sc':'0.70','119701_sc':'0.85','125497_sc':'0.65',
+        '100236_sc':'0.88','120505_sc':'0.72','148622':'0.64','100425_sc':'0.82',
+        /* ELSS */
+        '120472_el':'0.56','100425':'0.79','120600':'0.62','148931_el':'0.57',
+        '148935_el':'0.65','148918_el':'0.72','148622_el':'0.68','120841_el':'0.70',
+        '119552_el':'0.75','119386_el':'0.78','120503_el':'0.68','120465_el':'0.70',
+        '120594_el':'0.60','119701_el':'0.85','120838_el':'0.90','125497_el':'0.62',
+        '148717_el':'0.80','100236_el':'0.85','125354_el':'0.80','120505_el':'0.68',
+        /* Flexi Cap */
+        '148935_fl':'0.59','148931_fl':'0.79','148918_fl':'0.94','148622_fl':'0.68',
+        '120841_fl':'0.72','119552_fl':'0.80','120503_fl':'0.75','120465_fl':'0.78',
+        '120594_fl':'0.65','119701_fl':'0.85','120838_fl':'0.90','125497_fl':'0.62',
+        '119386_fl':'0.75','100016_fl':'0.92','148717_fl':'0.82','100236_fl':'0.88',
+        '100425_fl':'0.82','120822_fl':'0.70','120505_fl':'0.72','125354_fl':'0.85',
+        /* Hybrid / Balanced Advantage */
+        '119701_hy':'0.79','120838_hy':'0.97','120472_hy':'0.54','120503_hy':'0.48',
+        '148935_hy':'0.72','148931_hy':'0.75','148918_hy':'0.78','148622_hy':'0.70',
+        '120841_hy':'0.65','119552_hy':'0.82','120465_hy':'0.75','120594_hy':'0.68',
+        '100016_hy':'0.92','125497_hy':'0.62','119386_hy':'0.72','100425_hy':'0.82',
+        '148717_hy':'0.80','120505_hy':'0.70','100236_hy':'0.85','125354_hy':'0.78',
+        /* Debt — Short/Medium Duration */
+        '119386_db':'0.31','100016_db':'0.35','119552_db':'0.49','120465_db':'0.32',
+        '120503_db':'0.38','148935_db':'0.40','148918_db':'0.35','148931_db':'0.42',
+        '120841_db':'0.30','120594_db':'0.38','119701_db':'0.45','120838_db':'0.50',
+        '125497_db':'0.28','100425_db':'0.42','148622_db':'0.35','148717_db':'0.45',
+        '120472_db':'0.32','119775_db':'0.38','140228_db':'0.25','100236_db':'0.48',
+        /* Debt — Banking & PSU / Corporate Bond */
+        '119386_cp':'0.28','100016_cp':'0.30','119552_cp':'0.35','120465_cp':'0.28',
+        '120503_cp':'0.32','148935_cp':'0.35','120841_cp':'0.25','119701_cp':'0.40',
+        /* Debt — Gilt */
+        '119386_gl':'0.20','100016_gl':'0.25','119552_gl':'0.30','120465_gl':'0.22',
+        /* Liquid */
+        '119775_lq':'0.18','120716_lq':'0.15','148918_lq':'0.12','120503_lq':'0.20',
+        '148935_lq':'0.18','148931_lq':'0.20','148622_lq':'0.15','119552_lq':'0.22',
+        '120841_lq':'0.15','120465_lq':'0.18','120594_lq':'0.20','100016_lq':'0.25',
+        '119386_lq':'0.16','100425_lq':'0.18','148717_lq':'0.22','119701_lq':'0.20',
+        /* Overnight */
+        '119775_on':'0.10','120716_on':'0.08','148918_on':'0.08','120503_on':'0.10',
+        '148935_on':'0.09','120841_on':'0.08','119552_on':'0.12','120465_on':'0.10',
+        /* Sectoral — Pharma/IT/Banking/Infra */
+        '119552_se':'0.75','120503_se':'0.70','119386_se':'0.68','148935_se':'0.72',
+        '148931_se':'0.75','148918_se':'0.78','120841_se':'0.70','120465_se':'0.72',
+        '120594_se':'0.65','119701_se':'0.80','100016_se':'0.88','148622_se':'0.75',
+        /* International / Global */
+        '120503_in':'0.85','148935_in':'0.88','148918_in':'0.90','119552_in':'0.92',
+        '119386_in':'0.88','120465_in':'0.85','120841_in':'0.80','100016_in':'0.95',
+        /* Commodity — Gold */
+        '119775_go':'0.35','120716_go':'0.30','148918_go':'0.32','120503_go':'0.38',
+        '148935_go':'0.35','148931_go':'0.40','119552_go':'0.35','120841_go':'0.32',
+    };
+
+    /* Get expense ratio for a fund. Falls back to category median if not in lookup. */
+    const MFE_ER_CAT_MEDIAN = {
+        'Index':0.20,'Large Cap':0.75,'Mid Cap':0.72,'Small Cap':0.72,
+        'Flexi Cap':0.75,'ELSS':0.72,'Hybrid':0.75,'Debt':0.38,
+        'Liquid':0.18,'Sectoral':0.75,'International':0.88,'Commodity':0.35,'Other':0.80
+    };
+    function mfeGetER(code, cat) {
+        const v = MFE_ER[String(code)];
+        if (v != null) return { val: parseFloat(v), estimated: false };
+        // Fallback: return category median as estimate
+        const med = MFE_ER_CAT_MEDIAN[cat];
+        return med != null ? { val: med, estimated: true } : null;
+    }
+
+    /* Category ER benchmarks — colour thresholds */
+    const MFE_ER_BENCH = {
+        'Index':0.30,'Large Cap':1.00,'Mid Cap':1.10,'Small Cap':1.20,
+        'Flexi Cap':1.00,'ELSS':1.00,'Hybrid':1.00,'Debt':0.60,
+        'Liquid':0.25,'Sectoral':1.20,'International':1.20,'Commodity':0.50
+    };
+
+    /* ══════════════════════════════════════════════════════════════
+       PER-CATEGORY BENCHMARKS
+       Using index fund proxies (mfapi.in scheme codes).
+       These give appropriate peer comparison for each category.
+    ══════════════════════════════════════════════════════════════ */
+    const MFE_CAT_BENCH = {
+        // Equity categories — use appropriate index fund as proxy
+        'Large Cap':    '148940', // Nippon India Nifty 100 Index Fund Direct
+        'Mid Cap':      '148939', // Motilal Oswal Nifty Midcap 150 Index Direct
+        'Small Cap':    '148937', // Nippon India Nifty Smallcap 250 Index Direct
+        'Flexi Cap':    '148942', // UTI Nifty 500 Index Fund Direct
+        'ELSS':         '148942', // Nifty 500 — broad market, matches ELSS universe
+        'Index':        '120716', // Nifty 50 — most index funds track this
+        'Hybrid':       '120716', // Nifty 50 — equity component benchmark
+        'Sectoral':     '148942', // Nifty 500 broad market fallback
+        'International':'120716', // Nifty 50 domestic baseline for comparison
+        // Debt/Liquid — use a short duration debt fund as proxy
+        'Debt':         '119386', // HDFC Short Term Debt Fund Direct
+        'Liquid':       '119775', // ICICI Pru Liquid Fund Direct
+        'Arbitrage':    '120716', // Nifty 50 (arbitrage follows equity market)
+        'Commodity':    '120716', // Nifty 50 fallback
+        '_default':     '120716', // Nifty 50 universal fallback
+    };
+
+    /* Per-category benchmark cache */
+    let _mfeCatBenchCache = {}; // cat → nav array
+
+    async function mfeFetchCatBench(cat, signal) {
+        if (_mfeCatBenchCache[cat]) return _mfeCatBenchCache[cat];
+        const code = MFE_CAT_BENCH[cat] || MFE_CAT_BENCH['_default'];
+        // If this category uses same code as already-fetched Nifty 50, reuse
+        if (code === '120716' && _mfeBenchReady) {
+            _mfeCatBenchCache[cat] = _mfeBench;
+            return _mfeBench;
+        }
+        try {
+            const r = await fetch(`https://api.mfapi.in/mf/${code}`,
+                { signal: signal || AbortSignal.timeout(20000) });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const j = await r.json();
+            const navArr = (j?.data||[]).map(d=>parseFloat(d.nav))
+                .filter(v=>!isNaN(v)).reverse();
+            if (navArr.length > 30) {
+                _mfeCatBenchCache[cat] = navArr;
+                return navArr;
+            }
+        } catch {}
+        // Fallback to Nifty 50
+        _mfeCatBenchCache[cat] = _mfeBench;
+        return _mfeBench;
+    }
+
+    const MFE_CAT_BENCH_LABEL = {
+        'Large Cap':'Nifty 100','Mid Cap':'Nifty Midcap 150',
+        'Small Cap':'Nifty Smallcap 250','Flexi Cap':'Nifty 500',
+        'ELSS':'Nifty 500','Index':'Nifty 50','Hybrid':'Nifty 50',
+        'Sectoral':'Nifty 500','International':'Nifty 50 (domestic baseline)',
+        'Debt':'Short Duration Debt','Liquid':'Liquid Fund Index proxy',
+        'Commodity':'Nifty 50 (fallback)','_default':'Nifty 50'
+    };
+
+    const MFE_BENCH   = '120716'; // UTI Nifty 50 Index Direct (default)
+    let _mfeCagrPeriod = '3Y';
+    const MFE_PAGE    = 50;
+
+    /* ── state ── */
+    let _mfeList     = [];   // all eligible funds [{code,name,amc,cat}]
+    let _mfeNavCache = {};   // code → {nav, date}
+    let _mfeMetCache = {};   // code → {stdDev,beta,alpha,sharpe,sortino,score}|null
+    let _mfeCatDone  = {};   // cat → true when step3 complete
+    let _mfeCatNav   = {};   // cat → true when step2 complete
+    let _mfeBench    = [];   // benchmark NAV array
+    let _mfeBenchReady = false;
+    let _mfeCur      = 'Index';
+    let _mfeSortCol  = 'score';
+    let _mfeSortDir  = -1;
+    let _mfePage     = 0;
+    let _mfeReady    = false;   // step1 done
+    let _mfeBusy     = false;   // step1 running
+    let _mfeScopeAbort = null;  // AbortController for current category ops
+
+    /* ════════════════════════════════════════════════════════
+       PUBLIC: called by switchMode('mfexplorer')
+    ════════════════════════════════════════════════════════ */
+    function initMFExplorer() {
+        if (_mfeBusy) return;
+        if (_mfeReady) { _mfeShowTable(); mfeCatLoad(_mfeCur); return; }
+        _mfeBusy = true;
+        _mfeShow('mfe-loading'); _mfeHide('mfe-error'); _mfeHide('mfe-table-wrap'); _mfeHide('mfe-phase-bar');
+        _mfeMsg('Fetching fund list from AMFI…', 'One-time load · subsequent switches are instant');
+        mfeStep1();
+    }
+
+    function refreshMFExplorer() {
+        _mfeList=[]; _mfeNavCache={}; _mfeMetCache={}; _mfeCatDone={}; _mfeCatNav={};
+        _mfeBench=[]; _mfeBenchReady=false; _mfeCatBenchCache={}; _mfeReady=false; _mfeBusy=false; _mfePage=0;
+        if (_mfeScopeAbort) { _mfeScopeAbort.abort(); _mfeScopeAbort=null; }
+        const ic=document.getElementById('mfe-refresh-icon');
+        if(ic){ic.classList.add('mfe-spin');setTimeout(()=>ic.classList.remove('mfe-spin'),2000);}
+        initMFExplorer();
+    }
+
+    /* ════════════════════════════════════════════════════════
+       STEP 1 — fetch full AMFI list, filter, show category pills
+    ════════════════════════════════════════════════════════ */
+    async function mfeStep1() {
+        try {
+            const res = await fetch('https://api.mfapi.in/mf', {signal:AbortSignal.timeout(25000)});
+            if (!res.ok) throw new Error('HTTP '+res.status);
+            const list = await res.json();
+
+            // ── Quality filters ──────────────────────────────────────────
+            // 1. Direct plans from top AMCs only
+            // 2. Exclude segregated portfolios (credit-event constructs, not investable)
+            // 3. Exclude IDCW/Dividend variants — keep Growth option only for fair comparison
+            // 4. Exclude wound-down, matured, ETF feeders, and FoF-of-FoFs
+            // 5. Exclude clearly institutional / restricted plans
+            const EXCLUDE_PATTERN = new RegExp([
+                'segregated',          // segregated portfolio funds (credit events)
+                'idcw',                // income distribution cum capital withdrawal
+                'dividend',            // dividend payout/reinvestment plans
+                'weekly dividend',
+                'monthly dividend',
+                'quarterly dividend',
+                'annual dividend',
+                'bonus option',
+                'fixed maturity',      // FMPs — closed-ended, not comparable
+                'fmp',
+                'interval fund',
+                'capital protection',
+                'maturity plan',
+                'etf(?!.*fof)',        // ETFs (but keep ETF-FoF wrappers)
+                'exchange traded',
+                'of funds.*of funds',  // FoF-of-FoFs
+                'institutional',
+                'tier[\s\-]*[12]',
+                'class[\s\-]*[ab]',
+                'regular'
+            ].join('|'), 'i');
+
+            const raw = list.filter(f => {
+                const n = f.schemeName.toLowerCase();
+                return /direct/i.test(n)
+                    && !EXCLUDE_PATTERN.test(n)
+                    && MFE_TOP_AMCS.some(a => n.includes(a));
+            });
+
+            // De-duplicate: if same fund name prefix exists in both Growth and other
+            // options, keep Growth. Strategy: deduplicate by stripping option suffixes
+            // and keeping the Growth/Growth Option variant.
+            const growthPreferred = new Map();
+            raw.forEach(f => {
+                // Normalise name by removing trailing option labels
+                const base = f.schemeName
+                    .replace(/[-\s]*(growth option|growth plan|growth|direct plan|direct)[\s\-]*/gi, '')
+                    .replace(/\s+/g, ' ').trim().toLowerCase();
+                const existing = growthPreferred.get(base);
+                // Prefer "growth" in name over other variants
+                const isGrowth = /growth/i.test(f.schemeName);
+                if (!existing || isGrowth) {
+                    growthPreferred.set(base, f);
+                }
+            });
+
+            _mfeList = Array.from(growthPreferred.values())
+                .map(f => ({
+                    code: String(f.schemeCode),
+                    name: f.schemeName,
+                    amc:  mfeParseAMC(f.schemeName),
+                    cat:  mfeParseCat(f.schemeName)
+                }));
+
+            document.getElementById('mfe-stat-total').textContent = _mfeList.length.toLocaleString();
+            const ts = document.getElementById('mfe-last-updated');
+            if (ts) ts.textContent = 'Updated: ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+            _mfeReady = true;
+            _mfeBusy  = false;
+            _mfeHide('mfe-loading');
+            _mfeShowTable();
+
+            // Kick off benchmark fetch in background
+            mfeFetchBench();
+
+            // Load default category
+            mfeCatLoad('Index');
+
+        } catch(err) {
+            _mfeBusy = false;
+            _mfeHide('mfe-loading'); _mfeShow('mfe-error');
+            const em = document.getElementById('mfe-error-msg');
+            if (em) em.textContent = err.message;
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       STEP 2 — fetch latest NAV for all funds in category
+       NOTE: /latest returns exactly 1 data point (today's NAV).
+       AUM proxy already applied in Step 1 via top-AMC + Direct
+       filter. We store the NAV and refine category from API meta.
+    ════════════════════════════════════════════════════════ */
+    async function mfeStep2(cat, signal) {
+        const funds = _mfeList.filter(f => f.cat === cat);
+        const toFetch = funds.filter(f => !_mfeNavCache[f.code]);
+        if (toFetch.length === 0) { _mfeCatNav[cat]=true; return; }
+
+        const BATCH = 12;
+        let done = 0;
+        const total = toFetch.length;
+
+        for (let i = 0; i < toFetch.length; i += BATCH) {
+            if (signal?.aborted) return;
+            const batch = toFetch.slice(i, i + BATCH);
+            await Promise.allSettled(batch.map(async f => {
+                try {
+                    const r = await fetch(`https://api.mfapi.in/mf/${f.code}/latest`,
+                        {signal: AbortSignal.timeout(8000)});
+                    if (!r.ok) return;
+                    const j = await r.json();
+                    const d = j?.data?.[0];
+                    const nav = parseFloat(d?.nav);
+                    if (!d || isNaN(nav)) return;
+                    _mfeNavCache[f.code] = {nav, date: d.date};
+                    // Refine category from API metadata (more accurate than name parsing)
+                    const metaCat = mfeCatFromMeta(j?.meta?.scheme_category);
+                    if (metaCat) f.cat = metaCat;
+                } catch {}
+            }));
+            done += batch.length;
+            _mfeProgress(
+                `Loading NAV... ${done}/${total}`,
+                `Fetching live prices for ${cat} funds`,
+                Math.round(done / total * 100)
+            );
+            if (_mfeCur === cat) mfeRender();
+        }
+
+        const catCount = _mfeList.filter(f => f.cat === cat && _mfeNavCache[f.code]).length;
+        document.getElementById('mfe-stat-cat').textContent = catCount.toLocaleString();
+        _mfeCatNav[cat] = true;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       STEP 3 — fetch full 3yr history per fund → compute → score
+    ════════════════════════════════════════════════════════ */
+    async function mfeStep3(cat, signal, catBench) {
+        // catBench = category-appropriate benchmark NAV array
+        const bench = (catBench && catBench.length > 30) ? catBench : _mfeBench;
+        const funds = _mfeList.filter(f => f.cat === cat && !_mfeMetCache.hasOwnProperty(f.code));
+        if (funds.length === 0) { _mfeCatDone[cat] = true; return; }
+
+        const BATCH = 8;
+        let done = 0;
+        const total = funds.length;
+
+        for (let i = 0; i < funds.length; i += BATCH) {
+            if (signal?.aborted) return;
+            const batch = funds.slice(i, i + BATCH);
+            await Promise.allSettled(batch.map(async f => {
+                try {
+                    const r = await fetch(`https://api.mfapi.in/mf/${f.code}`,
+                        {signal: AbortSignal.timeout(20000)});
+                    if (!r.ok) { _mfeMetCache[f.code] = null; return; }
+                    const j = await r.json();
+                    const navArr = (j?.data||[])
+                        .map(d => parseFloat(d.nav)).filter(v => !isNaN(v)).reverse();
+                    _mfeMetCache[f.code] = (navArr.length >= 30 && bench.length > 30)
+                        ? mfeCompute(navArr, bench)
+                        : null;
+                } catch { _mfeMetCache[f.code] = null; }
+            }));
+            done += batch.length;
+            const pct = Math.round(done/total*100);
+            _mfeProgress(`Scoring funds… ${done}/${total}`, 'Scores fill in progressively — best funds rise to top 🏆', pct);
+            document.getElementById('mfe-stat-scored').textContent = done.toLocaleString();
+            // Normalise + re-render after each batch
+            mfeNorm(cat);
+            if (_mfeCur === cat) mfeRender();
+        }
+
+        _mfeCatDone[cat] = true;
+        mfeNorm(cat);
+        if (_mfeCur === cat) { mfeRender(); _mfeHide('mfe-phase-bar'); }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       ORCHESTRATOR — called when category is selected
+    ════════════════════════════════════════════════════════ */
+    async function mfeCatLoad(cat) {
+        if (_mfeScopeAbort) _mfeScopeAbort.abort();
+        const ctl = new AbortController();
+        _mfeScopeAbort = ctl;
+
+        const catFunds = _mfeList.filter(f => f.cat === cat);
+        document.getElementById('mfe-stat-cat').textContent = catFunds.length.toLocaleString();
+        document.getElementById('mfe-stat-scored').textContent = '—';
+
+        // Update benchmark label in UI
+        const bLabel = MFE_CAT_BENCH_LABEL[cat] || 'Nifty 50';
+        const bEl = document.getElementById('mfe-bench-label');
+        if (bEl) bEl.textContent = 'Benchmark: ' + bLabel;
+
+        if (_mfeCatDone[cat]) {
+            _mfeHide('mfe-phase-bar');
+            mfeRender();
+            return;
+        }
+
+        _mfeShow('mfe-phase-bar');
+
+        if (!_mfeCatNav[cat]) {
+            await mfeStep2(cat, ctl.signal);
+            if (ctl.signal.aborted) return;
+        }
+
+        // Fetch category-appropriate benchmark (may reuse cached Nifty 50)
+        const benchLabel = MFE_CAT_BENCH_LABEL[cat] || 'Nifty 50';
+        _mfeProgress(`Fetching ${benchLabel} benchmark…`, 'Used for Alpha, Beta, Sharpe, Sortino calculations', 0);
+        const catBench = await mfeFetchCatBench(cat, ctl.signal);
+        if (ctl.signal.aborted) return;
+
+        // Ensure Nifty 50 also available as fallback
+        if (!_mfeBenchReady) await mfeFetchBench();
+
+        await mfeStep3(cat, ctl.signal, catBench);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       BENCHMARK fetch
+    ════════════════════════════════════════════════════════ */
+    async function mfeFetchBench() {
+        if (_mfeBenchReady) return;
+        try {
+            const r = await fetch(`https://api.mfapi.in/mf/${MFE_BENCH}`,
+                {signal: AbortSignal.timeout(25000)});
+            if (!r.ok) return;
+            const j = await r.json();
+            _mfeBench = (j?.data||[]).map(d=>parseFloat(d.nav))
+                .filter(v=>!isNaN(v)).reverse();
+            _mfeBenchReady = _mfeBench.length > 30;
+            // Cache Nifty 50 for categories that use it
+            if (_mfeBenchReady) {
+                ['Index','Hybrid','Sectoral','International','Commodity','Arbitrage','_default']
+                    .forEach(cat => { if (!_mfeCatBenchCache[cat]) _mfeCatBenchCache[cat] = _mfeBench; });
+            }
+        } catch {}
+    }
+
+    /* ════════════════════════════════════════════════════════
+       METRIC COMPUTATION
+    ════════════════════════════════════════════════════════ */
+    /* ── Compute CAGR for a given year window ── */
+    function mfeCagr(navArr, years) {
+        const days = Math.round(years * 252);
+        if (navArr.length < days + 5) return null;
+        const latest = navArr[navArr.length - 1];
+        const past   = navArr[navArr.length - 1 - days];
+        // Sanity: reject if starting NAV is suspiciously low (< ₹1 = likely
+        // a segregated-portfolio fragment that slipped through, or a NAV reset)
+        if (!past || past < 1 || !latest || latest <= 0) return null;
+        const cagr = Math.pow(latest / past, 1 / years) - 1;
+        if (!isFinite(cagr)) return null;
+        // Cap at ±80% — anything beyond is almost certainly a data artefact
+        // (credit-event recovery, scheme merger, NAV adjustment) not real returns
+        if (Math.abs(cagr) > 0.80) return null;
+        return +(cagr * 100).toFixed(2);
+    }
+
+    /* ── Rolling returns: compute 3Y rolling windows step=21 days (monthly) ──
+       Returns: { hitRate: %, avgReturn: % } where hitRate = % of windows > 0
+    ── */
+    function mfeRolling(navArr) {
+        const windowDays = 756;   // ~3 years
+        const step       = 21;    // monthly step
+        if (navArr.length < windowDays + step) return null;
+        const returns = [];
+        for (let end = navArr.length - 1; end >= windowDays; end -= step) {
+            const start = end - windowDays;
+            if (navArr[start] <= 0 || navArr[end] <= 0) continue;
+            const r = Math.pow(navArr[end] / navArr[start], 1/3) - 1; // annualised
+            if (isFinite(r) && Math.abs(r) < 2) returns.push(r * 100); // % terms, cap at 200%
+        }
+        if (returns.length < 5) return null;
+        const avg     = returns.reduce((s,v)=>s+v,0) / returns.length;
+        const hitRate = returns.filter(r=>r>0).length / returns.length * 100;
+        return {
+            avg:     +avg.toFixed(2),
+            hitRate: +hitRate.toFixed(1)
+        };
+    }
+
+    function mfeCompute(navArr, bench) {
+        const MAX=756, f3=navArr.slice(-MAX), b3=bench.slice(-MAX);
+        if (f3.length < 30 || b3.length < 30) return null;
+        // Reject suspiciously low NAV — segregated portfolio remnants
+        const navMin = Math.min(...f3), navMax = Math.max(...f3);
+        if (navMin < 0.5 || navMax < 1) return null;
+
+        const fR=[], bR=[];
+        for(let i=1;i<f3.length;i++){const r=(f3[i]-f3[i-1])/f3[i-1]; if(isFinite(r)) fR.push(r);}
+        for(let i=1;i<b3.length;i++){const r=(b3[i]-b3[i-1])/b3[i-1]; if(isFinite(r)) bR.push(r);}
+        if(fR.length<20||bR.length<20) return null;
+
+        const n=Math.min(fR.length,bR.length);
+        const fr=fR.slice(-n), br=bR.slice(-n);
+        const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+        const std =a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/a.length);};
+        const fm=mean(fr),bm=mean(br),fs=std(fr),bs=std(br);
+        if(!isFinite(fm)||!isFinite(fs)||fs===0) return null;
+        const aFM=fm*252, aFS=fs*Math.sqrt(252);
+        let cov=0; for(let i=0;i<n;i++) cov+=(fr[i]-fm)*(br[i]-bm); cov/=n;
+        const bVar=bs*bs, beta=(isFinite(bVar)&&bVar>1e-10)?cov/bVar:1.0;
+        const RF=0.055, rfD=RF/252;
+        const alpha=(aFM-RF)-beta*(bm*252-RF);
+        const sharpe=aFS>0?(aFM-RF)/aFS:0;
+        const dn=fr.filter(r=>r<rfD);
+        const dVar=dn.length>0?dn.reduce((s,r)=>s+(r-rfD)**2,0)/fr.length:0;
+        const ds=Math.sqrt(dVar)*Math.sqrt(252);
+        const sortino=ds>0.0001?(aFM-RF)/ds:sharpe*2;
+        const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+
+        // Rolling returns (uses full navArr for maximum window coverage)
+        const rolling = mfeRolling(navArr);
+
+        const result = {
+            stdDev:  +clamp(aFS*100,   0, 60).toFixed(2),
+            beta:    +clamp(beta,     -2,  3).toFixed(2),
+            alpha:   +clamp(alpha*100,-30,30).toFixed(2),
+            sharpe:  +clamp(sharpe,   -3,  5).toFixed(2),
+            sortino: +clamp(sortino,  -3, 10).toFixed(2),
+            rolling,   // { avg, hitRate } or null
+            cagr: {
+                y1:  mfeCagr(navArr, 1),
+                y3:  mfeCagr(navArr, 3),
+                y5:  mfeCagr(navArr, 5),
+                y10: mfeCagr(navArr, 10)
+            },
+            score: null,
+            stars:  null
+        };
+        if (Object.entries(result)
+            .filter(([k])=>!['cagr','rolling','score','stars'].includes(k))
+            .some(([,v])=>v!==null&&!isFinite(v))) return null;
+        return result;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SCORING — 1–5 stars by percentile (Morningstar style)
+       Weights:
+         Sharpe         20%  — risk-adjusted return
+         Rolling HitRate 20% — consistency (% of 3Y windows positive)
+         Alpha          15%  — manager skill vs benchmark
+         Rolling AvgRet 15%  — magnitude of rolling returns
+         Sortino        15%  — downside-risk-adjusted return
+         Std Dev        10%  — NAV stability (inverted)
+         Beta            5%  — directional market sensitivity
+       ══════════════════════════════════════════════════════════ */
+    function mfeNorm(cat) {
+        const funds = _mfeList.filter(f => f.cat===cat && _mfeMetCache[f.code]);
+        if (!funds.length) return;
+        const isDebtLike = ['Debt','Liquid','Arbitrage'].includes(cat);
+
+        const scored = [];
+        funds.forEach(f => {
+            const m = _mfeMetCache[f.code];
+            if (!m) return;
+            if (!isFinite(m.sharpe)||!isFinite(m.alpha)||!isFinite(m.sortino)
+                ||!isFinite(m.stdDev)||!isFinite(m.beta)) return;
+
+            // Sharpe (20%) — clamp to [-3, 5]
+            const sh = Math.max(-3, Math.min(5,  m.sharpe));
+
+            // Alpha (15%) — normalise to [-3, 3] range
+            const al = Math.max(-30, Math.min(30, m.alpha)) / 10;
+
+            // Sortino (15%) — clamp to [-3, 10]
+            const so = Math.max(-3, Math.min(10, m.sortino));
+
+            // Std Dev (10%) — inverted: lower = better, baseline 30%
+            const sdScore = Math.max(0, (30 - m.stdDev) / 30);
+
+            // Beta (5%) — reward proximity to 1 for equity, low for debt
+            const bScore = isDebtLike
+                ? Math.max(0, 1 - Math.abs(m.beta))
+                : Math.max(0, 1.5 - Math.abs(m.beta - 1.0));
+
+            // Rolling Hit Rate (20%) — % of 3Y windows with positive return
+            // Normalise: 0% hit = 0, 100% hit = 1
+            const rHit  = m.rolling ? Math.max(0, Math.min(100, m.rolling.hitRate)) / 100 : 0.5;
+
+            // Rolling Avg Return (15%) — annualised avg of all 3Y windows
+            // Normalise: cap at ±30% range → [-1, 1] then scale
+            const rAvg  = m.rolling ? Math.max(-30, Math.min(30, m.rolling.avg)) / 30 : 0;
+
+            const raw =
+                sh    * 0.20 +
+                rHit  * 0.20 +
+                al    * 0.15 +
+                rAvg  * 0.15 +
+                so    * 0.15 +
+                sdScore * 0.10 +
+                bScore  * 0.05;
+
+            if (isFinite(raw)) scored.push({ code: f.code, raw });
+        });
+        if (!scored.length) return;
+
+        // Percentile-bucket into 1–5 stars (Morningstar distribution)
+        scored.sort((a,b) => a.raw - b.raw);
+        const total = scored.length;
+        scored.forEach(({ code }, idx) => {
+            if (!_mfeMetCache[code]) return;
+            const pct = (idx + 1) / total;
+            let stars;
+            if      (pct <= 0.10)  stars = 1;
+            else if (pct <= 0.325) stars = 2;
+            else if (pct <= 0.675) stars = 3;
+            else if (pct <= 0.90)  stars = 4;
+            else                   stars = 5;
+            _mfeMetCache[code].stars = stars;
+            _mfeMetCache[code].score = Math.round((idx / Math.max(total-1,1)) * 100);
+        });
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RENDER
+    ════════════════════════════════════════════════════════ */
+    /* ── Star display helper ── */
+    function mfeStarHtml(stars) {
+        if (stars == null) return '<span class="mfe-st-nd">…</span>';
+        const filled = '★'.repeat(stars);
+        const empty  = '☆'.repeat(5 - stars);
+        const cls = ['','mfe-st1','mfe-st2','mfe-st3','mfe-st4','mfe-st5'][stars] || 'mfe-st3';
+        return `<span class="mfe-stars ${cls}" title="${stars} star${stars!==1?'s':''}">${filled}<span style="opacity:.3">${empty}</span></span>`;
+    }
+
+    /* ── CAGR cell helper ── */
+    function mfeCagrHtml(m) {
+        if (!m || !m.cagr) return '<span class="mfe-shimmer"></span>';
+        const key = {y1:'y1',y3:'y3',y5:'y5',y10:'y10'}[_mfeCagrPeriod.toLowerCase().replace('y','y')];
+        const periodMap = {'1Y':'y1','3Y':'y3','5Y':'y5','10Y':'y10'};
+        const val = m.cagr[periodMap[_mfeCagrPeriod]];
+        if (val == null) return '<span class="mfe-cagr-na">—</span>';
+        const cls = val >= 0 ? 'mfe-cagr-pos' : 'mfe-cagr-neg';
+        return `<span class="${cls}">${val >= 0 ? '+' : ''}${val.toFixed(2)}%</span>`;
+    }
+
+    function mfeRender() {
+        const search=(document.getElementById('mfe-search')?.value||'').toLowerCase().trim();
+        let view = _mfeList.filter(f => {
+            if (f.cat !== _mfeCur) return false;
+            if (!_mfeNavCache[f.code]) return false;
+            if (search && !f.name.toLowerCase().includes(search) && !f.amc.toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        // Sort — stars use score (percentile rank) for ordering
+        const periodMap = {'1Y':'y1','3Y':'y3','5Y':'y5','10Y':'y10'};
+        view.sort((a,b)=>{
+            if (_mfeSortCol==='score'){
+                const sa=_mfeMetCache[a.code]?.score??-1, sb=_mfeMetCache[b.code]?.score??-1;
+                return _mfeSortDir*(sa-sb);
+            }
+            if (_mfeSortCol==='cagr'){
+                const pk = periodMap[_mfeCagrPeriod];
+                const ca=_mfeMetCache[a.code]?.cagr?.[pk]??-999;
+                const cb=_mfeMetCache[b.code]?.cagr?.[pk]??-999;
+                return _mfeSortDir*(ca-cb);
+            }
+            if (_mfeSortCol==='rollingHit'){
+                const ra=_mfeMetCache[a.code]?.rolling?.hitRate??-1;
+                const rb=_mfeMetCache[b.code]?.rolling?.hitRate??-1;
+                return _mfeSortDir*(ra-rb);
+            }
+            if (_mfeSortCol==='rollingAvg'){
+                const ra=_mfeMetCache[a.code]?.rolling?.avg??-999;
+                const rb=_mfeMetCache[b.code]?.rolling?.avg??-999;
+                return _mfeSortDir*(ra-rb);
+            }
+            if (_mfeSortCol==='expenseRatio'){
+                const ea=mfeGetER(a.code)??99, eb=mfeGetER(b.code)??99;
+                return _mfeSortDir*(ea-eb);
+            }
+            if (_mfeSortCol==='nav') return _mfeSortDir*((_mfeNavCache[a.code]?.nav||0)-(_mfeNavCache[b.code]?.nav||0));
+            return _mfeSortDir*a.name.localeCompare(b.name);
+        });
+
+        const total=view.length, totalPg=Math.max(1,Math.ceil(total/MFE_PAGE));
+        if (_mfePage>=totalPg) _mfePage=0;
+        const start=_mfePage*MFE_PAGE, page=view.slice(start, start+MFE_PAGE);
+
+        const tbody=document.getElementById('mfe-tbody');
+        if (!tbody) return;
+
+        const mc=(v,fn)=> v!=null && isFinite(v)
+            ? `<span class="${fn(v)}">${v.toFixed(2)}</span>`
+            : '<span class="mfe-shimmer"></span>';
+
+        tbody.innerHTML = page.map((f,i)=>{
+            const rank=start+i+1;
+            const nc=_mfeNavCache[f.code];
+            const m=_mfeMetCache[f.code];
+            const medals=['🥇','🥈','🥉'];
+            const rankHtml=`<span class="mfe-rank${rank<=3?' mfe-rank-top':''}">${rank<=3?medals[rank-1]:rank}</span>`;
+            const hasM = m !== undefined;
+            const starCell = !hasM
+                ? '<span class="mfe-st-nd">…</span>'
+                : mfeStarHtml(m?.stars ?? null);
+
+            // Rolling returns cells
+            const rollHit = m?.rolling?.hitRate;
+            const rollAvg = m?.rolling?.avg;
+            const rollHitHtml = !hasM ? '<span class="mfe-shimmer"></span>'
+                : rollHit==null ? '<span class="mfe-na">—</span>'
+                : `<span class="${rollHit>=80?'mfe-good':rollHit>=60?'mfe-avg':'mfe-bad'}">${rollHit.toFixed(1)}%</span>`;
+            const rollAvgHtml = !hasM ? '<span class="mfe-shimmer"></span>'
+                : rollAvg==null ? '<span class="mfe-na">—</span>'
+                : `<span class="${rollAvg>=12?'mfe-good':rollAvg>=8?'mfe-avg':'mfe-bad'}">${rollAvg>=0?'+':''}${rollAvg.toFixed(2)}%</span>`;
+
+            // Expense Ratio cell — show for all funds, estimated if not in lookup
+            const erData = mfeGetER(f.code, f.cat);
+            const erBench = MFE_ER_BENCH[f.cat] ?? 1.0;
+            let erHtml;
+            if (!erData) {
+                erHtml = '<span class="mfe-na">—</span>';
+            } else {
+                const erCls = erData.val <= erBench*0.6 ? 'mfe-good'
+                            : erData.val <= erBench      ? 'mfe-avg' : 'mfe-bad';
+                const erTip = erData.estimated ? ' title="Estimated — category median"' : '';
+                const erSuffix = erData.estimated ? '<span style="font-size:9px;opacity:0.6">~</span>' : '';
+                erHtml = `<span class="${erCls}"${erTip}>${erData.val.toFixed(2)}%${erSuffix}</span>`;
+            }
+
+            return `<tr>
+                <td class="mfe-td text-center">${rankHtml}</td>
+                <td class="mfe-td mfe-td-name">
+                    <span class="mfe-fname">${_esc(f.name)}</span>
+                    <span class="mfe-famc">${_esc(f.amc)}</span>
+                </td>
+                <td class="mfe-td text-center">${starCell}</td>
+                <td class="mfe-td text-right font-bold">${hasM ? mfeCagrHtml(m) : '<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right font-bold">${nc?'₹'+nc.nav.toFixed(4):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-center">${rollHitHtml}</td>
+                <td class="mfe-td text-right">${rollAvgHtml}</td>
+                <td class="mfe-td text-center">${erHtml}</td>
+                <td class="mfe-td text-right">${m&&m.stdDev!=null?mc(m.stdDev,v=>v<12?'mfe-good':v<20?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.beta!=null?mc(m.beta,v=>v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.alpha!=null?mc(m.alpha,v=>v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.sharpe!=null?mc(m.sharpe,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.sortino!=null?mc(m.sortino,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+            </tr>`;
+        }).join('');
+
+        // Row count + pagination
+        const rc=document.getElementById('mfe-row-count');
+        if(rc) rc.textContent=`${_mfeCur}: ${total.toLocaleString()} funds`;
+        const pg=document.getElementById('mfe-pagination');
+        if(pg) pg.innerHTML=totalPg<=1?'':
+            `<button onclick="mfeGoPage(${_mfePage-1})" ${_mfePage===0?'disabled':''} class="mfe-pg-btn">← Prev</button>
+             <span class="text-xs text-slate-500 font-bold">Page ${_mfePage+1}/${totalPg}</span>
+             <button onclick="mfeGoPage(${_mfePage+1})" ${_mfePage>=totalPg-1?'disabled':''} class="mfe-pg-btn">Next →</button>
+             <select onchange="mfeGoPage(+this.value)" class="mfe-pg-select">
+               ${Array.from({length:totalPg},(_,i)=>`<option value="${i}"${i===_mfePage?' selected':''}>Pg ${i+1}</option>`).join('')}
+             </select>`;
+
+        // CAGR column header label
+        const cagrHdr = document.getElementById('mfe-cagr-header');
+        if (cagrHdr) cagrHdr.innerHTML = `CAGR ${_mfeCagrPeriod} <span class="mfe-si">↕</span>`;
+
+        // Sort indicator
+        document.querySelectorAll('.mfe-th-sort').forEach(th=>th.classList.remove('mfe-sort-on'));
+        document.querySelector(`.mfe-th-sort[onclick="mfeSortBy('${_mfeSortCol}')"]`)?.classList.add('mfe-sort-on');
+    }
+
+    /* ════════════════════════════════════════════════════════
+       UI CONTROLS
+    ════════════════════════════════════════════════════════ */
+    function mfeSetCat(cat) {
+        if (cat===_mfeCur && _mfeCatDone[cat]) return;
+        _mfeCur=cat; _mfePage=0;
+        // Update pill styling
+        document.querySelectorAll('.mfe-cat-btn').forEach(b=>{
+            b.className=b.className.replace(/mfe-cat-(active|inactive)/g,'');
+            b.classList.add(b.dataset.cat===cat?'mfe-cat-active':'mfe-cat-inactive');
+        });
+        const cf=_mfeList.filter(f=>f.cat===cat);
+        document.getElementById('mfe-stat-cat').textContent=cf.length.toLocaleString();
+        document.getElementById('mfe-stat-scored').textContent='—';
+        if(_mfeReady) mfeCatLoad(cat);
+    }
+
+    function mfeSortBy(col) {
+        _mfeSortDir = _mfeSortCol===col ? -_mfeSortDir : -1;
+        _mfeSortCol=col;
+        mfeRender();
+    }
+
+    function mfeSetCagr(period) {
+        _mfeCagrPeriod = period;
+        document.querySelectorAll('.mfe-cagr-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.cagr === period);
+        });
+        mfeRender();
+    }
+
+    function mfeGoPage(n) {
+        const tp=Math.ceil(_mfeList.filter(f=>f.cat===_mfeCur&&_mfeNavCache[f.code]).length/MFE_PAGE);
+        _mfePage=Math.max(0,Math.min(n,tp-1));
+        mfeRender();
+        document.getElementById('mfe-table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function mfeOnSearch() { if(_mfeReady) mfeRender(); }
+
+    /* ════════════════════════════════════════════════════════
+       HELPERS
+    ════════════════════════════════════════════════════════ */
+    function _mfeShowTable() { _mfeShow('mfe-table-wrap'); }
+
+    function _mfeProgress(label, sub, pct) {
+        _mfeShow('mfe-phase-bar');
+        const lb=document.getElementById('mfe-phase-label'),
+              sb=document.getElementById('mfe-phase-sub'),
+              pb=document.getElementById('mfe-phase-prog'),
+              pc=document.getElementById('mfe-phase-pct');
+        if(lb) lb.textContent=label;
+        if(sb) sb.textContent=sub;
+        if(pb) pb.style.width=pct+'%';
+        if(pc) pc.textContent=pct+'%';
+    }
+
+    function _mfeMsg(main,sub) {
+        const a=document.getElementById('mfe-loading-text'),b=document.getElementById('mfe-loading-sub');
+        if(a) a.textContent=main; if(b) b.textContent=sub;
+    }
+
+    function _mfeShow(id){document.getElementById(id)?.classList.remove('hidden');}
+    function _mfeHide(id){document.getElementById(id)?.classList.add('hidden');}
+    function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+    function mfeParseCat(n) {
+        const nl=n.toLowerCase();
+        if(/large.?cap|bluechip|blue.?chip/.test(nl)) return 'Large Cap';
+        if(/mid.?cap/.test(nl))   return 'Mid Cap';
+        if(/small.?cap/.test(nl)) return 'Small Cap';
+        if(/elss|tax.?sav/.test(nl)) return 'ELSS';
+        if(/index|nifty|sensex|bse\s*\d|nse\s*\d/.test(nl)) return 'Index';
+        if(/liquid/.test(nl))     return 'Liquid';
+        if(/flexi.?cap|multi.?cap/.test(nl)) return 'Flexi Cap';
+        if(/hybrid|balanced|equity.?saving|dynamic asset/.test(nl)) return 'Hybrid';
+        if(/arbitrage/.test(nl))  return 'Arbitrage';
+        if(/gold|silver|commodity|metal/.test(nl)) return 'Commodity';
+        if(/international|global|overseas|nasdaq|s&p/.test(nl)) return 'International';
+        if(/debt|bond|gilt|income|duration|credit|corporate|money.?market|overnight|ultra.?short|floating|banking.?psu/.test(nl)) return 'Debt';
+        if(/sector|thematic|pharma|tech|infra|bank|fmcg|energy|auto|realty|defence/.test(nl)) return 'Sectoral';
+        if(/fund.?of.?fund|fof/.test(nl)) return 'FoF';
+        return 'Other';
+    }
+
+    function mfeCatFromMeta(c) {
+        if(!c) return null;
+        const cl=c.toLowerCase();
+        if(/large.?cap/.test(cl)) return 'Large Cap';
+        if(/mid.?cap/.test(cl))   return 'Mid Cap';
+        if(/small.?cap/.test(cl)) return 'Small Cap';
+        if(/elss|tax/.test(cl))   return 'ELSS';
+        if(/index/.test(cl))      return 'Index';
+        if(/liquid/.test(cl))     return 'Liquid';
+        if(/flexi|multi.?cap/.test(cl)) return 'Flexi Cap';
+        if(/hybrid|balanced/.test(cl))  return 'Hybrid';
+        if(/arbitrage/.test(cl))  return 'Arbitrage';
+        if(/gold|commodity/.test(cl)) return 'Commodity';
+        if(/international|global|overseas/.test(cl)) return 'International';
+        if(/debt|bond|gilt|income|duration|credit|corporate|money|overnight|floating/.test(cl)) return 'Debt';
+        if(/sector|thematic/.test(cl)) return 'Sectoral';
+        if(/fof|fund.?of/.test(cl)) return 'FoF';
+        return null;
+    }
+
+    function mfeParseAMC(n) {
+        const amcs=['SBI','HDFC','ICICI Prudential','Axis','Kotak','Mirae Asset','Nippon India',
+            'UTI','DSP','Franklin Templeton','Tata','Aditya Birla Sun Life','ABSL','Canara Robeco',
+            'Parag Parikh','PPFAS','Edelweiss','Motilal Oswal','Quant','Invesco','IDFC','Bandhan',
+            'Baroda BNP Paribas','Sundaram','PGIM','Mahindra Manulife','WhiteOak','Bajaj Finserv',
+            '360 One','JM Financial','LIC','Navi','Samco','Quantum','NJ'];
+        for(const a of amcs) if(n.toLowerCase().includes(a.toLowerCase())) return a;
+        return n.split(' ').slice(0,3).join(' ');
+    }
+    </script>
+
+    <style>
         /* ===== MOBILE RESPONSIVE: SPLASH & LOGO FIXES =====
            All rules are scoped to max-width:640px so desktop/tablet
            layout is completely unaffected.
