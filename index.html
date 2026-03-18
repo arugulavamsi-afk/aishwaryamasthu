@@ -1283,7 +1283,7 @@
             <button onclick="switchMode('fundpicker')" id="tab-fundpicker" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fund Picker Guide</button>
             <button onclick="switchMode('healthscore')" id="tab-healthscore" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Fin Health Score</button>
             <button onclick="switchMode('finplan')" id="tab-finplan" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">Financial Plan</button>
-            <button onclick="switchMode('mfexplorer')" id="tab-mfexplorer" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">MF Explorer</button>
+            <button onclick="switchMode('mfexplorer')" id="tab-mfexplorer" class="tab-inactive transition-all text-sm whitespace-nowrap px-4 py-1.5">🔭 MF Explorer</button>
         </div>
     </nav>
 
@@ -2739,7 +2739,7 @@
             <div class="rounded-2xl px-5 py-4 text-white" style="background:linear-gradient(135deg,#0c2340 0%,#1a5276 45%,#0e4d3e 100%);border:2px solid rgba(245,200,66,0.4);box-shadow:0 4px 18px rgba(0,0,0,0.25);">
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-lg font-black flex items-center gap-2">Indian MF Explorer</h2>
+                        <h2 class="text-lg font-black flex items-center gap-2">🔭 Indian MF Explorer</h2>
                         <p class="text-blue-200 text-xs mt-1 max-w-lg">Live NAV from AMFI · Auto-scored per category · Top AMCs · 3+ year funds only</p>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
@@ -2829,7 +2829,6 @@
 
             <!-- Table -->
             <div id="mfe-table-wrap" class="hidden bg-white rounded-2xl border border-[#f5c842]/30 overflow-hidden shadow-sm">
-
                 <!-- CAGR period toggle -->
                 <div class="px-4 pt-3 pb-2 flex items-center gap-2 border-b border-slate-100 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">CAGR Period:</span>
@@ -2837,69 +2836,55 @@
                     <button onclick="mfeSetCagr('3Y')"  class="mfe-cagr-btn active" data-cagr="3Y">3 Year</button>
                     <button onclick="mfeSetCagr('5Y')"  class="mfe-cagr-btn" data-cagr="5Y">5 Year</button>
                     <button onclick="mfeSetCagr('10Y')" class="mfe-cagr-btn" data-cagr="10Y">10 Year</button>
-                    <span class="text-[10px] text-slate-300 ml-2 hidden sm:inline">Shows — if fund history is too short for that period</span>
+                    <span class="text-[10px] text-slate-300 ml-2">Shows — if fund history is too short for that period</span>
                 </div>
                 <!-- Benchmark label -->
-                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2 flex-wrap">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">vs:</span>
+                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk metrics computed against:</span>
                     <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 50</span>
-                    <span class="text-[10px] text-slate-300 hidden sm:inline">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
+                    <span class="text-[10px] text-slate-300">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
                 </div>
-
-                <!-- ══ MOBILE COLUMN-GROUP SWITCHER (hidden on desktop) ══ -->
-                <div class="mfe-seg-wrap" id="mfe-seg-wrap">
-                    <div class="mfe-seg-ctrl" id="mfe-seg-ctrl" role="tablist">
-                        <div class="mfe-seg-ink" id="mfe-seg-ink"></div>
-                        <button class="mfe-seg-btn" onclick="mfeColGroup('core')"    data-grp="core"    role="tab">⭐ Core</button>
-                        <button class="mfe-seg-btn" onclick="mfeColGroup('returns')" data-grp="returns" role="tab">📈 Returns</button>
-                        <button class="mfe-seg-btn" onclick="mfeColGroup('risk')"    data-grp="risk"    role="tab">📐 Risk</button>
-                    </div>
-                    <div class="mfe-seg-hint" id="mfe-seg-hint">Rating · CAGR · Expense Ratio</div>
-                </div>
-
-                <!-- ══ UNIFIED TABLE (column groups control mobile visibility) ══ -->
-                <div class="mfe-tbl-scroll" id="mfe-tbl-scroll">
-                    <table id="mfe-tbl" class="grp-core w-full text-left border-collapse" style="min-width:1180px;">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" style="min-width:1180px;width:100%;">
                         <colgroup>
-                            <col class="mfe-col-fixed"  style="width:34px">
-                            <col class="mfe-col-fixed"  style="width:280px">
-                            <col class="mfe-gc" style="width:78px">
-                            <col class="mfe-gc" style="width:88px">
-                            <col class="mfe-gr" style="width:88px">
-                            <col class="mfe-gr" style="width:78px">
-                            <col class="mfe-gr" style="width:78px">
-                            <col class="mfe-gc" style="width:78px">
-                            <col class="mfe-gd" style="width:72px">
-                            <col class="mfe-gd" style="width:68px">
-                            <col class="mfe-gk" style="width:78px">
-                            <col class="mfe-gk" style="width:72px">
-                            <col class="mfe-gk" style="width:72px">
+                            <col style="width:42px">
+                            <col style="width:280px">
+                            <col style="width:80px">
+                            <col style="width:90px">
+                            <col style="width:90px">
+                            <col style="width:80px">
+                            <col style="width:80px">
+                            <col style="width:80px">
+                            <col style="width:75px">
+                            <col style="width:70px">
+                            <col style="width:80px">
+                            <col style="width:75px">
+                            <col style="width:75px">
                         </colgroup>
                         <thead>
                             <tr style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
-                                <th class="mfe-th" style="width:34px;">#</th>
+                                <th class="mfe-th" style="width:42px;">#</th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('name')" style="width:280px;">Fund Name <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gc" onclick="mfeSortBy('score')"       title="Star rating within category">Rating <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gc" onclick="mfeSortBy('cagr')"        id="mfe-cagr-header" title="Compounded Annual Growth Rate">CAGR <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gr" onclick="mfeSortBy('nav')"         title="Latest NAV from AMFI">NAV ₹ <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gr" onclick="mfeSortBy('rollingHit')"  title="% of 3Y rolling windows with positive return">Roll Hit% <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gr" onclick="mfeSortBy('rollingAvg')"  title="Average annualised 3Y rolling return">Roll Avg <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gc" onclick="mfeSortBy('expenseRatio')" title="Expense Ratio — annual fund cost">Exp Ratio <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-gd"             title="3Y Annualised Std Dev — lower is more stable">Std Dev</th>
-                                <th class="mfe-th mfe-gd"             title="Beta vs benchmark — 1.0 moves with market">Beta</th>
-                                <th class="mfe-th mfe-th-sort mfe-gk" onclick="mfeSortBy('alpha')"   title="Alpha — excess return vs benchmark">Alpha % <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gk" onclick="mfeSortBy('sharpe')"  title="Sharpe — return per unit of total risk">Sharpe <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort mfe-gk" onclick="mfeSortBy('sortino')" title="Sortino — return per unit of downside risk">Sortino <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('score')" title="Star rating: top 10% = 5★, next 22.5% = 4★, middle 35% = 3★, next 22.5% = 2★, bottom 10% = 1★ — within category">Rating <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('cagr')" id="mfe-cagr-header" title="Compounded Annual Growth Rate for selected period">CAGR <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('nav')" title="Latest NAV from AMFI">NAV ₹ <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingHit')" title="Rolling Hit Rate — % of all 3Y windows with positive return. Higher = more consistent">Roll Hit% <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingAvg')" title="Rolling Avg Return — average annualised 3Y return across all rolling windows">Roll Avg <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('expenseRatio')" title="Expense Ratio (TER) — annual cost deducted from NAV. Lower = more stays with you">Exp Ratio <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th" title="3Y Annualised Std Dev — lower is more stable">Std Dev</th>
+                                <th class="mfe-th" title="Beta vs Nifty 50 — 1.0 = moves with market">Beta</th>
+                                <th class="mfe-th" title="Alpha — excess return vs benchmark">Alpha %</th>
+                                <th class="mfe-th" title="Sharpe Ratio — return per unit of total risk">Sharpe</th>
+                                <th class="mfe-th" title="Sortino Ratio — return per unit of downside risk">Sortino</th>
                             </tr>
                         </thead>
                         <tbody id="mfe-tbody"></tbody>
                     </table>
                 </div>
-
                 <div class="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-wrap">
                     <span class="text-xs text-slate-500 font-bold" id="mfe-row-count"></span>
                     <div id="mfe-pagination" class="flex items-center gap-2 flex-wrap"></div>
-                    <span class="text-[10px] text-slate-300 hidden sm:block">Source: AMFI via mfapi.in · Informational only</span>
+                    <span class="text-[10px] text-slate-300">Source: AMFI via mfapi.in · 3Y NAV vs Nifty 50 · Informational only</span>
                 </div>
             </div>
 
@@ -7302,151 +7287,6 @@
         .mfe-pg-btn:hover:not([disabled]){background:#0d9488;color:#fff;border-color:#0d9488;}
         .mfe-pg-btn[disabled]{opacity:.35;cursor:default;}
         .mfe-pg-select{padding:4px 8px;border-radius:8px;font-size:11px;font-weight:600;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;cursor:pointer;}
-
-        /* ══════════════════════════════════════════════════
-           TABLE SCROLL CONTAINER
-        ══════════════════════════════════════════════════ */
-        .mfe-tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-        /* ══════════════════════════════════════════════════
-           MOBILE SEGMENTED CONTROL (hidden on desktop)
-        ══════════════════════════════════════════════════ */
-        .mfe-seg-wrap {
-            display: none;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0;
-            padding: 10px 12px 8px;
-            border-bottom: 1px solid #f1f5f9;
-            background: #fafafa;
-        }
-        .mfe-seg-ctrl {
-            position: relative;
-            display: flex;
-            background: #eff2f5;
-            border-radius: 11px;
-            padding: 3px;
-            gap: 0;
-        }
-        .mfe-seg-ink {
-            position: absolute;
-            top: 3px; bottom: 3px;
-            border-radius: 8px;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,.10), 0 0 0 1px rgba(0,0,0,.04);
-            transition: left .22s cubic-bezier(.34,1.56,.64,1), width .22s cubic-bezier(.34,1.56,.64,1);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .mfe-seg-btn {
-            position: relative;
-            z-index: 1;
-            flex: 1;
-            padding: 7px 4px 6px;
-            border: none;
-            background: transparent;
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #94a3b8;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: color .18s;
-            white-space: nowrap;
-            letter-spacing: .01em;
-        }
-        .mfe-seg-btn.active { color: #0d9488; }
-        .mfe-seg-hint {
-            margin-top: 5px;
-            font-size: 9.5px;
-            font-weight: 600;
-            color: #b0bec5;
-            text-align: center;
-            letter-spacing: .03em;
-            text-transform: uppercase;
-        }
-
-        /* ══════════════════════════════════════════════════
-           COLUMN GROUP CLASSES
-           Desktop: all groups always visible
-           Mobile:  only active group visible
-        ══════════════════════════════════════════════════ */
-        /* Desktop — force-show all groups */
-        @media (min-width: 768px) {
-            .mfe-gc, .mfe-gr, .mfe-gk, .mfe-gd { display: table-cell !important; }
-        }
-
-        /* Mobile — hide all groups, show only active */
-        @media (max-width: 767px) {
-            .mfe-seg-wrap { display: flex; }
-
-            /* Reset table to fill viewport exactly */
-            #mfe-tbl { min-width: unset !important; width: 100% !important; table-layout: fixed !important; }
-            .mfe-tbl-scroll { overflow-x: hidden; }
-
-            /* Sticky rank + name columns */
-            #mfe-tbl thead th:first-child,
-            #mfe-tbl tbody td:first-child {
-                position: sticky; left: 0; z-index: 6;
-                background: inherit;
-                width: 28px !important;
-            }
-            #mfe-tbl thead th:nth-child(2),
-            .mfe-td-name {
-                position: sticky; left: 28px; z-index: 6;
-                background: #fff;
-                width: 142px !important; min-width: 142px !important; max-width: 142px !important;
-            }
-            #mfe-tbl tbody tr:hover .mfe-td-name { background: #f8fafc; }
-            /* Subtle shadow separator on sticky name column */
-            .mfe-td-name::after,
-            #mfe-tbl thead th:nth-child(2)::after {
-                content: '';
-                position: absolute;
-                top: 0; right: -5px; bottom: 0; width: 5px;
-                background: linear-gradient(to right, rgba(0,0,0,.07), transparent);
-                pointer-events: none;
-            }
-
-            /* Hide ALL group columns by default on mobile */
-            .mfe-gc, .mfe-gr, .mfe-gk, .mfe-gd { display: none !important; }
-            /* Desktop-only columns: never visible on mobile */
-
-            /* Reveal active group — columns auto-distribute remaining width */
-            #mfe-tbl.grp-core    .mfe-gc { display: table-cell !important; }
-            #mfe-tbl.grp-returns .mfe-gr { display: table-cell !important; }
-            #mfe-tbl.grp-risk    .mfe-gk { display: table-cell !important; }
-
-            /* Mobile cell sizing */
-            .mfe-td { padding: 8px 6px !important; font-size: 11.5px !important; }
-            .mfe-th { padding: 9px 6px !important; font-size: 9.5px !important; letter-spacing: .04em; }
-
-            /* Truncate long fund names on mobile */
-            .mfe-fname {
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                max-width: 128px !important;
-                font-size: 11.5px !important;
-            }
-            .mfe-famc {
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                max-width: 128px !important;
-            }
-
-            /* Metric values: bolder, bigger on mobile for easy reading */
-            .mfe-good  { font-size: 12px !important; font-weight: 900 !important; }
-            .mfe-avg   { font-size: 12px !important; font-weight: 800 !important; }
-            .mfe-bad   { font-size: 12px !important; font-weight: 800 !important; }
-            .mfe-cagr-pos, .mfe-cagr-neg { font-size: 12px !important; }
-
-            /* Stars smaller on mobile to fit column */
-            .mfe-stars { font-size: 11px !important; }
-
-            /* Row dividers more visible */
-            #mfe-table-wrap table tbody tr { border-bottom: 1px solid #f0f4f8 !important; }
-        }
     </style>
 
 
@@ -7710,7 +7550,6 @@
     let _mfeSortCol  = 'score';
     let _mfeSortDir  = -1;
     let _mfePage     = 0;
-    let _mfeColGroup = 'core';  // active mobile column group: 'core' | 'returns' | 'risk'
     let _mfeReady    = false;   // step1 done
     let _mfeBusy     = false;   // step1 running
     let _mfeScopeAbort = null;  // AbortController for current category ops
@@ -7729,7 +7568,7 @@
 
     function refreshMFExplorer() {
         _mfeList=[]; _mfeNavCache={}; _mfeMetCache={}; _mfeCatDone={}; _mfeCatNav={};
-        _mfeBench=[]; _mfeBenchReady=false; _mfeCatBenchCache={}; _mfeReady=false; _mfeBusy=false; _mfePage=0; _mfeSubSect='All'; _mfeColGroup='core';
+        _mfeBench=[]; _mfeBenchReady=false; _mfeCatBenchCache={}; _mfeReady=false; _mfeBusy=false; _mfePage=0; _mfeSubSect='All';
         if (_mfeScopeAbort) { _mfeScopeAbort.abort(); _mfeScopeAbort=null; }
         const ic=document.getElementById('mfe-refresh-icon');
         if(ic){ic.classList.add('mfe-spin');setTimeout(()=>ic.classList.remove('mfe-spin'),2000);}
@@ -8229,9 +8068,6 @@
                 return _mfeSortDir*(ea-eb);
             }
             if (_mfeSortCol==='nav') return _mfeSortDir*((_mfeNavCache[a.code]?.nav||0)-(_mfeNavCache[b.code]?.nav||0));
-            if (_mfeSortCol==='alpha')   { const va=_mfeMetCache[a.code]?.alpha??-999,  vb=_mfeMetCache[b.code]?.alpha??-999;  return _mfeSortDir*(va-vb); }
-            if (_mfeSortCol==='sharpe')  { const va=_mfeMetCache[a.code]?.sharpe??-999, vb=_mfeMetCache[b.code]?.sharpe??-999; return _mfeSortDir*(va-vb); }
-            if (_mfeSortCol==='sortino') { const va=_mfeMetCache[a.code]?.sortino??-999,vb=_mfeMetCache[b.code]?.sortino??-999;return _mfeSortDir*(va-vb); }
             return _mfeSortDir*a.name.localeCompare(b.name);
         });
 
@@ -8267,7 +8103,7 @@
                 : rollAvg==null ? '<span class="mfe-na">—</span>'
                 : `<span class="${rollAvg>=12?'mfe-good':rollAvg>=8?'mfe-avg':'mfe-bad'}">${rollAvg>=0?'+':''}${rollAvg.toFixed(2)}%</span>`;
 
-            // Expense Ratio cell
+            // Expense Ratio cell — show for all funds, estimated if not in lookup
             const erData = mfeGetER(f.code, f.cat);
             const erBench = MFE_ER_BENCH[f.cat] ?? 1.0;
             let erHtml;
@@ -8281,31 +8117,23 @@
                 erHtml = `<span class="${erCls}"${erTip}>${erData.val.toFixed(2)}%${erSuffix}</span>`;
             }
 
-            // NAV — shorter on mobile (2dp)
-            const navHtml = nc ? `₹${nc.nav.toFixed(2)}` : '<span class="mfe-shimmer"></span>';
-
-            // Sectoral badge in name cell
-            const ssBadge = _mfeCur==='Sectoral'
-                ? ` <span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`
-                : '';
-
             return `<tr>
                 <td class="mfe-td text-center">${rankHtml}</td>
                 <td class="mfe-td mfe-td-name">
                     <span class="mfe-fname">${_esc(f.name)}</span>
-                    <span class="mfe-famc">${_esc(f.amc)}${ssBadge}</span>
+                    <span class="mfe-famc">${_esc(f.amc)}${_mfeCur==='Sectoral'?` <span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`:''}</span>
                 </td>
-                <td class="mfe-td mfe-gc text-center">${starCell}</td>
-                <td class="mfe-td mfe-gc text-right font-bold">${hasM ? mfeCagrHtml(m) : '<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td mfe-gr text-right font-bold">${navHtml}</td>
-                <td class="mfe-td mfe-gr text-center">${rollHitHtml}</td>
-                <td class="mfe-td mfe-gr text-right">${rollAvgHtml}</td>
-                <td class="mfe-td mfe-gc text-center">${erHtml}</td>
-                <td class="mfe-td mfe-gd text-right">${m&&m.stdDev!=null?mc(m.stdDev,v=>v<12?'mfe-good':v<20?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td mfe-gd text-right">${m&&m.beta!=null?mc(m.beta,v=>v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td mfe-gk text-right">${m&&m.alpha!=null?mc(m.alpha,v=>v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td mfe-gk text-right">${m&&m.sharpe!=null?mc(m.sharpe,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td mfe-gk text-right">${m&&m.sortino!=null?mc(m.sortino,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-center">${starCell}</td>
+                <td class="mfe-td text-right font-bold">${hasM ? mfeCagrHtml(m) : '<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right font-bold">${nc?'₹'+nc.nav.toFixed(4):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-center">${rollHitHtml}</td>
+                <td class="mfe-td text-right">${rollAvgHtml}</td>
+                <td class="mfe-td text-center">${erHtml}</td>
+                <td class="mfe-td text-right">${m&&m.stdDev!=null?mc(m.stdDev,v=>v<12?'mfe-good':v<20?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.beta!=null?mc(m.beta,v=>v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.alpha!=null?mc(m.alpha,v=>v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.sharpe!=null?mc(m.sharpe,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right">${m&&m.sortino!=null?mc(m.sortino,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
             </tr>`;
         }).join('');
 
@@ -8331,15 +8159,6 @@
         // Sort indicator
         document.querySelectorAll('.mfe-th-sort').forEach(th=>th.classList.remove('mfe-sort-on'));
         document.querySelector(`.mfe-th-sort[onclick="mfeSortBy('${_mfeSortCol}')"]`)?.classList.add('mfe-sort-on');
-
-        // Ensure column group class is applied (in case table was re-rendered)
-        const tbl = document.getElementById('mfe-tbl');
-        if (tbl && !tbl.classList.contains('grp-' + _mfeColGroup)) {
-            tbl.classList.remove('grp-core','grp-returns','grp-risk');
-            tbl.classList.add('grp-' + _mfeColGroup);
-        }
-        // Init segmented control ink on first render or after DOM refresh
-        requestAnimationFrame(mfeSegInit);
     }
 
     /* ════════════════════════════════════════════════════════
@@ -8417,54 +8236,6 @@
             b.classList.toggle('active', b.dataset.cagr === period);
         });
         mfeRender();
-    }
-
-    /* Switch mobile column group and animate the segmented control ink */
-    function mfeColGroup(grp) {
-        _mfeColGroup = grp;
-        // Apply group class to table
-        const tbl = document.getElementById('mfe-tbl');
-        if (tbl) {
-            tbl.classList.remove('grp-core','grp-returns','grp-risk');
-            tbl.classList.add('grp-' + grp);
-        }
-        // Animate segmented ink to active button
-        const ctrl = document.getElementById('mfe-seg-ctrl');
-        const ink  = document.getElementById('mfe-seg-ink');
-        if (ctrl && ink) {
-            ctrl.querySelectorAll('.mfe-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.grp === grp));
-            const activeBtn = ctrl.querySelector(`.mfe-seg-btn[data-grp="${grp}"]`);
-            if (activeBtn) {
-                ink.style.left  = activeBtn.offsetLeft + 'px';
-                ink.style.width = activeBtn.offsetWidth + 'px';
-            }
-        }
-        // Update hint text
-        const hints = {
-            core:    'Rating · CAGR · Expense Ratio',
-            returns: 'NAV · Rolling Hit% · Rolling Avg',
-            risk:    'Alpha · Sharpe · Sortino'
-        };
-        const hint = document.getElementById('mfe-seg-hint');
-        if (hint) hint.textContent = hints[grp] || '';
-    }
-
-    /* Initialise segmented control ink position (call after first render) */
-    function mfeSegInit() {
-        const ctrl = document.getElementById('mfe-seg-ctrl');
-        const ink  = document.getElementById('mfe-seg-ink');
-        if (!ctrl || !ink) return;
-        const activeBtn = ctrl.querySelector('.mfe-seg-btn[data-grp="' + _mfeColGroup + '"]');
-        if (activeBtn) {
-            // Mark active
-            ctrl.querySelectorAll('.mfe-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.grp === _mfeColGroup));
-            // Position ink without animation first time
-            ink.style.transition = 'none';
-            ink.style.left  = activeBtn.offsetLeft + 'px';
-            ink.style.width = activeBtn.offsetWidth + 'px';
-            // Re-enable animation after a tick
-            requestAnimationFrame(() => { ink.style.transition = ''; });
-        }
     }
 
     function mfeGoPage(n) {
