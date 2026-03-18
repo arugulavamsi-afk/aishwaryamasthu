@@ -2739,7 +2739,7 @@
             <div class="rounded-2xl px-5 py-4 text-white" style="background:linear-gradient(135deg,#0c2340 0%,#1a5276 45%,#0e4d3e 100%);border:2px solid rgba(245,200,66,0.4);box-shadow:0 4px 18px rgba(0,0,0,0.25);">
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-lg font-black flex items-center gap-2">🔭 Indian MF Explorer</h2>
+                        <h2 class="text-lg font-black flex items-center gap-2">Indian MF Explorer</h2>
                         <p class="text-blue-200 text-xs mt-1 max-w-lg">Live NAV from AMFI · Auto-scored per category · Top AMCs · 3+ year funds only</p>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
@@ -2792,6 +2792,8 @@
                     <button onclick="mfeSetCat('International')" data-cat="International" class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🌍 Intl</button>
                     <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
                 </div>
+                <!-- Sub-sector pills — visible only when Sectoral is active -->
+                <div id="mfe-subsect-row" class="hidden flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100"></div>
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <input id="mfe-search" type="text" placeholder="Search fund name or AMC within this category…"
@@ -2834,15 +2836,27 @@
                     <button onclick="mfeSetCagr('3Y')"  class="mfe-cagr-btn active" data-cagr="3Y">3 Year</button>
                     <button onclick="mfeSetCagr('5Y')"  class="mfe-cagr-btn" data-cagr="5Y">5 Year</button>
                     <button onclick="mfeSetCagr('10Y')" class="mfe-cagr-btn" data-cagr="10Y">10 Year</button>
-                    <span class="text-[10px] text-slate-300 ml-2">Shows — if fund history is too short for that period</span>
+                    <span class="text-[10px] text-slate-300 ml-2 hidden sm:inline">Shows — if fund history is too short for that period</span>
                 </div>
                 <!-- Benchmark label -->
-                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk metrics computed against:</span>
+                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2 flex-wrap">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">vs:</span>
                     <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 50</span>
-                    <span class="text-[10px] text-slate-300">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
+                    <span class="text-[10px] text-slate-300 hidden sm:inline">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
                 </div>
-                <div class="overflow-x-auto">
+
+                <!-- ═══ MOBILE SORT BAR (only visible on mobile) ═══ -->
+                <div class="mfe-mobile-sort" id="mfe-mobile-sort-bar">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0">Sort:</span>
+                    <button onclick="mfeMobileSort('score')"       class="mfe-msort-btn on"  data-ms="score">⭐ Rating</button>
+                    <button onclick="mfeMobileSort('cagr')"        class="mfe-msort-btn"     data-ms="cagr">📈 CAGR</button>
+                    <button onclick="mfeMobileSort('expenseRatio')"class="mfe-msort-btn"     data-ms="expenseRatio">💸 Exp</button>
+                    <button onclick="mfeMobileSort('rollingHit')"  class="mfe-msort-btn"     data-ms="rollingHit">🎯 Consistency</button>
+                    <button onclick="mfeMobileSort('sharpe')"      class="mfe-msort-btn"     data-ms="sharpe">📐 Sharpe</button>
+                </div>
+
+                <!-- ═══ DESKTOP TABLE (hidden on mobile) ═══ -->
+                <div class="mfe-desktop-view overflow-x-auto">
                     <table class="w-full text-left border-collapse" style="min-width:1180px;width:100%;">
                         <colgroup>
                             <col style="width:42px">
@@ -2870,7 +2884,7 @@
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingAvg')" title="Rolling Avg Return — average annualised 3Y return across all rolling windows">Roll Avg <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('expenseRatio')" title="Expense Ratio (TER) — annual cost deducted from NAV. Lower = more stays with you">Exp Ratio <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th" title="3Y Annualised Std Dev — lower is more stable">Std Dev</th>
-                                <th class="mfe-th" title="Beta vs Nifty 50 — 1.0 = moves with market">Beta</th>
+                                <th class="mfe-th" title="Beta vs benchmark — 1.0 = moves with market">Beta</th>
                                 <th class="mfe-th" title="Alpha — excess return vs benchmark">Alpha %</th>
                                 <th class="mfe-th" title="Sharpe Ratio — return per unit of total risk">Sharpe</th>
                                 <th class="mfe-th" title="Sortino Ratio — return per unit of downside risk">Sortino</th>
@@ -2879,10 +2893,14 @@
                         <tbody id="mfe-tbody"></tbody>
                     </table>
                 </div>
+
+                <!-- ═══ MOBILE CARDS (hidden on desktop) ═══ -->
+                <div class="mfe-mobile-view" id="mfe-cards"></div>
+
                 <div class="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-wrap">
                     <span class="text-xs text-slate-500 font-bold" id="mfe-row-count"></span>
                     <div id="mfe-pagination" class="flex items-center gap-2 flex-wrap"></div>
-                    <span class="text-[10px] text-slate-300">Source: AMFI via mfapi.in · 3Y NAV vs Nifty 50 · Informational only</span>
+                    <span class="text-[10px] text-slate-300 hidden sm:block">Source: AMFI via mfapi.in · Informational only</span>
                 </div>
             </div>
 
@@ -7273,6 +7291,10 @@
         .mfe-cat-active{background:linear-gradient(135deg,#0d9488,#10b981);color:#fff;box-shadow:0 2px 8px rgba(13,148,136,.3);}
         .mfe-cat-inactive{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;}
         .mfe-cat-inactive:hover{background:#e2e8f0;color:#334155;}
+        /* Sub-sector pills (Sectoral category only) */
+        .mfe-ss-active{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.28);}
+        .mfe-ss-inactive{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;}
+        .mfe-ss-inactive:hover{background:#ede9fe;color:#6d28d9;border-color:#c4b5fd;}
         .mfe-spinner{width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:#0d9488;border-radius:50%;animation:mfeSpin .75s linear infinite;}
         .mfe-spinner-sm{width:16px;height:16px;border:2px solid #e2e8f0;border-top-color:#0d9488;border-radius:50%;animation:mfeSpin .6s linear infinite;flex-shrink:0;}
         @keyframes mfeSpin{to{transform:rotate(360deg);}}
@@ -7281,6 +7303,185 @@
         .mfe-pg-btn:hover:not([disabled]){background:#0d9488;color:#fff;border-color:#0d9488;}
         .mfe-pg-btn[disabled]{opacity:.35;cursor:default;}
         .mfe-pg-select{padding:4px 8px;border-radius:8px;font-size:11px;font-weight:600;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;cursor:pointer;}
+
+        /* ── Desktop vs Mobile view switching ── */
+        .mfe-desktop-view { display: block; }
+        .mfe-mobile-view  { display: none; }
+
+        @media (max-width: 767px) {
+            .mfe-desktop-view { display: none !important; }
+            .mfe-mobile-view  { display: block !important; }
+        }
+
+        /* ── Mobile fund cards ── */
+        .mfe-card {
+            position: relative;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 12px 14px 10px;
+            transition: background .12s;
+            cursor: default;
+        }
+        .mfe-card:last-child { border-bottom: none; }
+        .mfe-card:active { background: #f8fafc; }
+
+        /* Rank badge */
+        .mfe-card-rank {
+            position: absolute;
+            top: 13px; left: 14px;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900; color: #94a3b8;
+            flex-shrink: 0;
+        }
+        .mfe-card-rank.top { background: linear-gradient(135deg,#fef3c7,#fde68a); color: #92400e; }
+
+        /* Header row: name + stars */
+        .mfe-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 6px;
+            padding-left: 28px;
+            margin-bottom: 8px;
+        }
+        .mfe-card-name {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.35;
+            flex: 1;
+        }
+        .mfe-card-amc {
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .mfe-card-stars-wrap {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        /* Primary metrics row */
+        .mfe-card-primary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 7px;
+        }
+        .mfe-card-metric {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 9px;
+            padding: 6px 8px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .mfe-card-metric-label {
+            font-size: 8.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #94a3b8;
+        }
+        .mfe-card-metric-value {
+            font-size: 13px;
+            font-weight: 900;
+            color: #334155;
+            line-height: 1.2;
+        }
+
+        /* Secondary metrics grid (2 cols × 2 rows) */
+        .mfe-card-secondary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+        .mfe-card-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            padding: 5px 6px;
+            background: #f8fafc;
+            border-radius: 7px;
+        }
+        .mfe-card-stat-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: #b0bec5;
+        }
+        .mfe-card-stat-value {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #475569;
+        }
+
+        /* Expandable advanced metrics */
+        .mfe-card-more-btn {
+            margin-top: 7px;
+            width: 100%;
+            padding: 5px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px dashed #e2e8f0;
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            cursor: pointer;
+            text-align: center;
+            transition: all .15s;
+        }
+        .mfe-card-more-btn:active { background: #f1f5f9; }
+        .mfe-card-extra {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 6px;
+        }
+        .mfe-card-extra.open { display: grid; }
+
+        /* Mobile sort bar */
+        .mfe-mobile-sort {
+            display: none;
+            padding: 8px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 767px) {
+            .mfe-mobile-sort { display: flex; }
+        }
+        .mfe-msort-btn {
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+            cursor: pointer;
+            transition: all .13s;
+            white-space: nowrap;
+        }
+        .mfe-msort-btn.on {
+            background: linear-gradient(135deg,#1e3a5f,#0d9488);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 1px 4px rgba(13,148,136,.25);
+        }
     </style>
 
 
@@ -7486,6 +7687,52 @@
     let _mfeCagrPeriod = '3Y';
     const MFE_PAGE    = 50;
 
+    /* ── Sectoral sub-sector labels, benchmark metadata & icons ── */
+    const MFE_SUBSECT_ORDER = [
+        'Banking & Finance','Pharma & Healthcare','Technology',
+        'FMCG & Consumption','Infrastructure','Energy & Power',
+        'Auto','Realty','PSU & Defence','MNC','ESG','Thematic'
+    ];
+    const MFE_SUBSECT_BENCH_LABEL = {
+        'Banking & Finance':   'Nifty Bank',
+        'Pharma & Healthcare': 'Nifty Pharma',
+        'Technology':          'Nifty IT',
+        'FMCG & Consumption':  'Nifty FMCG',
+        'Infrastructure':      'Nifty Infrastructure',
+        'Energy & Power':      'Nifty Energy',
+        'Auto':                'Nifty Auto',
+        'Realty':              'Nifty Realty',
+        'PSU & Defence':       'Nifty PSE',
+        'MNC':                 'Nifty MNC',
+        'ESG':                 'Nifty 500',
+        'Thematic':            'Nifty 500',
+    };
+    const MFE_SUBSECT_ICON = {
+        'Banking & Finance':'🏦','Pharma & Healthcare':'💊','Technology':'💻',
+        'FMCG & Consumption':'🛒','Infrastructure':'🏗️','Energy & Power':'⚡',
+        'Auto':'🚗','Realty':'🏢','PSU & Defence':'🛡️','MNC':'🌐',
+        'ESG':'🌱','Thematic':'🔬',
+    };
+
+    /* Detect sectoral sub-sector from fund name */
+    function mfeParseSubSect(n) {
+        const nl = n.toLowerCase();
+        if(/\bbank(?!ing.?psu)|banking.?financ|finserv|financial.?serv/.test(nl)) return 'Banking & Finance';
+        if(/pharma|health|medic|hospital/.test(nl))                               return 'Pharma & Healthcare';
+        if(/\btech\b|information.?tech|nifty.?it\b|software|digital/.test(nl))   return 'Technology';
+        if(/fmcg|consumption|consumer/.test(nl))                                  return 'FMCG & Consumption';
+        if(/infra|infrastructure/.test(nl))                                       return 'Infrastructure';
+        if(/energy|power|utilities/.test(nl))                                     return 'Energy & Power';
+        if(/\bauto\b|automobile|mobility/.test(nl))                               return 'Auto';
+        if(/realt|real.?estate/.test(nl))                                         return 'Realty';
+        if(/defence|defense|\bpsu\b|public.?sector/.test(nl))                     return 'PSU & Defence';
+        if(/\bmnc\b|multinational/.test(nl))                                      return 'MNC';
+        if(/esg|sustain/.test(nl))                                                return 'ESG';
+        return 'Thematic';
+    }
+
+    let _mfeSubSect = 'All'; // current sub-sector filter (Sectoral only)
+
     /* ── state ── */
     let _mfeList     = [];   // all eligible funds [{code,name,amc,cat}]
     let _mfeNavCache = {};   // code → {nav, date}
@@ -7516,7 +7763,7 @@
 
     function refreshMFExplorer() {
         _mfeList=[]; _mfeNavCache={}; _mfeMetCache={}; _mfeCatDone={}; _mfeCatNav={};
-        _mfeBench=[]; _mfeBenchReady=false; _mfeCatBenchCache={}; _mfeReady=false; _mfeBusy=false; _mfePage=0;
+        _mfeBench=[]; _mfeBenchReady=false; _mfeCatBenchCache={}; _mfeReady=false; _mfeBusy=false; _mfePage=0; _mfeSubSect='All';
         if (_mfeScopeAbort) { _mfeScopeAbort.abort(); _mfeScopeAbort=null; }
         const ic=document.getElementById('mfe-refresh-icon');
         if(ic){ic.classList.add('mfe-spin');setTimeout(()=>ic.classList.remove('mfe-spin'),2000);}
@@ -7590,7 +7837,8 @@
                     code: String(f.schemeCode),
                     name: f.schemeName,
                     amc:  mfeParseAMC(f.schemeName),
-                    cat:  mfeParseCat(f.schemeName)
+                    cat:  mfeParseCat(f.schemeName),
+                    subSect: mfeParseSubSect(f.schemeName)
                 }));
 
             document.getElementById('mfe-stat-total').textContent = _mfeList.length.toLocaleString();
@@ -7719,7 +7967,12 @@
         document.getElementById('mfe-stat-scored').textContent = '—';
 
         // Update benchmark label in UI
-        const bLabel = MFE_CAT_BENCH_LABEL[cat] || 'Nifty 50';
+        let bLabel;
+        if (cat === 'Sectoral' && _mfeSubSect) {
+            bLabel = MFE_SUBSECT_BENCH_LABEL[_mfeSubSect] || 'Nifty 500';
+        } else {
+            bLabel = MFE_CAT_BENCH_LABEL[cat] || 'Nifty 50';
+        }
         const bEl = document.getElementById('mfe-bench-label');
         if (bEl) bEl.textContent = 'Benchmark: ' + bLabel;
 
@@ -7969,10 +8222,15 @@
     }
 
     function mfeRender() {
+        // Keep sub-sector pills in sync (counts may update as NAVs load)
+        if (_mfeCur === 'Sectoral') mfeRenderSubSectPills();
+
         const search=(document.getElementById('mfe-search')?.value||'').toLowerCase().trim();
         let view = _mfeList.filter(f => {
             if (f.cat !== _mfeCur) return false;
             if (!_mfeNavCache[f.code]) return false;
+            // Sub-sector filter (Sectoral only — always a specific sub-sector, no All)
+            if (_mfeCur === 'Sectoral' && _mfeSubSect && f.subSect !== _mfeSubSect) return false;
             if (search && !f.name.toLowerCase().includes(search) && !f.amc.toLowerCase().includes(search)) return false;
             return true;
         });
@@ -8058,7 +8316,7 @@
                 <td class="mfe-td text-center">${rankHtml}</td>
                 <td class="mfe-td mfe-td-name">
                     <span class="mfe-fname">${_esc(f.name)}</span>
-                    <span class="mfe-famc">${_esc(f.amc)}</span>
+                    <span class="mfe-famc">${_esc(f.amc)}${_mfeCur==='Sectoral'?` <span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`:''}</span>
                 </td>
                 <td class="mfe-td text-center">${starCell}</td>
                 <td class="mfe-td text-right font-bold">${hasM ? mfeCagrHtml(m) : '<span class="mfe-shimmer"></span>'}</td>
@@ -8074,9 +8332,154 @@
             </tr>`;
         }).join('');
 
+        // ── Mobile cards ──────────────────────────────────────────────────────
+        const mobileCards = document.getElementById('mfe-cards');
+        if (mobileCards) {
+            const periodMap2 = {'1Y':'y1','3Y':'y3','5Y':'y5','10Y':'y10'};
+            mobileCards.innerHTML = page.map((f,i) => {
+                const rank = start+i+1;
+                const nc   = _mfeNavCache[f.code];
+                const m    = _mfeMetCache[f.code];
+                const hasM = m !== undefined;
+                const isTop3 = rank <= 3;
+                const medals = ['🥇','🥈','🥉'];
+
+                // Stars
+                const starsHtml = !hasM ? '<span class="mfe-st-nd" style="font-size:10px;">…</span>' : mfeStarHtml(m?.stars ?? null);
+
+                // CAGR
+                const pk = periodMap2[_mfeCagrPeriod];
+                const cagrVal = m?.cagr?.[pk];
+                const cagrDisp = cagrVal == null
+                    ? '<span style="color:#cbd5e1;font-style:italic;font-size:11px;">—</span>'
+                    : `<span class="${cagrVal>=0?'mfe-cagr-pos':'mfe-cagr-neg'}" style="font-size:14px;">${cagrVal>=0?'+':''}${cagrVal.toFixed(2)}%</span>`;
+
+                // NAV
+                const navDisp = nc
+                    ? `<span style="color:#1e293b;font-size:13px;">₹${nc.nav.toFixed(2)}</span>`
+                    : '<span class="mfe-shimmer"></span>';
+
+                // Exp ratio
+                const erD = mfeGetER(f.code, f.cat);
+                const erB = MFE_ER_BENCH[f.cat] ?? 1.0;
+                const erDispVal = !erD ? '—'
+                    : `<span class="${erD.val<=erB*0.6?'mfe-good':erD.val<=erB?'mfe-avg':'mfe-bad'}" style="font-size:13px;">${erD.val.toFixed(2)}%${erD.estimated?'<span style="font-size:9px;opacity:.6">~</span>':''}</span>`;
+
+                // Roll Hit
+                const rh = m?.rolling?.hitRate;
+                const rhDisp = !hasM ? '<span class="mfe-shimmer"></span>'
+                    : rh==null ? '<span style="color:#cbd5e1;">—</span>'
+                    : `<span class="${rh>=80?'mfe-good':rh>=60?'mfe-avg':'mfe-bad'}">${rh.toFixed(0)}%</span>`;
+
+                // Roll Avg
+                const ra = m?.rolling?.avg;
+                const raDisp = !hasM ? '<span class="mfe-shimmer"></span>'
+                    : ra==null ? '<span style="color:#cbd5e1;">—</span>'
+                    : `<span class="${ra>=12?'mfe-good':ra>=8?'mfe-avg':'mfe-bad'}">${ra>=0?'+':''}${ra.toFixed(1)}%</span>`;
+
+                // Sharpe
+                const shDisp = !hasM ? '<span class="mfe-shimmer"></span>'
+                    : m?.sharpe==null ? '<span style="color:#cbd5e1;">—</span>'
+                    : `<span class="${m.sharpe>1.5?'mfe-good':m.sharpe>0.8?'mfe-avg':'mfe-bad'}">${m.sharpe.toFixed(2)}</span>`;
+
+                // Sortino
+                const soDisp = !hasM ? '<span class="mfe-shimmer"></span>'
+                    : m?.sortino==null ? '<span style="color:#cbd5e1;">—</span>'
+                    : `<span class="${m.sortino>1.5?'mfe-good':m.sortino>0.8?'mfe-avg':'mfe-bad'}">${m.sortino.toFixed(2)}</span>`;
+
+                // Extra: Alpha, Beta, StdDev
+                const alDisp = !hasM ? '—'
+                    : m?.alpha==null ? '—'
+                    : `<span class="${m.alpha>2?'mfe-good':m.alpha>0?'mfe-avg':'mfe-bad'}">${m.alpha>=0?'+':''}${m.alpha.toFixed(2)}%</span>`;
+                const beDisp = !hasM ? '—'
+                    : m?.beta==null ? '—'
+                    : `<span class="${m.beta<0.9?'mfe-good':m.beta<1.15?'mfe-avg':'mfe-bad'}">${m.beta.toFixed(2)}</span>`;
+                const sdDisp = !hasM ? '—'
+                    : m?.stdDev==null ? '—'
+                    : `<span class="${m.stdDev<12?'mfe-good':m.stdDev<20?'mfe-avg':'mfe-bad'}">${m.stdDev.toFixed(2)}%</span>`;
+
+                // Sectoral sub-sector badge
+                const ssBadge = _mfeCur==='Sectoral'
+                    ? `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`
+                    : '';
+
+                // Rank accent color
+                const rankBg = isTop3
+                    ? 'background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;'
+                    : 'background:#f1f5f9;color:#94a3b8;';
+
+                const cardId = `mfe-card-${f.code}`;
+                return `
+                <div class="mfe-card" id="${cardId}">
+                    <div class="mfe-card-rank ${isTop3?'top':''}" style="${rankBg}">
+                        ${isTop3 ? medals[rank-1] : rank}
+                    </div>
+                    <div class="mfe-card-header">
+                        <div>
+                            <div class="mfe-card-name">${_esc(f.name)}</div>
+                            <div class="mfe-card-amc">${_esc(f.amc)} ${ssBadge}</div>
+                        </div>
+                        <div class="mfe-card-stars-wrap">
+                            ${starsHtml}
+                            ${nc ? `<span style="font-size:9px;color:#94a3b8;font-weight:600;">NAV ₹${nc.nav.toFixed(2)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="mfe-card-primary">
+                        <div class="mfe-card-metric">
+                            <div class="mfe-card-metric-label">CAGR ${_mfeCagrPeriod}</div>
+                            <div class="mfe-card-metric-value">${cagrDisp}</div>
+                        </div>
+                        <div class="mfe-card-metric">
+                            <div class="mfe-card-metric-label">Exp Ratio</div>
+                            <div class="mfe-card-metric-value">${erDispVal}</div>
+                        </div>
+                        <div class="mfe-card-metric">
+                            <div class="mfe-card-metric-label">Roll Hit%</div>
+                            <div class="mfe-card-metric-value">${rhDisp}</div>
+                        </div>
+                    </div>
+                    <div class="mfe-card-secondary">
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Roll Avg</div>
+                            <div class="mfe-card-stat-value">${raDisp}</div>
+                        </div>
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Sharpe</div>
+                            <div class="mfe-card-stat-value">${shDisp}</div>
+                        </div>
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Sortino</div>
+                            <div class="mfe-card-stat-value">${soDisp}</div>
+                        </div>
+                        <div class="mfe-card-stat" style="cursor:pointer;" onclick="mfeCardToggle('${cardId}')">
+                            <div class="mfe-card-stat-label">More</div>
+                            <div class="mfe-card-stat-value" style="color:#0d9488;font-size:13px;">＋</div>
+                        </div>
+                    </div>
+                    <div class="mfe-card-extra" id="${cardId}-extra">
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Alpha</div>
+                            <div class="mfe-card-stat-value">${alDisp}</div>
+                        </div>
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Beta</div>
+                            <div class="mfe-card-stat-value">${beDisp}</div>
+                        </div>
+                        <div class="mfe-card-stat">
+                            <div class="mfe-card-stat-label">Std Dev</div>
+                            <div class="mfe-card-stat-value">${sdDisp}</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
         // Row count + pagination
         const rc=document.getElementById('mfe-row-count');
-        if(rc) rc.textContent=`${_mfeCur}: ${total.toLocaleString()} funds`;
+        const rcLabel = _mfeCur==='Sectoral' && _mfeSubSect
+            ? `${_mfeCur} › ${_mfeSubSect}: ${total.toLocaleString()} funds`
+            : `${_mfeCur}: ${total.toLocaleString()} funds`;
+        if(rc) rc.textContent=rcLabel;
         const pg=document.getElementById('mfe-pagination');
         if(pg) pg.innerHTML=totalPg<=1?'':
             `<button onclick="mfeGoPage(${_mfePage-1})" ${_mfePage===0?'disabled':''} class="mfe-pg-btn">← Prev</button>
@@ -8101,20 +8504,70 @@
     function mfeSetCat(cat) {
         if (cat===_mfeCur && _mfeCatDone[cat]) return;
         _mfeCur=cat; _mfePage=0;
+        // For Sectoral: reset to empty so mfeRenderSubSectPills auto-picks first available
+        _mfeSubSect = (cat === 'Sectoral') ? '' : 'All';
         // Update pill styling
         document.querySelectorAll('.mfe-cat-btn').forEach(b=>{
             b.className=b.className.replace(/mfe-cat-(active|inactive)/g,'');
             b.classList.add(b.dataset.cat===cat?'mfe-cat-active':'mfe-cat-inactive');
         });
+        // Show / build sub-sector pills only for Sectoral
+        mfeRenderSubSectPills();
         const cf=_mfeList.filter(f=>f.cat===cat);
         document.getElementById('mfe-stat-cat').textContent=cf.length.toLocaleString();
         document.getElementById('mfe-stat-scored').textContent='—';
         if(_mfeReady) mfeCatLoad(cat);
     }
 
+    /* Build sub-sector filter pills (Sectoral only) */
+    function mfeRenderSubSectPills() {
+        const wrap = document.getElementById('mfe-subsect-row');
+        if (!wrap) return;
+        if (_mfeCur !== 'Sectoral') { wrap.classList.add('hidden'); return; }
+        wrap.classList.remove('hidden');
+        // Compute counts from already-loaded funds
+        const sectoralFunds = _mfeList.filter(f => f.cat === 'Sectoral');
+        const counts = {};
+        sectoralFunds.forEach(f => { counts[f.subSect] = (counts[f.subSect]||0) + 1; });
+
+        // Auto-select first available sub-sector if current selection has 0 funds
+        const available = MFE_SUBSECT_ORDER.filter(ss => (counts[ss]||0) > 0);
+        if (available.length && (!counts[_mfeSubSect])) {
+            _mfeSubSect = available[0];
+            // Sync benchmark label to the auto-selected sub-sector
+            const bEl = document.getElementById('mfe-bench-label');
+            if (bEl) bEl.textContent = 'Benchmark: ' + (MFE_SUBSECT_BENCH_LABEL[_mfeSubSect] || 'Nifty 500');
+        }
+
+        let html = `<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0 self-center">Sub-Sector:</span>`;
+        // Per sub-sector pills only — no "All" option
+        MFE_SUBSECT_ORDER.forEach(ss => {
+            const cnt = counts[ss] || 0;
+            if (!cnt) return;
+            const icon = MFE_SUBSECT_ICON[ss] || '📌';
+            html += `<button onclick="mfeSetSubSect('${ss}')" data-ss="${ss}"
+                class="mfe-ss-btn ${_mfeSubSect===ss?'mfe-ss-active':'mfe-ss-inactive'} px-2.5 py-1 rounded-full text-[11px] font-bold transition-all">
+                ${icon} ${ss} <span class="text-[10px] opacity-70">(${cnt})</span></button>`;
+        });
+        wrap.innerHTML = html;
+    }
+
+    function mfeSetSubSect(ss) {
+        _mfeSubSect = ss; _mfePage = 0;
+        // Update benchmark label to match this sub-sector
+        const bEl = document.getElementById('mfe-bench-label');
+        if (bEl) bEl.textContent = 'Benchmark: ' + (MFE_SUBSECT_BENCH_LABEL[ss] || 'Nifty 500');
+        mfeRenderSubSectPills();
+        mfeRender();
+    }
+
     function mfeSortBy(col) {
         _mfeSortDir = _mfeSortCol===col ? -_mfeSortDir : -1;
         _mfeSortCol=col;
+        // Sync mobile sort bar if visible
+        document.querySelectorAll('.mfe-msort-btn').forEach(b => {
+            b.classList.toggle('on', b.dataset.ms === col);
+        });
         mfeRender();
     }
 
@@ -8122,6 +8575,27 @@
         _mfeCagrPeriod = period;
         document.querySelectorAll('.mfe-cagr-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.cagr === period);
+        });
+        mfeRender();
+    }
+
+    /* Toggle the expandable "more" section on a mobile card */
+    function mfeCardToggle(cardId) {
+        const extra = document.getElementById(cardId + '-extra');
+        const card  = document.getElementById(cardId);
+        if (!extra) return;
+        const isOpen = extra.classList.toggle('open');
+        // Flip the ＋ / ─ icon in the More stat
+        const moreVal = card?.querySelector('.mfe-card-extra + .mfe-card-secondary .mfe-card-stat:last-child .mfe-card-stat-value,  .mfe-card-secondary .mfe-card-stat:last-child .mfe-card-stat-value');
+        if (moreVal) moreVal.textContent = isOpen ? '－' : '＋';
+    }
+
+    /* Mobile sort shortcut — mirrors mfeSortBy but also syncs the mobile sort bar */
+    function mfeMobileSort(col) {
+        _mfeSortDir = _mfeSortCol === col ? -_mfeSortDir : -1;
+        _mfeSortCol = col;
+        document.querySelectorAll('.mfe-msort-btn').forEach(b => {
+            b.classList.toggle('on', b.dataset.ms === col);
         });
         mfeRender();
     }
@@ -8167,15 +8641,19 @@
         if(/mid.?cap/.test(nl))   return 'Mid Cap';
         if(/small.?cap/.test(nl)) return 'Small Cap';
         if(/elss|tax.?sav/.test(nl)) return 'ELSS';
-        if(/index|nifty|sensex|bse\s*\d|nse\s*\d/.test(nl)) return 'Index';
-        if(/liquid/.test(nl))     return 'Liquid';
         if(/flexi.?cap|multi.?cap/.test(nl)) return 'Flexi Cap';
         if(/hybrid|balanced|equity.?saving|dynamic asset/.test(nl)) return 'Hybrid';
         if(/arbitrage/.test(nl))  return 'Arbitrage';
         if(/gold|silver|commodity|metal/.test(nl)) return 'Commodity';
         if(/international|global|overseas|nasdaq|s&p/.test(nl)) return 'International';
-        if(/debt|bond|gilt|income|duration|credit|corporate|money.?market|overnight|ultra.?short|floating|banking.?psu/.test(nl)) return 'Debt';
-        if(/sector|thematic|pharma|tech|infra|bank|fmcg|energy|auto|realty|defence/.test(nl)) return 'Sectoral';
+        // ── Debt check BEFORE generic index check ──────────────────────────────
+        // Bond/debt/gilt/CRISIL IBX/AAA/SDL/G-Sec etc. must go to Debt even if
+        // "nifty" or "index" appears in their name (e.g. "HDFC Nifty SDL Apr 2027 Index Fund")
+        if(/debt|bond|gilt|credit.?risk|corporate.?bond|money.?market|ultra.?short|short.?dur|medium.?dur|long.?dur|dynamic.?bond|floating|overnight|banking.?psu|crisil|ibx|nbfc|aaa.*fund|psu.?bond|financial.?serv.*debt|\bsdl\b|state.?dev|g.?sec\b|gsec|target.?matur|\bhtm\b|bharat.?bond/.test(nl)) return 'Debt';
+        if(/liquid/.test(nl))     return 'Liquid';
+        // ── Equity index funds (only reaches here if no debt pattern matched) ──
+        if(/index|nifty|sensex|bse\s*\d|nse\s*\d/.test(nl)) return 'Index';
+        if(/sector|thematic|pharma|tech\s|infra|fmcg|energy|auto|realty|defence/.test(nl)) return 'Sectoral';
         if(/fund.?of.?fund|fof/.test(nl)) return 'FoF';
         return 'Other';
     }
@@ -8187,15 +8665,16 @@
         if(/mid.?cap/.test(cl))   return 'Mid Cap';
         if(/small.?cap/.test(cl)) return 'Small Cap';
         if(/elss|tax/.test(cl))   return 'ELSS';
-        if(/index/.test(cl))      return 'Index';
         if(/liquid/.test(cl))     return 'Liquid';
         if(/flexi|multi.?cap/.test(cl)) return 'Flexi Cap';
         if(/hybrid|balanced/.test(cl))  return 'Hybrid';
         if(/arbitrage/.test(cl))  return 'Arbitrage';
         if(/gold|commodity/.test(cl)) return 'Commodity';
         if(/international|global|overseas/.test(cl)) return 'International';
-        if(/debt|bond|gilt|income|duration|credit|corporate|money|overnight|floating/.test(cl)) return 'Debt';
+        // ── Debt BEFORE index — "Index Funds - Debt", SDL, G-Sec, Target Maturity → Debt ──
+        if(/debt|bond|gilt|income|duration|credit|corporate|money|overnight|floating|banking.?psu|crisil|ibx|\bsdl\b|state.?dev|g.?sec|gsec|target.?matur|\bhtm\b|bharat.?bond/.test(cl)) return 'Debt';
         if(/sector|thematic/.test(cl)) return 'Sectoral';
+        if(/index/.test(cl)) return 'Index';          // only plain equity index funds remain
         if(/fof|fund.?of/.test(cl)) return 'FoF';
         return null;
     }
