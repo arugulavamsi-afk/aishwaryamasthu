@@ -1697,14 +1697,18 @@
                         <h2 class="text-xl font-black flex items-center gap-2">Mutual Fund Kit</h2>
                         <p class="text-blue-200 text-xs mt-1 max-w-xl">Tap any fund type to learn what it is, when to use it, and see a real-world Indian example. Build your financial vocabulary one card at a time.</p>
                     </div>
-                    <div class="mfe-cat-scroll" id="mf-filter-btns">
-                        <button onclick="filterMF('all')" id="mf-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All</button>
-                        <button onclick="filterMF('equity')" id="mf-f-equity" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Equity</button>
-                        <button onclick="filterMF('debt')" id="mf-f-debt" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Debt</button>
-                        <button onclick="filterMF('hybrid')" id="mf-f-hybrid" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Hybrid</button>
-                        <button onclick="filterMF('tax')" id="mf-f-tax" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Tax Saving</button>
-                        <button onclick="filterMF('passive')" id="mf-f-passive" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Passive</button>
-                        <button onclick="filterMF('others')" id="mf-f-others" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Others</button>
+                    <div class="pill-scroll-wrap dark-ctx" id="mf-filter-wrap">
+                        <button class="pill-arrow pill-arrow-left" onclick="pillScroll('mf-filter-btns',-1)" aria-label="Scroll left">‹</button>
+                        <div class="mfe-cat-scroll" id="mf-filter-btns" style="padding: 0 4px;">
+                            <button onclick="filterMF('all')" id="mf-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All</button>
+                            <button onclick="filterMF('equity')" id="mf-f-equity" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Equity</button>
+                            <button onclick="filterMF('debt')" id="mf-f-debt" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Debt</button>
+                            <button onclick="filterMF('hybrid')" id="mf-f-hybrid" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Hybrid</button>
+                            <button onclick="filterMF('tax')" id="mf-f-tax" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Tax Saving</button>
+                            <button onclick="filterMF('passive')" id="mf-f-passive" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Passive</button>
+                            <button onclick="filterMF('others')" id="mf-f-others" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Others</button>
+                        </div>
+                        <button class="pill-arrow pill-arrow-right" onclick="pillScroll('mf-filter-btns',1)" aria-label="Scroll right">›</button>
                     </div>
                 </div>
             </div>
@@ -2057,12 +2061,16 @@
                     <div>
                         <h2 class="text-xl font-black mb-1">How to Pick a Quality Mutual Fund</h2>
                         <p class="text-blue-200 text-xs max-w-2xl leading-relaxed">Not all funds are equal — even within the same category. These metrics tell you if a fund is actually doing its job well. Use them to compare any two funds before putting your money in.</p>
-                        <div class="mfe-cat-scroll mt-3" id="picker-filter-btns">
-                            <button onclick="filterPickerMetrics('all')" id="picker-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All Metrics</button>
-                            <button onclick="filterPickerMetrics('returns')" id="picker-f-returns" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Returns</button>
-                            <button onclick="filterPickerMetrics('risk')" id="picker-f-risk" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Risk Metrics</button>
-                            <button onclick="filterPickerMetrics('cost')" id="picker-f-cost" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Cost &amp; Tax</button>
-                            <button onclick="filterPickerMetrics('structure')" id="picker-f-structure" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Fund Structure</button>
+                        <div class="pill-scroll-wrap dark-ctx mt-3" id="picker-filter-wrap">
+                            <button class="pill-arrow pill-arrow-left" onclick="pillScroll('picker-filter-btns',-1)" aria-label="Scroll left">‹</button>
+                            <div class="mfe-cat-scroll" id="picker-filter-btns" style="padding: 0 4px;">
+                                <button onclick="filterPickerMetrics('all')" id="picker-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All Metrics</button>
+                                <button onclick="filterPickerMetrics('returns')" id="picker-f-returns" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Returns</button>
+                                <button onclick="filterPickerMetrics('risk')" id="picker-f-risk" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Risk Metrics</button>
+                                <button onclick="filterPickerMetrics('cost')" id="picker-f-cost" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Cost &amp; Tax</button>
+                                <button onclick="filterPickerMetrics('structure')" id="picker-f-structure" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Fund Structure</button>
+                            </div>
+                            <button class="pill-arrow pill-arrow-right" onclick="pillScroll('picker-filter-btns',1)" aria-label="Scroll right">›</button>
                         </div>
                     </div>
                 </div>
@@ -2802,24 +2810,42 @@
                     </div>
                 </div>
 
-                <!-- ── Desktop: pill row (hidden on mobile) ── -->
-                <div class="hidden sm:flex mfe-cat-scroll" id="mfe-cat-filters">
-                    <button onclick="mfeSetCat('Index')"         data-cat="Index"         class="mfe-cat-btn mfe-cat-active  px-3 py-1.5 rounded-full text-xs font-bold transition-all">📊 Index</button>
-                    <button onclick="mfeSetCat('Large Cap')"     data-cat="Large Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏛 Large Cap</button>
-                    <button onclick="mfeSetCat('Mid Cap')"       data-cat="Mid Cap"       class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">📈 Mid Cap</button>
-                    <button onclick="mfeSetCat('Small Cap')"     data-cat="Small Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🚀 Small Cap</button>
-                    <button onclick="mfeSetCat('Flexi Cap')"     data-cat="Flexi Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🔄 Flexi Cap</button>
-                    <button onclick="mfeSetCat('ELSS')"          data-cat="ELSS"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🧾 ELSS</button>
-                    <button onclick="mfeSetCat('Hybrid')"        data-cat="Hybrid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">⚖️ Hybrid</button>
-                    <button onclick="mfeSetCat('Debt')"          data-cat="Debt"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏦 Debt</button>
-                    <button onclick="mfeSetCat('Liquid')"        data-cat="Liquid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">💧 Liquid</button>
-                    <button onclick="mfeSetCat('Sectoral')"      data-cat="Sectoral"      class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏭 Sectoral</button>
-                    <button onclick="mfeSetCat('International')" data-cat="International" class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🌍 Intl</button>
-                    <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
+                <!-- ── Desktop: pill row with scroll arrows (hidden on mobile) ── -->
+                <div class="hidden sm:block pill-scroll-wrap" id="mfe-cat-filters-wrap">
+                    <button class="pill-arrow pill-arrow-left" onclick="pillScroll('mfe-cat-filters',-1)" aria-label="Scroll left">‹</button>
+                    <div class="mfe-cat-scroll" id="mfe-cat-filters" style="padding: 0 4px;">
+                        <button onclick="mfeSetCat('Index')"         data-cat="Index"         class="mfe-cat-btn mfe-cat-active  px-3 py-1.5 rounded-full text-xs font-bold transition-all">📊 Index</button>
+                        <button onclick="mfeSetCat('Large Cap')"     data-cat="Large Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏛 Large Cap</button>
+                        <button onclick="mfeSetCat('Mid Cap')"       data-cat="Mid Cap"       class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">📈 Mid Cap</button>
+                        <button onclick="mfeSetCat('Small Cap')"     data-cat="Small Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🚀 Small Cap</button>
+                        <button onclick="mfeSetCat('Flexi Cap')"     data-cat="Flexi Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🔄 Flexi Cap</button>
+                        <button onclick="mfeSetCat('ELSS')"          data-cat="ELSS"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🧾 ELSS</button>
+                        <button onclick="mfeSetCat('Hybrid')"        data-cat="Hybrid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">⚖️ Hybrid</button>
+                        <button onclick="mfeSetCat('Debt')"          data-cat="Debt"          class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏦 Debt</button>
+                        <button onclick="mfeSetCat('Liquid')"        data-cat="Liquid"        class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">💧 Liquid</button>
+                        <button onclick="mfeSetCat('Sectoral')"      data-cat="Sectoral"      class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏭 Sectoral</button>
+                        <button onclick="mfeSetCat('International')" data-cat="International" class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🌍 Intl</button>
+                        <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
+                    </div>
+                    <button class="pill-arrow pill-arrow-right" onclick="pillScroll('mfe-cat-filters',1)" aria-label="Scroll right">›</button>
                 </div>
 
-                <!-- Sub-sector pills — visible only when Sectoral is active (both breakpoints) -->
-                <div id="mfe-subsect-row" class="hidden mfe-cat-scroll pt-1 border-t border-slate-100"></div>
+                <!-- Sub-sector — mobile: dropdown / desktop: scrollable pills with arrows -->
+                <div id="mfe-subsect-row" class="hidden pt-1 border-t border-slate-100">
+                    <!-- Mobile dropdown -->
+                    <div class="mfe-ss-dd-wrap">
+                        <div class="relative">
+                            <select id="mfe-ss-dropdown" onchange="mfeSetSubSect(this.value)" class="mfe-ss-dd-select"></select>
+                            <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:#7c3aed;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                    </div>
+                    <!-- Desktop scrollable pills -->
+                    <div class="mfe-ss-pills-wrap pill-scroll-wrap" id="mfe-subsect-pills-wrap">
+                        <button class="pill-arrow pill-arrow-left" onclick="pillScroll('mfe-subsect-pills',-1)" aria-label="Scroll left">‹</button>
+                        <div class="mfe-cat-scroll" id="mfe-subsect-pills" style="padding: 0 4px;"></div>
+                        <button class="pill-arrow pill-arrow-right" onclick="pillScroll('mfe-subsect-pills',1)" aria-label="Scroll right">›</button>
+                    </div>
+                </div>
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <input id="mfe-search" type="text" placeholder="Search fund name or AMC within this category…"
@@ -2892,7 +2918,7 @@
                 <!-- Benchmark label -->
                 <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk metrics computed against:</span>
-                    <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 50</span>
+                    <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 100</span>
                     <span class="text-[10px] text-slate-300 hidden sm:inline">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
                     <span class="text-[10px] text-slate-400 sm:hidden ml-auto">← Swipe table →</span>
                 </div>
@@ -2924,7 +2950,7 @@
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingAvg')" title="Rolling Avg Return — average annualised 3Y return across all rolling windows">Roll Avg <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('expenseRatio')" title="Expense Ratio (TER) — annual cost deducted from NAV. Lower = more stays with you">Exp Ratio <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th" title="3Y Annualised Std Dev — lower is more stable">Std Dev</th>
-                                <th class="mfe-th" title="Beta vs Nifty 50 — 1.0 = moves with market">Beta</th>
+                                <th class="mfe-th" title="Beta vs category benchmark — 1.0 = moves in lockstep with benchmark; <1 = less volatile">Beta</th>
                                 <th class="mfe-th" title="Alpha — excess return vs benchmark">Alpha %</th>
                                 <th class="mfe-th" title="Sharpe Ratio — return per unit of total risk">Sharpe</th>
                                 <th class="mfe-th" title="Sortino Ratio — return per unit of downside risk">Sortino</th>
@@ -2977,16 +3003,82 @@
                 </div>
                 <p class="text-[10px] text-slate-500 mb-3">Funds are ranked by composite score, then bucketed into 5 signal tiers by percentile — within category only. Each bar represents a score dimension; taller = stronger signal.</p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                    <div class="rounded-xl p-2.5 text-center" style="background:#ecfdf5;border:1px solid #6ee7b7;"><div class="text-base font-black text-emerald-600">25%</div><div class="text-[10px] font-bold text-slate-700">Roll Hit%</div><div class="text-[9px] text-slate-400">Consistency</div></div>
                     <div class="rounded-xl p-2.5 text-center" style="background:#f0fdfa;border:1px solid #99f6e4;"><div class="text-base font-black text-teal-600">20%</div><div class="text-[10px] font-bold text-slate-700">Sharpe</div><div class="text-[9px] text-slate-400">Risk-adj return</div></div>
-                    <div class="rounded-xl p-2.5 text-center" style="background:#ecfdf5;border:1px solid #6ee7b7;"><div class="text-base font-black text-emerald-600">20%</div><div class="text-[10px] font-bold text-slate-700">Roll Hit%</div><div class="text-[9px] text-slate-400">Consistency</div></div>
-                    <div class="rounded-xl p-2.5 text-center" style="background:#eff6ff;border:1px solid #bfdbfe;"><div class="text-base font-black text-blue-600">15%</div><div class="text-[10px] font-bold text-slate-700">Alpha</div><div class="text-[9px] text-slate-400">Beats benchmark</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#eff6ff;border:1px solid #bfdbfe;"><div class="text-base font-black text-blue-600">20%</div><div class="text-[10px] font-bold text-slate-700">Alpha</div><div class="text-[9px] text-slate-400">Beats benchmark</div></div>
                     <div class="rounded-xl p-2.5 text-center" style="background:#f0fdf4;border:1px solid #86efac;"><div class="text-base font-black text-green-600">15%</div><div class="text-[10px] font-bold text-slate-700">Roll Avg</div><div class="text-[9px] text-slate-400">Return magnitude</div></div>
-                    <div class="rounded-xl p-2.5 text-center" style="background:#fdf4ff;border:1px solid #e9d5ff;"><div class="text-base font-black text-purple-600">15%</div><div class="text-[10px] font-bold text-slate-700">Sortino</div><div class="text-[9px] text-slate-400">Downside prot.</div></div>
-                    <div class="rounded-xl p-2.5 text-center" style="background:#fff7ed;border:1px solid #fed7aa;"><div class="text-base font-black text-orange-600">10%</div><div class="text-[10px] font-bold text-slate-700">Std Dev</div><div class="text-[9px] text-slate-400">NAV stability</div></div>
-                    <div class="rounded-xl p-2.5 text-center" style="background:#fef9c3;border:1px solid #fde68a;"><div class="text-base font-black text-yellow-600">5%</div><div class="text-[10px] font-bold text-slate-700">Beta</div><div class="text-[9px] text-slate-400">Mkt sensitivity</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fdf4ff;border:1px solid #e9d5ff;"><div class="text-base font-black text-purple-600">10%</div><div class="text-[10px] font-bold text-slate-700">Sortino</div><div class="text-[9px] text-slate-400">Downside prot.</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fff7ed;border:1px solid #fed7aa;"><div class="text-base font-black text-orange-600">7%</div><div class="text-[10px] font-bold text-slate-700">Std Dev</div><div class="text-[9px] text-slate-400">NAV stability</div></div>
+                    <div class="rounded-xl p-2.5 text-center" style="background:#fef9c3;border:1px solid #fde68a;"><div class="text-base font-black text-yellow-600">3%</div><div class="text-[10px] font-bold text-slate-700">Beta</div><div class="text-[9px] text-slate-400">Mkt sensitivity</div></div>
                 </div>
                 <p class="text-[10px] text-slate-400 mt-2.5 leading-relaxed">All comparisons are within-category only. Rolling returns use monthly 3Y windows across full NAV history. Expense Ratio is informational only — not included in score (already reflected in NAV). Shows — when data is insufficient.</p>
             </div>
+
+            <!-- ===================== FUND COMPARATOR ===================== -->
+            <div class="bg-white rounded-2xl border border-[#f5c842]/30 overflow-hidden shadow-sm" id="mfc-section">
+
+                <!-- Header -->
+                <div class="px-5 py-4 flex items-center justify-between gap-3 flex-wrap"
+                     style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
+                    <div>
+                        <h3 class="text-white font-black text-base flex items-center gap-2">⚖️ Fund Comparator</h3>
+                        <p class="text-blue-200 text-xs mt-0.5">Add up to 5 funds · side-by-side metrics · best value highlighted</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-blue-300 font-medium" id="mfc-fund-count"></span>
+                        <button onclick="mfcClearAll()" class="text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all"
+                                style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);">
+                            Clear all
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search row -->
+                <div class="px-4 pt-3 pb-2 border-b border-slate-100">
+                    <div class="relative" id="mfc-search-wrap">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5 flex-shrink-0"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input id="mfc-search" type="text" autocomplete="off"
+                               placeholder="Search any fund name or AMC to add…"
+                               class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                               oninput="mfcOnSearch()" onkeydown="mfcKeyNav(event)">
+                        <!-- Autocomplete dropdown -->
+                        <div id="mfc-autocomplete"
+                             class="hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden"
+                             style="max-height:260px;overflow-y:auto;"></div>
+                    </div>
+                    <!-- Selected chips -->
+                    <div id="mfc-chips" class="flex flex-wrap gap-2 mt-2 empty:mt-0 empty:hidden"></div>
+                </div>
+
+                <!-- Empty state -->
+                <div id="mfc-empty" class="py-12 flex flex-col items-center gap-2 text-slate-400">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4">
+                        <path d="M9 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-4"/>
+                        <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/>
+                        <line x1="10" y1="14" x2="14" y2="14"/>
+                    </svg>
+                    <p class="text-xs font-semibold">Search and add funds above to start comparing</p>
+                </div>
+
+                <!-- Loading state -->
+                <div id="mfc-loading" class="hidden py-8 flex flex-col items-center gap-3">
+                    <div class="mfe-spinner"></div>
+                    <p class="text-xs font-bold text-slate-500" id="mfc-loading-text">Fetching fund data…</p>
+                </div>
+
+                <!-- Comparison grid -->
+                <div id="mfc-grid" class="hidden overflow-x-auto">
+                    <table id="mfc-table" class="w-full border-collapse" style="min-width:520px;"></table>
+                </div>
+
+                <p class="text-[10px] text-slate-300 px-4 pb-3 text-right hidden sm:block">
+                    Data from AMFI via mfapi.in · Informational only
+                </p>
+            </div>
+            <!-- =================== END FUND COMPARATOR =================== -->
 
         </div>
         <!-- =================== END MF EXPLORER PANEL ================== -->
@@ -7355,12 +7447,66 @@
             border-color: #0d9488;
             box-shadow: 0 0 0 3px rgba(13,148,136,0.15);
         }
+        /* ── Pill scroll wrapper — shows fade + arrows when overflowing ── */
+        .pill-scroll-wrap {
+            position: relative;
+        }
+        .pill-scroll-wrap .pill-arrow {
+            display: none; /* hidden until JS detects overflow */
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(13,148,136,0.25);
+            background: #fff;
+            color: #0d9488;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            flex-shrink: 0;
+            transition: opacity 0.15s;
+            font-size: 11px;
+            line-height: 1;
+        }
+        .pill-scroll-wrap .pill-arrow.visible { display: flex; }
+        .pill-scroll-wrap .pill-arrow.faded   { opacity: 0.3; pointer-events: none; }
+        .pill-scroll-wrap .pill-arrow-left  { left: 0; }
+        .pill-scroll-wrap .pill-arrow-right { right: 0; }
+        /* fade-out edges when there's more to scroll */
+        .pill-scroll-wrap::before,
+        .pill-scroll-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 28px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .pill-scroll-wrap::before { left: 0;  background: linear-gradient(to right, #fff 40%, transparent); }
+        .pill-scroll-wrap::after  { right: 0; background: linear-gradient(to left,  #fff 40%, transparent); }
+        .pill-scroll-wrap.fade-left::before  { opacity: 1; }
+        .pill-scroll-wrap.fade-right::after  { opacity: 1; }
+        /* dark background context (MF Kit / Fund Picker headers) */
+        .pill-scroll-wrap.dark-ctx::before { background: linear-gradient(to right, rgba(7,30,34,0.9) 40%, transparent); }
+        .pill-scroll-wrap.dark-ctx::after  { background: linear-gradient(to left,  rgba(7,30,34,0.9) 40%, transparent); }
+        .pill-scroll-wrap.dark-ctx .pill-arrow { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25); }
+
         .mfe-cat-scroll {
             display: flex;
             align-items: center;
             gap: 6px;
             flex-wrap: wrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
+        .mfe-cat-scroll::-webkit-scrollbar { display: none; }
         /* Signal legend: scrollable single row */
         .mfe-legend-scroll {
             display: flex;
@@ -7372,13 +7518,9 @@
         @media (max-width: 640px) {
             .mfe-cat-scroll {
                 flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
                 padding-bottom: 4px;
                 padding-top: 2px;
             }
-            .mfe-cat-scroll::-webkit-scrollbar { display: none; }
             .mfe-cat-scroll > button,
             .mfe-cat-scroll > .mfe-cat-btn { flex-shrink: 0; }
             .mfe-legend-scroll {
@@ -7393,6 +7535,29 @@
             /* Pagination: left-align on mobile */
             #mfe-pagination { justify-content: flex-start; }
             .mfe-pg-btn { padding: 5px 10px; font-size: 11px; }
+        }
+        /* Sub-sector dropdown (mobile only) */
+        .mfe-ss-dd-wrap { display: none; }
+        @media (max-width: 640px) {
+            .mfe-ss-dd-wrap { display: block; }
+            .mfe-ss-pills-wrap { display: none; }
+        }
+        .mfe-ss-dd-select {
+            appearance: none; -webkit-appearance: none;
+            width: 100%;
+            padding: 9px 38px 9px 12px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(124,58,237,0.30);
+            background: linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);
+            color: #5b21b6;
+            font-size: 13px; font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            outline: none; cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .mfe-ss-dd-select:focus {
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
         }
         @media (max-width: 640px) {
             #mfe-table-wrap .overflow-x-auto { -webkit-overflow-scrolling: touch; }
@@ -7457,6 +7622,32 @@
         .mfe-pg-btn:hover:not([disabled]){background:#0d9488;color:#fff;border-color:#0d9488;}
         .mfe-pg-btn[disabled]{opacity:.35;cursor:default;}
         .mfe-pg-select{padding:4px 8px;border-radius:8px;font-size:11px;font-weight:600;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;cursor:pointer;}
+
+        /* ── Fund Comparator ── */
+        .mfc-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 10px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border:1px solid #6ee7b7;color:#065f46;max-width:200px;}
+        .mfc-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .mfc-chip button{flex-shrink:0;width:16px;height:16px;border-radius:50%;border:none;background:rgba(6,95,70,0.15);color:#065f46;cursor:pointer;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;}
+        .mfc-chip button:hover{background:rgba(6,95,70,0.30);}
+        .mfc-ac-item{padding:9px 14px;font-size:12px;cursor:pointer;border-bottom:0.5px solid #f1f5f9;display:flex;flex-direction:column;gap:1px;transition:background .1s;}
+        .mfc-ac-item:last-child{border-bottom:none;}
+        .mfc-ac-item:hover,.mfc-ac-item.mfc-ac-sel{background:#f0fdfa;}
+        .mfc-ac-name{font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .mfc-ac-meta{font-size:10px;color:#94a3b8;font-weight:600;}
+        .mfc-ac-added{font-size:10px;color:#0d9488;font-weight:700;}
+        #mfc-table th.mfc-metric{padding:9px 12px;font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;white-space:nowrap;min-width:110px;position:sticky;left:0;z-index:2;}
+        #mfc-table th.mfc-fund-col{padding:10px 14px;background:linear-gradient(135deg,#1e3a5f,#0e6655);color:#fff;font-size:11px;font-weight:800;text-align:center;border-right:1px solid rgba(255,255,255,.12);min-width:150px;max-width:190px;}
+        #mfc-table th.mfc-fund-col:last-child{border-right:none;}
+        #mfc-table th.mfc-fund-col .mfc-fn{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;display:block;}
+        #mfc-table th.mfc-fund-col .mfc-fa{font-size:9px;opacity:.65;font-weight:600;margin-top:1px;display:block;}
+        #mfc-table th.mfc-fund-col .mfc-rm{display:inline-flex;align-items:center;justify-content:center;margin-top:4px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:11px;transition:background .15s;}
+        #mfc-table th.mfc-fund-col .mfc-rm:hover{background:rgba(255,80,80,.4);color:#fff;}
+        #mfc-table td.mfc-metric{padding:8px 12px;font-size:11px;color:#64748b;font-weight:700;background:#f8fafc;border-bottom:1px solid #f1f5f9;border-right:1px solid #e2e8f0;white-space:nowrap;position:sticky;left:0;z-index:2;}
+        #mfc-table td.mfc-val{padding:8px 14px;font-size:12px;font-weight:700;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;white-space:nowrap;transition:background .2s;}
+        #mfc-table td.mfc-val:last-child{border-right:none;}
+        #mfc-table td.mfc-best{background:#f0fdf4 !important;color:#15803d !important;}
+        #mfc-table td.mfc-worst{color:#b91c1c !important;}
+        #mfc-table tr:last-child td{border-bottom:none;}
+        #mfc-table tr.mfc-section-head td,#mfc-table tr.mfc-section-head th{background:#f1f5f9;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;padding:5px 12px;border-bottom:1px solid #e2e8f0;}
     </style>
 
 
@@ -7598,37 +7789,51 @@
     };
 
     /* ══════════════════════════════════════════════════════════════
-       PER-CATEGORY BENCHMARKS
-       Using index fund proxies (mfapi.in scheme codes).
-       These give appropriate peer comparison for each category.
+       PER-CATEGORY BENCHMARKS  (mfapi.in scheme codes)
+       Each category uses the most appropriate available proxy.
+       Rationale:
+         Large Cap    → Nifty 100           (SEBI-mandated universe)
+         Mid Cap      → Nifty Midcap 150    (SEBI-mandated 101–250 range)
+         Small Cap    → Nifty Smallcap 250  (SEBI-mandated 251+ range)
+         Flexi Cap    → Nifty 500           (no market-cap floor; broadest index)
+         ELSS         → Nifty 500           (no market-cap mandate; multi-cap in practice)
+         Index        → Nifty 100           (mid-point for mixed index-fund bucket)
+         Hybrid       → ICICI Pru BAF       (65/35 blended proxy; Nifty 500 alone overstates equity risk)
+         Sectoral     → Nifty 500           (too heterogeneous for one sectoral index)
+         International→ Motilal S&P 500 INR (US-focused; domestic index comparison meaningless)
+         Debt         → Nippon Overnight    (duration-neutral; avoids circular active-fund benchmark)
+         Liquid       → Nippon Overnight    (closest to T-bill/repo rate baseline)
+         Arbitrage    → Nippon Overnight    (arbitrage returns track repo rate, not equity)
+         Commodity    → Nippon Gold ETF     (same asset class; measures tracking efficiency)
     ══════════════════════════════════════════════════════════════ */
     const MFE_CAT_BENCH = {
-        // Equity categories — use appropriate index fund as proxy
         'Large Cap':    '148940', // Nippon India Nifty 100 Index Fund Direct
         'Mid Cap':      '148939', // Motilal Oswal Nifty Midcap 150 Index Direct
         'Small Cap':    '148937', // Nippon India Nifty Smallcap 250 Index Direct
         'Flexi Cap':    '148942', // UTI Nifty 500 Index Fund Direct
-        'ELSS':         '148942', // Nifty 500 — broad market, matches ELSS universe
-        'Index':        '120716', // Nifty 50 — most index funds track this
-        'Hybrid':       '120716', // Nifty 50 — equity component benchmark
+        'ELSS':         '148942', // UTI Nifty 500 (broad multi-cap proxy)
+        'Index':        '148940', // Nippon Nifty 100 — mid-point for mixed index bucket
+        'Hybrid':       '120503', // ICICI Pru Balanced Advantage Fund Direct (65/35 blend proxy)
         'Sectoral':     '148942', // Nifty 500 broad market fallback
-        'International':'120716', // Nifty 50 domestic baseline for comparison
-        // Debt/Liquid — use a short duration debt fund as proxy
-        'Debt':         '119386', // HDFC Short Term Debt Fund Direct
-        'Liquid':       '119775', // ICICI Pru Liquid Fund Direct
-        'Arbitrage':    '120716', // Nifty 50 (arbitrage follows equity market)
-        'Commodity':    '120716', // Nifty 50 fallback
-        '_default':     '120716', // Nifty 50 universal fallback
+        'International':'135781', // Motilal Oswal S&P 500 Index Fund Direct (INR)
+        'Debt':         '136094', // Nippon India Overnight Fund Direct
+        'Liquid':       '136094', // Nippon India Overnight Fund Direct
+        'Arbitrage':    '136094', // Nippon India Overnight Fund Direct (repo-rate proxy)
+        'Commodity':    '118503', // Nippon India Gold ETF (same asset class benchmark)
+        '_default':     '120716', // UTI Nifty 50 Index Direct (universal fallback)
     };
 
     /* Per-category benchmark cache */
     let _mfeCatBenchCache = {}; // cat → nav array
 
+    /* Codes that share the Nifty 50 cache (already fetched at startup) */
+    const _MFE_NIFTY50_CODE = '120716';
+
     async function mfeFetchCatBench(cat, signal) {
         if (_mfeCatBenchCache[cat]) return _mfeCatBenchCache[cat];
         const code = MFE_CAT_BENCH[cat] || MFE_CAT_BENCH['_default'];
-        // If this category uses same code as already-fetched Nifty 50, reuse
-        if (code === '120716' && _mfeBenchReady) {
+        // Reuse already-fetched Nifty 50 if this category still maps to it
+        if (code === _MFE_NIFTY50_CODE && _mfeBenchReady) {
             _mfeCatBenchCache[cat] = _mfeBench;
             return _mfeBench;
         }
@@ -7644,18 +7849,26 @@
                 return navArr;
             }
         } catch {}
-        // Fallback to Nifty 50
+        // Fallback to Nifty 50 if fetch fails
         _mfeCatBenchCache[cat] = _mfeBench;
         return _mfeBench;
     }
 
     const MFE_CAT_BENCH_LABEL = {
-        'Large Cap':'Nifty 100','Mid Cap':'Nifty Midcap 150',
-        'Small Cap':'Nifty Smallcap 250','Flexi Cap':'Nifty 500',
-        'ELSS':'Nifty 500','Index':'Nifty 50','Hybrid':'Nifty 50',
-        'Sectoral':'Nifty 500','International':'Nifty 50 (domestic baseline)',
-        'Debt':'Short Duration Debt','Liquid':'Liquid Fund Index proxy',
-        'Commodity':'Nifty 50 (fallback)','_default':'Nifty 50'
+        'Large Cap':    'Nifty 100',
+        'Mid Cap':      'Nifty Midcap 150',
+        'Small Cap':    'Nifty Smallcap 250',
+        'Flexi Cap':    'Nifty 500',
+        'ELSS':         'Nifty 500 (multi-cap)',
+        'Index':        'Nifty 100',
+        'Hybrid':       'CRISIL Hybrid 65+35 proxy',
+        'Sectoral':     'Nifty 500',
+        'International':'S&P 500 INR proxy',
+        'Debt':         'Overnight rate proxy',
+        'Liquid':       'Overnight rate proxy',
+        'Arbitrage':    'Overnight rate proxy',
+        'Commodity':    'Gold ETF proxy',
+        '_default':     'Nifty 50',
     };
 
     const MFE_BENCH   = '120716'; // UTI Nifty 50 Index Direct (default)
@@ -7694,15 +7907,18 @@
         const nl = n.toLowerCase();
         if(/\bbank(?!ing.?psu)|banking.?financ|finserv|financial.?serv/.test(nl)) return 'Banking & Finance';
         if(/pharma|health|medic|hospital/.test(nl))                               return 'Pharma & Healthcare';
-        if(/\btech\b|information.?tech|nifty.?it\b|software|digital/.test(nl))   return 'Technology';
+        if(/\btech\b|information.?tech|nifty.?it\b|\bit\s*index|\bit\s*etf|software|digital/.test(nl)) return 'Technology';
         if(/fmcg|consumption|consumer/.test(nl))                                  return 'FMCG & Consumption';
         if(/infra|infrastructure/.test(nl))                                       return 'Infrastructure';
         if(/energy|power|utilities/.test(nl))                                     return 'Energy & Power';
         if(/\bauto\b|automobile|mobility/.test(nl))                               return 'Auto';
         if(/realt|real.?estate/.test(nl))                                         return 'Realty';
+        if(/manufactur|capital.?good|industrial/.test(nl))                        return 'Infrastructure'; // Manufacturing → Infrastructure bucket
+        if(/psu.?bank|public.?sector.?bank/.test(nl))                             return 'Banking & Finance';
         if(/defence|defense|\bpsu\b|public.?sector/.test(nl))                     return 'PSU & Defence';
         if(/\bmnc\b|multinational/.test(nl))                                      return 'MNC';
         if(/esg|sustain/.test(nl))                                                return 'ESG';
+        if(/housing|realt/.test(nl))                                              return 'Realty';
         return 'Thematic';
     }
 
@@ -8061,7 +8277,7 @@
         const aFM=fm*252, aFS=fs*Math.sqrt(252);
         let cov=0; for(let i=0;i<n;i++) cov+=(fr[i]-fm)*(br[i]-bm); cov/=n;
         const bVar=bs*bs, beta=(isFinite(bVar)&&bVar>1e-10)?cov/bVar:1.0;
-        const RF=0.055, rfD=RF/252;
+        const RF=0.065, rfD=RF/252;  // India 91-day T-bill / repo rate proxy (updated from 5.5%)
         const alpha=(aFM-RF)-beta*(bm*252-RF);
         const sharpe=aFS>0?(aFM-RF)/aFS:0;
         const dn=fr.filter(r=>r<rfD);
@@ -8096,20 +8312,32 @@
     }
 
     /* ══════════════════════════════════════════════════════════
-       SCORING — 1–5 stars by percentile (Morningstar style)
-       Weights:
-         Sharpe         20%  — risk-adjusted return
-         Rolling HitRate 20% — consistency (% of 3Y windows positive)
-         Alpha          15%  — manager skill vs benchmark
-         Rolling AvgRet 15%  — magnitude of rolling returns
-         Sortino        15%  — downside-risk-adjusted return
-         Std Dev        10%  — NAV stability (inverted)
-         Beta            5%  — directional market sensitivity
-       ══════════════════════════════════════════════════════════ */
+       SCORING — 1–5 signal tiers by percentile (Morningstar distribution)
+
+       WEIGHTS (revised for v6):
+         Rolling HitRate  25%  — consistency: % of 3Y windows with positive return
+         Sharpe           20%  — risk-adjusted return (RF = 6.5% India T-bill proxy)
+         Alpha            20%  — manager skill vs category benchmark (raised from 15%)
+         Rolling AvgRet   15%  — rolling return magnitude
+         Sortino          10%  — downside protection (lowered from 15%; was scale-distorted)
+         Std Dev           7%  — NAV stability (lowered from 10%; partially captured by Sharpe)
+         Beta              3%  — market sensitivity (lowered from 5%; least informative signal)
+
+       KEY FIXES vs prior version:
+         1. RF rate updated 5.5% → 6.5% (India repo / 91-day T-bill, inside mfeCompute).
+         2. Sortino cap lowered 10 → 6: previously a Sortino outlier could contribute 1.5× raw
+            vs Sharpe's 1.0×, letting a single metric hijack the top rank.
+         3. Alpha clamp tightened ±30% → ±15% (realistic Indian active fund range),
+            /5 keeps output on same [-3,+3] scale as Sharpe for fair weighting.
+         4. RollAvg clamp tightened ±30% → ±20% for finer discrimination.
+         5. Weights rebalanced: rolling consistency + alpha upweighted; Sortino/StdDev/Beta down.
+    ══════════════════════════════════════════════════════════ */
     function mfeNorm(cat) {
         const funds = _mfeList.filter(f => f.cat===cat && _mfeMetCache[f.code]);
         if (!funds.length) return;
         const isDebtLike = ['Debt','Liquid','Arbitrage'].includes(cat);
+        const isGold     = cat === 'Commodity';
+        const isIntl     = cat === 'International';
 
         const scored = [];
         funds.forEach(f => {
@@ -8118,39 +8346,38 @@
             if (!isFinite(m.sharpe)||!isFinite(m.alpha)||!isFinite(m.sortino)
                 ||!isFinite(m.stdDev)||!isFinite(m.beta)) return;
 
-            // Sharpe (20%) — clamp to [-3, 5]
-            const sh = Math.max(-3, Math.min(5,  m.sharpe));
+            // Sharpe (20%) — clamp [-3, 5]
+            const sh = Math.max(-3, Math.min(5, m.sharpe));
 
-            // Alpha (15%) — normalise to [-3, 3] range
-            const al = Math.max(-30, Math.min(30, m.alpha)) / 10;
+            // Alpha (20%) — tightened ±15% realistic range; /5 → [-3, +3] scale
+            const al = Math.max(-15, Math.min(15, m.alpha)) / 5;
 
-            // Sortino (15%) — clamp to [-3, 10]
-            const so = Math.max(-3, Math.min(10, m.sortino));
+            // Sortino (10%) — cap lowered 10→6 to match Sharpe's realistic ceiling
+            const so = Math.max(-3, Math.min(6, m.sortino));
 
-            // Std Dev (10%) — inverted: lower = better, baseline 30%
-            const sdScore = Math.max(0, (30 - m.stdDev) / 30);
+            // Std Dev (7%) — inverted; lower volatility = better
+            const sdBaseline = isDebtLike ? 8 : (isGold ? 25 : 30);
+            const sdScore = Math.max(0, (sdBaseline - m.stdDev) / sdBaseline);
 
-            // Beta (5%) — reward proximity to 1 for equity, low for debt
+            // Beta (3%) — debt: near 0; equity/intl/gold: near 1
             const bScore = isDebtLike
                 ? Math.max(0, 1 - Math.abs(m.beta))
                 : Math.max(0, 1.5 - Math.abs(m.beta - 1.0));
 
-            // Rolling Hit Rate (20%) — % of 3Y windows with positive return
-            // Normalise: 0% hit = 0, 100% hit = 1
-            const rHit  = m.rolling ? Math.max(0, Math.min(100, m.rolling.hitRate)) / 100 : 0.5;
+            // Rolling Hit Rate (25%) — % of 3Y windows positive
+            const rHit = m.rolling ? Math.max(0, Math.min(100, m.rolling.hitRate)) / 100 : 0.5;
 
-            // Rolling Avg Return (15%) — annualised avg of all 3Y windows
-            // Normalise: cap at ±30% range → [-1, 1] then scale
-            const rAvg  = m.rolling ? Math.max(-30, Math.min(30, m.rolling.avg)) / 30 : 0;
+            // Rolling Avg Return (15%) — tightened ±20%
+            const rAvg = m.rolling ? Math.max(-20, Math.min(20, m.rolling.avg)) / 20 : 0;
 
             const raw =
-                sh    * 0.20 +
-                rHit  * 0.20 +
-                al    * 0.15 +
-                rAvg  * 0.15 +
-                so    * 0.15 +
-                sdScore * 0.10 +
-                bScore  * 0.05;
+                rHit    * 0.25 +
+                sh      * 0.20 +
+                al      * 0.20 +
+                rAvg    * 0.15 +
+                so      * 0.10 +
+                sdScore * 0.07 +
+                bScore  * 0.03;
 
             if (isFinite(raw)) scored.push({ code: f.code, raw });
         });
@@ -8278,6 +8505,10 @@
                 ? '<span class="mfe-st-nd">…</span>'
                 : mfeSignalHtml(m?.stars ?? null);
 
+            // For Commodity and International, note that Alpha/Beta use non-Nifty benchmark
+            const benchNote = (_mfeCur==='International'||_mfeCur==='Commodity')
+                ? ` title="vs ${MFE_CAT_BENCH_LABEL[_mfeCur]}"` : '';
+
             // Rolling returns cells
             const rollHit = m?.rolling?.hitRate;
             const rollAvg = m?.rolling?.avg;
@@ -8315,8 +8546,8 @@
                 <td class="mfe-td text-right">${rollAvgHtml}</td>
                 <td class="mfe-td text-center">${erHtml}</td>
                 <td class="mfe-td text-right">${m&&m.stdDev!=null?mc(m.stdDev,v=>v<12?'mfe-good':v<20?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td text-right">${m&&m.beta!=null?mc(m.beta,v=>v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
-                <td class="mfe-td text-right">${m&&m.alpha!=null?mc(m.alpha,v=>v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right"${benchNote}>${m&&m.beta!=null?mc(m.beta,v=>v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
+                <td class="mfe-td text-right"${benchNote}>${m&&m.alpha!=null?mc(m.alpha,v=>v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad')+'%':'<span class="mfe-shimmer"></span>'}</td>
                 <td class="mfe-td text-right">${m&&m.sharpe!=null?mc(m.sharpe,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
                 <td class="mfe-td text-right">${m&&m.sortino!=null?mc(m.sortino,v=>v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'):'<span class="mfe-shimmer"></span>'}</td>
             </tr>`;
@@ -8377,6 +8608,7 @@
         if (!wrap) return;
         if (_mfeCur !== 'Sectoral') { wrap.classList.add('hidden'); return; }
         wrap.classList.remove('hidden');
+
         // Compute counts from already-loaded funds
         const sectoralFunds = _mfeList.filter(f => f.cat === 'Sectoral');
         const counts = {};
@@ -8386,29 +8618,44 @@
         const available = MFE_SUBSECT_ORDER.filter(ss => (counts[ss]||0) > 0);
         if (available.length && (!counts[_mfeSubSect])) {
             _mfeSubSect = available[0];
-            // Sync benchmark label to the auto-selected sub-sector
             const bEl = document.getElementById('mfe-bench-label');
             if (bEl) bEl.textContent = 'Benchmark: ' + (MFE_SUBSECT_BENCH_LABEL[_mfeSubSect] || 'Nifty 500');
         }
 
-        let html = `<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0 self-center">Sub-Sector:</span>`;
-        // Per sub-sector pills only — no "All" option
-        MFE_SUBSECT_ORDER.forEach(ss => {
-            const cnt = counts[ss] || 0;
-            if (!cnt) return;
-            const icon = MFE_SUBSECT_ICON[ss] || '📌';
-            html += `<button onclick="mfeSetSubSect('${ss}')" data-ss="${ss}"
-                class="mfe-ss-btn ${_mfeSubSect===ss?'mfe-ss-active':'mfe-ss-inactive'} px-2.5 py-1 rounded-full text-[11px] font-bold transition-all">
-                ${icon} ${ss} <span class="text-[10px] opacity-70">(${cnt})</span></button>`;
-        });
-        wrap.innerHTML = html;
+        // ── Mobile dropdown ──
+        const dd = document.getElementById('mfe-ss-dropdown');
+        if (dd) {
+            dd.innerHTML = available.map(ss => {
+                const icon = MFE_SUBSECT_ICON[ss] || '📌';
+                const cnt  = counts[ss] || 0;
+                return `<option value="${ss}"${_mfeSubSect===ss?' selected':''}>${icon}  ${ss} (${cnt})</option>`;
+            }).join('');
+        }
+
+        // ── Desktop pills ──
+        const pillsWrap = document.getElementById('mfe-subsect-pills');
+        if (pillsWrap) {
+            let html = `<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0 self-center">Sub-Sector:</span>`;
+            MFE_SUBSECT_ORDER.forEach(ss => {
+                const cnt = counts[ss] || 0;
+                if (!cnt) return;
+                const icon = MFE_SUBSECT_ICON[ss] || '📌';
+                html += `<button onclick="mfeSetSubSect('${ss}')" data-ss="${ss}"
+                    class="mfe-ss-btn ${_mfeSubSect===ss?'mfe-ss-active':'mfe-ss-inactive'} px-2.5 py-1 rounded-full text-[11px] font-bold transition-all flex-shrink-0">
+                    ${icon} ${ss} <span class="text-[10px] opacity-70">(${cnt})</span></button>`;
+            });
+            pillsWrap.innerHTML = html;
+            // Trigger arrow update after pills render
+            setTimeout(() => pillScrollUpdate('mfe-subsect-pills'), 50);
+        }
     }
 
     function mfeSetSubSect(ss) {
         _mfeSubSect = ss; _mfePage = 0;
-        // Update benchmark label to match this sub-sector
         const bEl = document.getElementById('mfe-bench-label');
         if (bEl) bEl.textContent = 'Benchmark: ' + (MFE_SUBSECT_BENCH_LABEL[ss] || 'Nifty 500');
+        const dd = document.getElementById('mfe-ss-dropdown');
+        if (dd && dd.value !== ss) dd.value = ss;
         mfeRenderSubSectPills();
         mfeRender();
     }
@@ -8472,15 +8719,23 @@
         if(/hybrid|balanced|equity.?saving|dynamic asset/.test(nl)) return 'Hybrid';
         if(/arbitrage/.test(nl))  return 'Arbitrage';
         if(/gold|silver|commodity|metal/.test(nl)) return 'Commodity';
-        if(/international|global|overseas|nasdaq|s&p/.test(nl)) return 'International';
-        // ── Debt check BEFORE generic index check ──────────────────────────────
-        // Bond/debt/gilt/CRISIL IBX/AAA/SDL/G-Sec etc. must go to Debt even if
-        // "nifty" or "index" appears in their name (e.g. "HDFC Nifty SDL Apr 2027 Index Fund")
+        if(/international|global|overseas|nasdaq|s&p|nyse|ftse|hang.?seng/.test(nl)) return 'International';
+        // ── Debt BEFORE sectoral/index ─────────────────────────────────────────
+        // Must run first — bond/gilt/PSU-bond/SDL/G-Sec funds contain "nifty"/"index"
         if(/debt|bond|gilt|credit.?risk|corporate.?bond|money.?market|ultra.?short|short.?dur|medium.?dur|long.?dur|dynamic.?bond|floating|overnight|banking.?psu|crisil|ibx|nbfc|aaa.*fund|psu.?bond|financial.?serv.*debt|\bsdl\b|state.?dev|g.?sec\b|gsec|target.?matur|\bhtm\b|bharat.?bond/.test(nl)) return 'Debt';
         if(/liquid/.test(nl))     return 'Liquid';
-        // ── Equity index funds (only reaches here if no debt pattern matched) ──
+        // ── Sectoral BEFORE generic index/nifty catch-all ─────────────────────
+        // Covers active AND passive sectoral: Nifty IT / Nifty Bank / Nifty Auto /
+        // Nifty Pharma / Nifty Manufacturing / Nifty FMCG / Nifty Defence etc.
+        // Pattern handles both "Nifty IT Index Fund" and "ICICI Pru Technology Fund"
+        if(/sector|thematic|pharma|health(?!.*score)|technolog|infra|fmcg|energy|\bauto\b|realty|defence|manufactur|consumption|consumer|housing|media|tourism|transport|\bmnc\b|banking.?(?:financial|service)|financial.?service(?!.*debt)|\bnifty\s+(?:india\s+)?(?:it|bank|auto|pse|psu)(?:\s|$)|\bpsu\s+(?:index|fund)|nifty.*(it\s+index|bank\s+index)/.test(nl)) return 'Sectoral';
+        // ── Equity index funds: plain market-cap + factor/smart-beta ──────────
         if(/index|nifty|sensex|bse\s*\d|nse\s*\d/.test(nl)) return 'Index';
-        if(/sector|thematic|pharma|tech\s|infra|fmcg|energy|auto|realty|defence/.test(nl)) return 'Sectoral';
+        // ── Value, Contra, Dividend Yield, Focused → Flexi Cap ─────────────────
+        // SEBI gives no market-cap mandate to any of these → multi-cap in practice.
+        // Index check fires first, so "Nifty50 Value 20 Index" stays in Index.
+        // Without this, these funds fall to 'Other' and disappear from the explorer.
+        if(/\bvalue\b|\bcontra\b|dividend.?yield|\bfocused\b/.test(nl)) return 'Flexi Cap';
         if(/fund.?of.?fund|fof/.test(nl)) return 'FoF';
         return 'Other';
     }
@@ -8500,8 +8755,13 @@
         if(/international|global|overseas/.test(cl)) return 'International';
         // ── Debt BEFORE index — "Index Funds - Debt", SDL, G-Sec, Target Maturity → Debt ──
         if(/debt|bond|gilt|income|duration|credit|corporate|money|overnight|floating|banking.?psu|crisil|ibx|\bsdl\b|state.?dev|g.?sec|gsec|target.?matur|\bhtm\b|bharat.?bond/.test(cl)) return 'Debt';
-        if(/sector|thematic/.test(cl)) return 'Sectoral';
-        if(/index/.test(cl)) return 'Index';          // only plain equity index funds remain
+        // ── Active equity categories from SEBI metadata ──
+        if(/value.?fund|contra|dividend.?yield/.test(cl)) return 'Flexi Cap'; // active value/contra → broad equity
+        if(/focused/.test(cl)) return 'Flexi Cap'; // SEBI mandates no market-cap floor for focused funds
+        // ── Sectoral/thematic ──
+        if(/sector|thematic|manufactur|consum|defence|housing|media|tourism|transport|mnc/.test(cl)) return 'Sectoral';
+        // ── Index — equity only (debt already caught above) ──
+        if(/index|etf/.test(cl)) return 'Index';
         if(/fof|fund.?of/.test(cl)) return 'FoF';
         return null;
     }
@@ -8616,7 +8876,286 @@
                 font-size: clamp(1.35rem, 8vw, 2rem) !important;
             }
         }
-    </style>    <!-- ===== SCROLL TO TOP (mobile only) ===== -->
+    </style>    <!-- ===== FUND COMPARATOR SCRIPT ===== -->
+    <script>
+    /* ═══════════════════════════════════════════════════════════════
+       FUND COMPARATOR
+       State: _mfcFunds — array of fund objects from _mfeList
+       Up to 5 funds. Reuses mfeCompute / mfeFetchCatBench / mfeSignalHtml.
+       Persists fund codes to localStorage.
+    ═══════════════════════════════════════════════════════════════ */
+    const MFC_MAX = 5;
+    const MFC_STORE_KEY = 'am_mfc_funds';
+    let _mfcFunds  = [];   // [{code,name,amc,cat}]
+    let _mfcMet    = {};   // code → computed metrics (or null)
+    let _mfcNav    = {};   // code → {nav,date}
+    let _mfcAcIdx  = -1;   // autocomplete keyboard cursor
+
+    /* ── Persist / restore ── */
+    function mfcSave() {
+        try { localStorage.setItem(MFC_STORE_KEY, JSON.stringify(_mfcFunds.map(f=>f.code))); } catch {}
+    }
+    function mfcRestore() {
+        try {
+            const codes = JSON.parse(localStorage.getItem(MFC_STORE_KEY)||'[]');
+            if (!codes.length || !_mfeReady) return;
+            codes.forEach(code => {
+                const f = _mfeList.find(x => x.code === code);
+                if (f && !_mfcFunds.find(x=>x.code===code)) _mfcFunds.push(f);
+            });
+            if (_mfcFunds.length) { mfcRenderChips(); mfcFetchAndRender(); }
+        } catch {}
+    }
+
+    /* ── Search autocomplete ── */
+    function mfcOnSearch() {
+        const q = (document.getElementById('mfc-search')?.value||'').toLowerCase().trim();
+        const ac = document.getElementById('mfc-autocomplete');
+        if (!ac) return;
+        if (!q || !_mfeReady) { ac.classList.add('hidden'); return; }
+        const hits = _mfeList.filter(f =>
+            f.name.toLowerCase().includes(q) || f.amc.toLowerCase().includes(q)
+        ).slice(0, 8);
+        if (!hits.length) { ac.classList.add('hidden'); return; }
+        _mfcAcIdx = -1;
+        ac.innerHTML = hits.map((f, i) => {
+            const already = _mfcFunds.find(x=>x.code===f.code);
+            return `<div class="mfc-ac-item" data-idx="${i}" data-code="${f.code}"
+                onclick="mfcPickAc('${f.code}')">
+                <span class="mfc-ac-name">${_esc(f.name)}</span>
+                <span class="mfc-ac-meta">${_esc(f.amc)} · ${f.cat}
+                    ${already?'<span class="mfc-ac-added">✓ Added</span>':''}</span>
+            </div>`;
+        }).join('');
+        ac.classList.remove('hidden');
+    }
+    function mfcKeyNav(e) {
+        const ac = document.getElementById('mfc-autocomplete');
+        if (!ac || ac.classList.contains('hidden')) return;
+        const items = ac.querySelectorAll('.mfc-ac-item');
+        if (e.key === 'ArrowDown') { e.preventDefault(); _mfcAcIdx = Math.min(_mfcAcIdx+1, items.length-1); mfcHilite(items); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); _mfcAcIdx = Math.max(_mfcAcIdx-1, 0); mfcHilite(items); }
+        else if (e.key === 'Enter' && _mfcAcIdx >= 0) { e.preventDefault(); items[_mfcAcIdx]?.click(); }
+        else if (e.key === 'Escape') { ac.classList.add('hidden'); }
+    }
+    function mfcHilite(items) {
+        items.forEach((el,i) => el.classList.toggle('mfc-ac-sel', i===_mfcAcIdx));
+    }
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#mfc-search-wrap')) {
+            document.getElementById('mfc-autocomplete')?.classList.add('hidden');
+        }
+    });
+    function mfcPickAc(code) {
+        document.getElementById('mfc-autocomplete')?.classList.add('hidden');
+        document.getElementById('mfc-search').value = '';
+        if (_mfcFunds.find(f=>f.code===code)) return; // already added
+        if (_mfcFunds.length >= MFC_MAX) {
+            alert(`Maximum ${MFC_MAX} funds can be compared at once.`); return;
+        }
+        const f = _mfeList.find(x=>x.code===code);
+        if (!f) return;
+        _mfcFunds.push(f);
+        mfcSave();
+        mfcRenderChips();
+        mfcFetchAndRender();
+    }
+    function mfcRemove(code) {
+        _mfcFunds = _mfcFunds.filter(f=>f.code!==code);
+        mfcSave();
+        mfcRenderChips();
+        if (_mfcFunds.length) mfcRenderTable(); else mfcShowEmpty();
+    }
+    function mfcClearAll() {
+        _mfcFunds=[]; mfcSave(); mfcRenderChips(); mfcShowEmpty();
+    }
+
+    /* ── Chips ── */
+    function mfcRenderChips() {
+        const wrap = document.getElementById('mfc-chips');
+        if (!wrap) return;
+        wrap.innerHTML = _mfcFunds.map(f => `
+            <div class="mfc-chip">
+                <span title="${_esc(f.name)}">${_esc(f.name.length>28?f.name.slice(0,26)+'…':f.name)}</span>
+                <button onclick="mfcRemove('${f.code}')" title="Remove">✕</button>
+            </div>`).join('');
+        const cnt = document.getElementById('mfc-fund-count');
+        if (cnt) cnt.textContent = _mfcFunds.length ? `${_mfcFunds.length}/${MFC_MAX} funds` : '';
+    }
+
+    /* ── Fetch metrics for any fund not yet in cache ── */
+    async function mfcFetchAndRender() {
+        const toFetch = _mfcFunds.filter(f => !_mfeMetCache.hasOwnProperty(f.code));
+        if (!toFetch.length) { mfcRenderTable(); return; }
+        document.getElementById('mfc-empty')?.classList.add('hidden');
+        document.getElementById('mfc-grid')?.classList.add('hidden');
+        document.getElementById('mfc-loading')?.classList.remove('hidden');
+        const txt = document.getElementById('mfc-loading-text');
+        let done = 0;
+        await Promise.allSettled(toFetch.map(async f => {
+            try {
+                if (txt) txt.textContent = `Fetching ${f.name.slice(0,32)}…`;
+                // Get benchmark for this fund's category
+                const bench = await mfeFetchCatBench(f.cat, null);
+                const r = await fetch(`https://api.mfapi.in/mf/${f.code}`,
+                    {signal: AbortSignal.timeout(20000)});
+                if (!r.ok) throw new Error('HTTP '+r.status);
+                const j = await r.json();
+                const navArr = (j?.data||[]).map(d=>parseFloat(d.nav))
+                    .filter(v=>!isNaN(v)).reverse();
+                // Store latest NAV if not already in cache
+                if (!_mfeNavCache[f.code] && navArr.length) {
+                    _mfeNavCache[f.code] = { nav: navArr[navArr.length-1], date: j.data?.[0]?.date||'' };
+                }
+                _mfeMetCache[f.code] = navArr.length >= 30 ? mfeCompute(navArr, bench) : null;
+                // Refine category from API metadata
+                const metaCat = mfeCatFromMeta(j?.meta?.scheme_category);
+                if (metaCat) f.cat = metaCat;
+            } catch { _mfeMetCache[f.code] = null; }
+            done++;
+            if (txt) txt.textContent = `Loading… ${done}/${toFetch.length}`;
+        }));
+        document.getElementById('mfc-loading')?.classList.add('hidden');
+        mfcRenderTable();
+    }
+
+    /* ── Render the comparison table ── */
+    function mfcRenderTable() {
+        if (!_mfcFunds.length) { mfcShowEmpty(); return; }
+        document.getElementById('mfc-empty')?.classList.add('hidden');
+        document.getElementById('mfc-loading')?.classList.add('hidden');
+        const grid = document.getElementById('mfc-grid');
+        if (!grid) return;
+        grid.classList.remove('hidden');
+
+        const funds = _mfcFunds;
+        const mets  = funds.map(f => _mfeMetCache[f.code]);
+        const navs  = funds.map(f => _mfeNavCache[f.code]?.nav ?? null);
+
+        // Helper: pick best/worst index for a row (higher=better by default)
+        function highlight(vals, higherBetter=true) {
+            const nums = vals.map(v => typeof v==='number'&&isFinite(v)?v:null);
+            if (nums.filter(v=>v!==null).length < 2) return [];
+            const best  = higherBetter ? Math.max(...nums.filter(v=>v!==null)) : Math.min(...nums.filter(v=>v!==null));
+            const worst = higherBetter ? Math.min(...nums.filter(v=>v!==null)) : Math.max(...nums.filter(v=>v!==null));
+            return nums.map(v => v===null?'':v===best?'mfc-best':v===worst?'mfc-worst':'');
+        }
+
+        // Build header row
+        let html = '<thead><tr>';
+        html += '<th class="mfc-metric">Fund</th>';
+        funds.forEach((f,i) => {
+            const shortName = f.name.replace(/direct|growth|plan|option|fund/gi,'').trim().replace(/\s+/g,' ');
+            html += `<th class="mfc-fund-col">
+                <span class="mfc-fn" title="${_esc(f.name)}">${_esc(shortName.length>32?shortName.slice(0,30)+'…':shortName)}</span>
+                <span class="mfc-fa">${_esc(f.amc)} · ${f.cat}</span>
+                <button class="mfc-rm" onclick="mfcRemove('${f.code}')" title="Remove">✕</button>
+            </th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        // Section builder
+        function section(label) {
+            html += `<tr class="mfc-section-head">
+                <td colspan="${funds.length+1}">${label}</td>
+            </tr>`;
+        }
+        function row(label, vals, cls=[], fmt=(v)=>v, tooltip='') {
+            html += `<tr><td class="mfc-metric"${tooltip?` title="${tooltip}"`:''}>${label}</td>`;
+            vals.forEach((v,i) => {
+                html += `<td class="mfc-val ${cls[i]||''}">${v===null||v===undefined?'<span class="mfe-na">—</span>':fmt(v)}</td>`;
+            });
+            html += '</tr>';
+        }
+
+        // ── Signal ──
+        section('Signal Strength');
+        const sigVals = funds.map((_,i) => mets[i]?.stars ?? null);
+        row('Signal', sigVals, highlight(sigVals),
+            v => mfeSignalHtml(v),
+            'Percentile rank within category (1=Avoid → 5=Elite)');
+
+        // ── CAGR ──
+        section('Returns (CAGR)');
+        ['y1','y3','y5','y10'].forEach((k,j) => {
+            const label = ['1 Year','3 Year','5 Year','10 Year'][j];
+            const vals  = funds.map((_,i) => mets[i]?.cagr?.[k] ?? null);
+            const cls   = highlight(vals);
+            row(label, vals, cls,
+                v => `<span class="${v>=0?'mfe-cagr-pos':'mfe-cagr-neg'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`);
+        });
+        // Latest NAV
+        row('Latest NAV', navs, [],
+            v => `₹${v.toFixed(4)}`);
+
+        // ── Consistency ──
+        section('Consistency');
+        const rollHitVals = funds.map((_,i) => mets[i]?.rolling?.hitRate ?? null);
+        row('Roll Hit %', rollHitVals, highlight(rollHitVals),
+            v => `<span class="${v>=80?'mfe-good':v>=60?'mfe-avg':'mfe-bad'}">${v.toFixed(1)}%</span>`,
+            '% of rolling 3Y windows with positive return');
+        const rollAvgVals = funds.map((_,i) => mets[i]?.rolling?.avg ?? null);
+        row('Roll Avg Return', rollAvgVals, highlight(rollAvgVals),
+            v => `<span class="${v>=12?'mfe-good':v>=8?'mfe-avg':'mfe-bad'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`,
+            'Average annualised return across all rolling 3Y windows');
+
+        // ── Risk-adjusted ──
+        section('Risk & Quality');
+        const sharpeVals = funds.map((_,i) => mets[i]?.sharpe ?? null);
+        row('Sharpe Ratio', sharpeVals, highlight(sharpeVals),
+            v => `<span class="${v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'}">${v.toFixed(2)}</span>`,
+            'Return per unit of total risk (higher = better)');
+        const sortinoVals = funds.map((_,i) => mets[i]?.sortino ?? null);
+        row('Sortino Ratio', sortinoVals, highlight(sortinoVals),
+            v => `<span class="${v>1.5?'mfe-good':v>0.8?'mfe-avg':'mfe-bad'}">${v.toFixed(2)}</span>`,
+            'Return per unit of downside risk (higher = better)');
+        const alphaVals = funds.map((_,i) => mets[i]?.alpha ?? null);
+        row('Alpha %', alphaVals, highlight(alphaVals),
+            v => `<span class="${v>2?'mfe-good':v>0?'mfe-avg':'mfe-bad'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`,
+            'Excess return vs category benchmark');
+        const stdDevVals = funds.map((_,i) => mets[i]?.stdDev ?? null);
+        row('Std Dev %', stdDevVals, highlight(stdDevVals, false), // lower is better
+            v => `<span class="${v<12?'mfe-good':v<20?'mfe-avg':'mfe-bad'}">${v.toFixed(2)}%</span>`,
+            'Annualised volatility — lower is more stable');
+        const betaVals = funds.map((_,i) => mets[i]?.beta ?? null);
+        row('Beta', betaVals, [],
+            v => `<span class="${v<0.9?'mfe-good':v<1.15?'mfe-avg':'mfe-bad'}">${v.toFixed(2)}</span>`,
+            'Market sensitivity vs benchmark (1.0 = moves with market)');
+
+        // ── Cost ──
+        section('Cost');
+        const erVals = funds.map(f => { const d=mfeGetER(f.code,f.cat); return d?d.val:null; });
+        row('Expense Ratio', erVals, highlight(erVals, false), // lower is better
+            v => `<span class="${v<=0.5?'mfe-good':v<=1.0?'mfe-avg':'mfe-bad'}">${v.toFixed(2)}%${erVals.every(e=>e!==null)?'':''}</span>`,
+            'Annual cost deducted from NAV');
+
+        html += '</tbody>';
+        const tbl = document.getElementById('mfc-table');
+        if (tbl) tbl.innerHTML = html;
+    }
+
+    function mfcShowEmpty() {
+        document.getElementById('mfc-empty')?.classList.remove('hidden');
+        document.getElementById('mfc-grid')?.classList.add('hidden');
+        document.getElementById('mfc-loading')?.classList.add('hidden');
+        const cnt = document.getElementById('mfc-fund-count');
+        if (cnt) cnt.textContent = '';
+    }
+
+    /* Restore saved funds once MFE data is ready */
+    const _mfcOrigInit = window.mfeInit;
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hook into MFE ready state — poll until _mfeReady
+        const _mfcPoll = setInterval(() => {
+            if (_mfeReady && _mfeList.length) {
+                clearInterval(_mfcPoll);
+                mfcRestore();
+            }
+        }, 500);
+    });
+    </script>
+
+    <!-- ===== SCROLL TO TOP (mobile only) ===== -->
     <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
         aria-label="Back to top"
         style="display:none;position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:16px;z-index:999;
@@ -8650,6 +9189,57 @@
         window.addEventListener('scroll', checkScroll, { passive: true });
         window.addEventListener('resize', checkScroll, { passive: true });
         checkScroll();
+    })();
+    </script>
+    <!-- ===== PILL SCROLL ARROWS ENGINE ===== -->
+    <script>
+    /* pillScrollUpdate(scrollId)
+       Reads the scroll container and updates fade classes + arrow visibility
+       on its parent .pill-scroll-wrap.
+    */
+    function pillScrollUpdate(scrollId) {
+        const el = document.getElementById(scrollId);
+        if (!el) return;
+        const wrap = el.closest('.pill-scroll-wrap');
+        if (!wrap) return;
+        const atStart = el.scrollLeft <= 2;
+        const atEnd   = el.scrollLeft >= (el.scrollWidth - el.clientWidth - 2);
+        const canScroll = el.scrollWidth > el.clientWidth + 4;
+        wrap.classList.toggle('fade-left',  canScroll && !atStart);
+        wrap.classList.toggle('fade-right', canScroll && !atEnd);
+        wrap.querySelectorAll('.pill-arrow').forEach(btn => {
+            btn.classList.toggle('visible', canScroll);
+            if (btn.classList.contains('pill-arrow-left'))  btn.classList.toggle('faded', atStart);
+            if (btn.classList.contains('pill-arrow-right')) btn.classList.toggle('faded', atEnd);
+        });
+    }
+
+    /* pillScroll(scrollId, dir)  dir = -1 (left) or +1 (right)  */
+    function pillScroll(scrollId, dir) {
+        const el = document.getElementById(scrollId);
+        if (!el) return;
+        el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+    }
+
+    /* Attach scroll listeners and run initial check for all pill rows */
+    (function initPillArrows() {
+        const ids = ['mfe-cat-filters','mfe-subsect-pills','mf-filter-btns','picker-filter-btns'];
+        function attach(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('scroll', () => pillScrollUpdate(id), { passive: true });
+            pillScrollUpdate(id);
+        }
+        // Run after layout
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => ids.forEach(attach));
+        } else {
+            ids.forEach(attach);
+        }
+        // Re-check on resize (viewport change / rotation)
+        window.addEventListener('resize', () => ids.forEach(pillScrollUpdate), { passive: true });
+        // Expose for JS-rendered pill rows (sub-sector pills built later)
+        window._pillIds = ids;
     })();
     </script>
 
