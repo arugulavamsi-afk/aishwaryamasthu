@@ -1697,14 +1697,14 @@
                         <h2 class="text-xl font-black flex items-center gap-2">Mutual Fund Kit</h2>
                         <p class="text-blue-200 text-xs mt-1 max-w-xl">Tap any fund type to learn what it is, when to use it, and see a real-world Indian example. Build your financial vocabulary one card at a time.</p>
                     </div>
-                    <div class="flex gap-2 flex-wrap" id="mf-filter-btns">
-                        <button onclick="filterMF('all')" id="mf-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all">All</button>
-                        <button onclick="filterMF('equity')" id="mf-f-equity" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Equity</button>
-                        <button onclick="filterMF('debt')" id="mf-f-debt" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Debt</button>
-                        <button onclick="filterMF('hybrid')" id="mf-f-hybrid" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Hybrid</button>
-                        <button onclick="filterMF('tax')" id="mf-f-tax" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Tax Saving</button>
-                        <button onclick="filterMF('passive')" id="mf-f-passive" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Passive</button>
-                        <button onclick="filterMF('others')" id="mf-f-others" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Others</button>
+                    <div class="mfe-cat-scroll" id="mf-filter-btns">
+                        <button onclick="filterMF('all')" id="mf-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All</button>
+                        <button onclick="filterMF('equity')" id="mf-f-equity" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Equity</button>
+                        <button onclick="filterMF('debt')" id="mf-f-debt" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Debt</button>
+                        <button onclick="filterMF('hybrid')" id="mf-f-hybrid" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Hybrid</button>
+                        <button onclick="filterMF('tax')" id="mf-f-tax" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Tax Saving</button>
+                        <button onclick="filterMF('passive')" id="mf-f-passive" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Passive</button>
+                        <button onclick="filterMF('others')" id="mf-f-others" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Others</button>
                     </div>
                 </div>
             </div>
@@ -2057,12 +2057,12 @@
                     <div>
                         <h2 class="text-xl font-black mb-1">How to Pick a Quality Mutual Fund</h2>
                         <p class="text-blue-200 text-xs max-w-2xl leading-relaxed">Not all funds are equal — even within the same category. These metrics tell you if a fund is actually doing its job well. Use them to compare any two funds before putting your money in.</p>
-                        <div class="flex flex-wrap gap-2 mt-3" id="picker-filter-btns">
-                            <button onclick="filterPickerMetrics('all')" id="picker-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all">All Metrics</button>
-                            <button onclick="filterPickerMetrics('returns')" id="picker-f-returns" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Returns</button>
-                            <button onclick="filterPickerMetrics('risk')" id="picker-f-risk" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Risk Metrics</button>
-                            <button onclick="filterPickerMetrics('cost')" id="picker-f-cost" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Cost &amp; Tax</button>
-                            <button onclick="filterPickerMetrics('structure')" id="picker-f-structure" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all">Fund Structure</button>
+                        <div class="mfe-cat-scroll mt-3" id="picker-filter-btns">
+                            <button onclick="filterPickerMetrics('all')" id="picker-f-all" class="mf-filter-active text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">All Metrics</button>
+                            <button onclick="filterPickerMetrics('returns')" id="picker-f-returns" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Returns</button>
+                            <button onclick="filterPickerMetrics('risk')" id="picker-f-risk" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Risk Metrics</button>
+                            <button onclick="filterPickerMetrics('cost')" id="picker-f-cost" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Cost &amp; Tax</button>
+                            <button onclick="filterPickerMetrics('structure')" id="picker-f-structure" class="mf-filter-inactive text-xs font-bold px-3 py-1.5 rounded-full transition-all flex-shrink-0">Fund Structure</button>
                         </div>
                     </div>
                 </div>
@@ -2778,7 +2778,7 @@
 
             <!-- Controls: category pills + search -->
             <div class="bg-white rounded-2xl border border-[#f5c842]/30 px-4 py-3 flex flex-col gap-3">
-                <div class="flex items-center gap-1.5 flex-wrap" id="mfe-cat-filters">
+                <div class="mfe-cat-scroll" id="mfe-cat-filters">
                     <button onclick="mfeSetCat('Index')"         data-cat="Index"         class="mfe-cat-btn mfe-cat-active  px-3 py-1.5 rounded-full text-xs font-bold transition-all">📊 Index</button>
                     <button onclick="mfeSetCat('Large Cap')"     data-cat="Large Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏛 Large Cap</button>
                     <button onclick="mfeSetCat('Mid Cap')"       data-cat="Mid Cap"       class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">📈 Mid Cap</button>
@@ -2793,7 +2793,7 @@
                     <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
                 </div>
                 <!-- Sub-sector pills — visible only when Sectoral is active -->
-                <div id="mfe-subsect-row" class="hidden flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100"></div>
+                <div id="mfe-subsect-row" class="hidden mfe-cat-scroll pt-1 border-t border-slate-100"></div>
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <input id="mfe-search" type="text" placeholder="Search fund name or AMC within this category…"
@@ -2802,14 +2802,39 @@
                 </div>
             </div>
 
-            <!-- Star rating legend -->
-            <div class="flex items-center gap-3 flex-wrap px-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Star rating (within category):</span>
-                <span class="text-[11px] font-bold mfe-st5">★★★★★</span><span class="text-[10px] text-slate-500 -ml-1.5">Top 10%</span>
-                <span class="text-[11px] font-bold mfe-st4">★★★★☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Next 22.5%</span>
-                <span class="text-[11px] font-bold mfe-st3">★★★☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Middle 35%</span>
-                <span class="text-[11px] font-bold mfe-st2">★★☆☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Next 22.5%</span>
-                <span class="text-[11px] font-bold mfe-st1">★☆☆☆☆</span><span class="text-[10px] text-slate-500 -ml-1.5">Bottom 10%</span>
+            <!-- Signal bar legend -->
+            <div class="mfe-legend-scroll">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Signal strength (within category):</span>
+                <span class="flex items-center gap-1.5">
+                    <span class="mfe-sig mfe-sig-5" style="gap:2px;">
+                        <span class="mfe-sig-bar on" style="height:4px;"></span><span class="mfe-sig-bar on" style="height:7px;"></span><span class="mfe-sig-bar on" style="height:11px;"></span><span class="mfe-sig-bar on" style="height:15px;"></span><span class="mfe-sig-bar on" style="height:19px;"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-violet-700">Elite</span><span class="text-[10px] text-slate-400">Top 10%</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="mfe-sig mfe-sig-4" style="gap:2px;">
+                        <span class="mfe-sig-bar on" style="height:4px;"></span><span class="mfe-sig-bar on" style="height:7px;"></span><span class="mfe-sig-bar on" style="height:11px;"></span><span class="mfe-sig-bar on" style="height:15px;"></span><span class="mfe-sig-bar off" style="height:19px;"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-teal-700">Strong</span><span class="text-[10px] text-slate-400">Next 22.5%</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="mfe-sig mfe-sig-3" style="gap:2px;">
+                        <span class="mfe-sig-bar on" style="height:4px;"></span><span class="mfe-sig-bar on" style="height:7px;"></span><span class="mfe-sig-bar on" style="height:11px;"></span><span class="mfe-sig-bar off" style="height:15px;"></span><span class="mfe-sig-bar off" style="height:19px;"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-500">Average</span><span class="text-[10px] text-slate-400">Middle 35%</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="mfe-sig mfe-sig-2" style="gap:2px;">
+                        <span class="mfe-sig-bar on" style="height:4px;"></span><span class="mfe-sig-bar on" style="height:7px;"></span><span class="mfe-sig-bar off" style="height:11px;"></span><span class="mfe-sig-bar off" style="height:15px;"></span><span class="mfe-sig-bar off" style="height:19px;"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-amber-700">Weak</span><span class="text-[10px] text-slate-400">Next 22.5%</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="mfe-sig mfe-sig-1" style="gap:2px;">
+                        <span class="mfe-sig-bar on" style="height:4px;"></span><span class="mfe-sig-bar off" style="height:7px;"></span><span class="mfe-sig-bar off" style="height:11px;"></span><span class="mfe-sig-bar off" style="height:15px;"></span><span class="mfe-sig-bar off" style="height:19px;"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-red-700">Avoid</span><span class="text-[10px] text-slate-400">Bottom 10%</span>
+                </span>
             </div>
 
             <!-- Initial loading -->
@@ -2836,7 +2861,7 @@
                     <button onclick="mfeSetCagr('3Y')"  class="mfe-cagr-btn active" data-cagr="3Y">3 Year</button>
                     <button onclick="mfeSetCagr('5Y')"  class="mfe-cagr-btn" data-cagr="5Y">5 Year</button>
                     <button onclick="mfeSetCagr('10Y')" class="mfe-cagr-btn" data-cagr="10Y">10 Year</button>
-                    <span class="text-[10px] text-slate-300 ml-2">Shows — if fund history is too short for that period</span>
+                    <span class="text-[10px] text-slate-300 hidden sm:inline">Shows — if fund history is too short for that period</span>
                 </div>
                 <!-- Benchmark label -->
                 <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2 flex-wrap">
@@ -2866,7 +2891,7 @@
                             <tr style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
                                 <th class="mfe-th" style="width:34px;text-align:center;">#</th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('name')" style="width:180px;">Fund Name <span class="mfe-si">↕</span></th>
-                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('score')" title="Star rating: top 10% = 5★, next 22.5% = 4★, middle 35% = 3★, next 22.5% = 2★, bottom 10% = 1★ — within category">Rating <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('score')" title="Signal strength: Elite (top 10%) → Strong → Average → Weak → Avoid (bottom 10%) — ranked within category">Signal <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('cagr')" id="mfe-cagr-header" title="Compounded Annual Growth Rate for selected period">CAGR <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('nav')" title="Latest NAV from AMFI">NAV ₹ <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('rollingHit')" title="Rolling Hit Rate — % of all 3Y windows with positive return. Higher = more consistent">Roll Hit% <span class="mfe-si">↕</span></th>
@@ -2882,24 +2907,49 @@
                         <tbody id="mfe-tbody"></tbody>
                     </table>
                 </div>
-                <div class="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-wrap">
+                <div class="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <span class="text-xs text-slate-500 font-bold" id="mfe-row-count"></span>
                     <div id="mfe-pagination" class="flex items-center gap-2 flex-wrap"></div>
-                    <span class="text-[10px] text-slate-300">Source: AMFI via mfapi.in · 3Y NAV vs Nifty 50 · Informational only</span>
+                    <span class="text-[10px] text-slate-300 hidden sm:block">Source: AMFI via mfapi.in · 3Y NAV vs Nifty 50 · Informational only</span>
                 </div>
             </div>
 
             <!-- Rating methodology -->
             <div class="bg-white rounded-2xl border border-[#f5c842]/30 p-4">
-                <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-3">📐 Rating Methodology</h3>
-                <div class="flex items-center gap-3 mb-3 flex-wrap">
-                    <span class="text-xl font-black mfe-st5">★★★★★</span><span class="text-xs text-slate-600">Top 10% of category</span>
-                    <span class="text-xl font-black mfe-st4 ml-2">★★★★☆</span><span class="text-xs text-slate-600">Next 22.5%</span>
-                    <span class="text-xl font-black mfe-st3 ml-2">★★★☆☆</span><span class="text-xs text-slate-600">Middle 35%</span>
-                    <span class="text-xl font-black mfe-st2 ml-2">★★☆☆☆</span><span class="text-xs text-slate-600">Next 22.5%</span>
-                    <span class="text-xl font-black mfe-st1 ml-2">★☆☆☆☆</span><span class="text-xs text-slate-600">Bottom 10%</span>
+                <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-3">📶 Signal Strength Methodology</h3>
+                <div class="flex items-center gap-4 mb-3 flex-wrap">
+                    <span class="flex items-center gap-2">
+                        <span class="mfe-sig mfe-sig-5" style="gap:2px;">
+                            <span class="mfe-sig-bar on" style="height:5px;"></span><span class="mfe-sig-bar on" style="height:8px;"></span><span class="mfe-sig-bar on" style="height:12px;"></span><span class="mfe-sig-bar on" style="height:16px;"></span><span class="mfe-sig-bar on" style="height:20px;"></span>
+                        </span>
+                        <span class="text-xs font-black text-violet-700">Elite</span><span class="text-xs text-slate-500 ml-1">Top 10% of category</span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span class="mfe-sig mfe-sig-4" style="gap:2px;">
+                            <span class="mfe-sig-bar on" style="height:5px;"></span><span class="mfe-sig-bar on" style="height:8px;"></span><span class="mfe-sig-bar on" style="height:12px;"></span><span class="mfe-sig-bar on" style="height:16px;"></span><span class="mfe-sig-bar off" style="height:20px;"></span>
+                        </span>
+                        <span class="text-xs font-black text-teal-700">Strong</span><span class="text-xs text-slate-500 ml-1">Next 22.5%</span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span class="mfe-sig mfe-sig-3" style="gap:2px;">
+                            <span class="mfe-sig-bar on" style="height:5px;"></span><span class="mfe-sig-bar on" style="height:8px;"></span><span class="mfe-sig-bar on" style="height:12px;"></span><span class="mfe-sig-bar off" style="height:16px;"></span><span class="mfe-sig-bar off" style="height:20px;"></span>
+                        </span>
+                        <span class="text-xs font-black text-slate-500">Average</span><span class="text-xs text-slate-500 ml-1">Middle 35%</span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span class="mfe-sig mfe-sig-2" style="gap:2px;">
+                            <span class="mfe-sig-bar on" style="height:5px;"></span><span class="mfe-sig-bar on" style="height:8px;"></span><span class="mfe-sig-bar off" style="height:12px;"></span><span class="mfe-sig-bar off" style="height:16px;"></span><span class="mfe-sig-bar off" style="height:20px;"></span>
+                        </span>
+                        <span class="text-xs font-black text-amber-700">Weak</span><span class="text-xs text-slate-500 ml-1">Next 22.5%</span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span class="mfe-sig mfe-sig-1" style="gap:2px;">
+                            <span class="mfe-sig-bar on" style="height:5px;"></span><span class="mfe-sig-bar off" style="height:8px;"></span><span class="mfe-sig-bar off" style="height:12px;"></span><span class="mfe-sig-bar off" style="height:16px;"></span><span class="mfe-sig-bar off" style="height:20px;"></span>
+                        </span>
+                        <span class="text-xs font-black text-red-700">Avoid</span><span class="text-xs text-slate-500 ml-1">Bottom 10%</span>
+                    </span>
                 </div>
-                <p class="text-[10px] text-slate-500 mb-3">Funds are ranked by a composite score, then bucketed into stars by percentile — exactly like Morningstar / Value Research Online.</p>
+                <p class="text-[10px] text-slate-500 mb-3">Funds are ranked by composite score, then bucketed into 5 signal tiers by percentile — within category only. Each bar represents a score dimension; taller = stronger signal.</p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                     <div class="rounded-xl p-2.5 text-center" style="background:#f0fdfa;border:1px solid #99f6e4;"><div class="text-base font-black text-teal-600">20%</div><div class="text-[10px] font-bold text-slate-700">Sharpe</div><div class="text-[9px] text-slate-400">Risk-adj return</div></div>
                     <div class="rounded-xl p-2.5 text-center" style="background:#ecfdf5;border:1px solid #6ee7b7;"><div class="text-base font-black text-emerald-600">20%</div><div class="text-[10px] font-bold text-slate-700">Roll Hit%</div><div class="text-[9px] text-slate-400">Consistency</div></div>
@@ -7258,6 +7308,46 @@
         .mfe-famc{font-size:10px;color:#94a3b8;font-weight:600;display:block;margin-top:1px;}
 
         /* ── Mobile table: compact everything so more columns are visible ── */
+        /* Category pills / filter rows: scroll on mobile, wrap on desktop */
+        .mfe-cat-scroll {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        /* Signal legend: scrollable single row */
+        .mfe-legend-scroll {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 0 4px;
+        }
+        @media (max-width: 640px) {
+            .mfe-cat-scroll {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 4px;
+                padding-top: 2px;
+            }
+            .mfe-cat-scroll::-webkit-scrollbar { display: none; }
+            .mfe-cat-scroll > button,
+            .mfe-cat-scroll > .mfe-cat-btn { flex-shrink: 0; }
+            .mfe-legend-scroll {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 4px;
+            }
+            .mfe-legend-scroll::-webkit-scrollbar { display: none; }
+            .mfe-legend-scroll > span { flex-shrink: 0; }
+            /* Pagination: left-align on mobile */
+            #mfe-pagination { justify-content: flex-start; }
+            .mfe-pg-btn { padding: 5px 10px; font-size: 11px; }
+        }
         @media (max-width: 640px) {
             #mfe-table-wrap .overflow-x-auto { -webkit-overflow-scrolling: touch; }
             .mfe-th { padding: 7px 6px; font-size: 9px; letter-spacing: .03em; }
@@ -7268,7 +7358,8 @@
             #mfe-table-wrap table thead tr th:nth-child(2) { left: 28px; min-width: 130px; width: 140px; }
             .mfe-fname { font-size: 11px; max-width: 130px; }
             .mfe-famc { font-size: 9px; }
-            .mfe-stars { font-size: 11px; }
+            .mfe-sig { gap: 1px; }
+            .mfe-sig-bar { width: 3px; }
             /* Shrink hint strip */
             #mfe-table-wrap .text-\[10px\].text-slate-300 { display: none; }
         }
@@ -7281,13 +7372,15 @@
             .mfe-fname { font-size: 10px; max-width: 108px; }
         }
         .mfe-score{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:900;}
-        /* Star rating badges */
-        .mfe-stars{display:inline-flex;align-items:center;gap:1px;font-size:14px;line-height:1;}
-        .mfe-st5{color:#f59e0b;}
-        .mfe-st4{color:#3b82f6;}
-        .mfe-st3{color:#6b7280;}
-        .mfe-st2{color:#f97316;}
-        .mfe-st1{color:#ef4444;}
+        /* ── Signal bar rating ── */
+        .mfe-sig{display:inline-flex;align-items:flex-end;gap:2px;cursor:default;}
+        .mfe-sig-bar{display:inline-block;width:4px;border-radius:1px;flex-shrink:0;}
+        .mfe-sig-5 .mfe-sig-bar.on{background:#7c3aed;}
+        .mfe-sig-4 .mfe-sig-bar.on{background:#0d9488;}
+        .mfe-sig-3 .mfe-sig-bar.on{background:#64748b;}
+        .mfe-sig-2 .mfe-sig-bar.on{background:#d97706;}
+        .mfe-sig-1 .mfe-sig-bar.on{background:#dc2626;}
+        .mfe-sig .mfe-sig-bar.off{background:#e2e8f0;}
         .mfe-st-nd{font-size:10px;font-weight:600;color:#94a3b8;font-style:italic;}
         /* CAGR toggle buttons */
         .mfe-cagr-btn{padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;border:1px solid #e2e8f0;background:#f1f5f9;color:#64748b;}
@@ -8017,18 +8110,18 @@
         });
         if (!scored.length) return;
 
-        // Percentile-bucket into 1–5 stars (Morningstar distribution)
+        // Percentile-bucket into 1–5 signal tiers (Morningstar distribution)
         scored.sort((a,b) => a.raw - b.raw);
         const total = scored.length;
         scored.forEach(({ code }, idx) => {
             if (!_mfeMetCache[code]) return;
             const pct = (idx + 1) / total;
             let stars;
-            if      (pct <= 0.10)  stars = 1;
-            else if (pct <= 0.325) stars = 2;
-            else if (pct <= 0.675) stars = 3;
-            else if (pct <= 0.90)  stars = 4;
-            else                   stars = 5;
+            if      (pct <= 0.10)  stars = 1;  // Avoid   — bottom 10%
+            else if (pct <= 0.325) stars = 2;  // Weak    — next 22.5%
+            else if (pct <= 0.675) stars = 3;  // Average — middle 35%
+            else if (pct <= 0.90)  stars = 4;  // Strong  — next 22.5%
+            else                   stars = 5;  // Elite   — top 10%
             _mfeMetCache[code].stars = stars;
             _mfeMetCache[code].score = Math.round((idx / Math.max(total-1,1)) * 100);
         });
@@ -8037,14 +8130,29 @@
     /* ════════════════════════════════════════════════════════
        RENDER
     ════════════════════════════════════════════════════════ */
-    /* ── Star display helper ── */
-    function mfeStarHtml(stars) {
-        if (stars == null) return '<span class="mfe-st-nd">…</span>';
-        const filled = '★'.repeat(stars);
-        const empty  = '☆'.repeat(5 - stars);
-        const cls = ['','mfe-st1','mfe-st2','mfe-st3','mfe-st4','mfe-st5'][stars] || 'mfe-st3';
-        return `<span class="mfe-stars ${cls}" title="${stars} star${stars!==1?'s':''}">${filled}<span style="opacity:.3">${empty}</span></span>`;
+    /* ── Signal bar display helper ── */
+    const _mfeSigCfg = [
+        null,
+        { clr:'#dc2626', lbl:'Avoid',   pct:'Bottom 10%'  },
+        { clr:'#d97706', lbl:'Weak',    pct:'Next 22.5%'  },
+        { clr:'#64748b', lbl:'Average', pct:'Middle 35%'  },
+        { clr:'#0d9488', lbl:'Strong',  pct:'Next 22.5%'  },
+        { clr:'#7c3aed', lbl:'Elite',   pct:'Top 10%'     },
+    ];
+    const _mfeSigH = [4, 7, 11, 15, 19]; // bar heights in px
+
+    function mfeSignalHtml(tier) {
+        if (tier == null) return '<span class="mfe-st-nd">…</span>';
+        const cfg = _mfeSigCfg[tier];
+        if (!cfg) return '';
+        const bars = _mfeSigH.map((h, i) =>
+            `<span class="mfe-sig-bar ${i < tier ? 'on' : 'off'}" style="height:${h}px;"></span>`
+        ).join('');
+        return `<span class="mfe-sig mfe-sig-${tier}" title="${cfg.lbl} · ${cfg.pct} within category">${bars}</span>`;
     }
+
+    /* kept for sort compat — internal value unchanged */
+    function mfeStarHtml(tier) { return mfeSignalHtml(tier); }
 
     /* ── CAGR cell helper ── */
     function mfeCagrHtml(m) {
@@ -8120,9 +8228,9 @@
             const medals=['🥇','🥈','🥉'];
             const rankHtml=`<span class="mfe-rank${rank<=3?' mfe-rank-top':''}">${rank<=3?medals[rank-1]:rank}</span>`;
             const hasM = m !== undefined;
-            const starCell = !hasM
+            const sigCell = !hasM
                 ? '<span class="mfe-st-nd">…</span>'
-                : mfeStarHtml(m?.stars ?? null);
+                : mfeSignalHtml(m?.stars ?? null);
 
             // Rolling returns cells
             const rollHit = m?.rolling?.hitRate;
@@ -8154,7 +8262,7 @@
                     <span class="mfe-fname">${_esc(f.name)}</span>
                     <span class="mfe-famc">${_esc(f.amc)}${_mfeCur==='Sectoral'?` <span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`:''}</span>
                 </td>
-                <td class="mfe-td text-center">${starCell}</td>
+                <td class="mfe-td text-center">${sigCell}</td>
                 <td class="mfe-td text-right font-bold">${hasM ? mfeCagrHtml(m) : '<span class="mfe-shimmer"></span>'}</td>
                 <td class="mfe-td text-right font-bold">${nc?'₹'+nc.nav.toFixed(4):'<span class="mfe-shimmer"></span>'}</td>
                 <td class="mfe-td text-center">${rollHitHtml}</td>
@@ -8200,11 +8308,13 @@
         _mfeCur=cat; _mfePage=0;
         // For Sectoral: reset to empty so mfeRenderSubSectPills auto-picks first available
         _mfeSubSect = (cat === 'Sectoral') ? '' : 'All';
-        // Update pill styling
+        // Update pill styling + scroll active pill into view on mobile
         document.querySelectorAll('.mfe-cat-btn').forEach(b=>{
             b.className=b.className.replace(/mfe-cat-(active|inactive)/g,'');
             b.classList.add(b.dataset.cat===cat?'mfe-cat-active':'mfe-cat-inactive');
         });
+        const activeBtn = document.querySelector(`.mfe-cat-btn[data-cat="${cat}"]`);
+        if (activeBtn) activeBtn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
         // Show / build sub-sector pills only for Sectoral
         mfeRenderSubSectPills();
         const cf=_mfeList.filter(f=>f.cat===cat);
@@ -8458,6 +8568,42 @@
                 font-size: clamp(1.35rem, 8vw, 2rem) !important;
             }
         }
+    </style>    <!-- ===== SCROLL TO TOP (mobile only) ===== -->
+    <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Back to top"
+        style="display:none;position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:16px;z-index:999;
+               width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+               background:linear-gradient(135deg,#0d9488,#10b981);
+               color:#fff;font-size:18px;line-height:1;
+               box-shadow:0 4px 14px rgba(13,148,136,0.45);
+               transition:opacity 0.2s ease,transform 0.2s ease;">
+        ↑
+    </button>
+
+    <style>
+        /* iOS safe-area bottom padding for main content */
+        @media (max-width: 640px) {
+            main { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+            footer { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+        }
     </style>
+
+    <script>
+    (function() {
+        var btn = document.getElementById('scroll-top-btn');
+        if (!btn) return;
+        /* Only show on mobile-ish viewports */
+        function checkScroll() {
+            if (window.innerWidth > 768) { btn.style.display = 'none'; return; }
+            btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+        }
+        window.addEventListener('scroll', checkScroll, { passive: true });
+        window.addEventListener('resize', checkScroll, { passive: true });
+        checkScroll();
+    })();
+    </script>
+
 </body>
 </html>
