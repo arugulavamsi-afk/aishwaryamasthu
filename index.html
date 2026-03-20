@@ -2776,9 +2776,34 @@
                 <p class="text-[10px] text-slate-400 mt-1.5" id="mfe-phase-sub">Scores fill in progressively — best funds rise to the top 🏆</p>
             </div>
 
-            <!-- Controls: category pills + search -->
+            <!-- Controls: category selector + search -->
             <div class="bg-white rounded-2xl border border-[#f5c842]/30 px-4 py-3 flex flex-col gap-3">
-                <div class="mfe-cat-scroll" id="mfe-cat-filters">
+
+                <!-- ── Mobile: styled dropdown ── -->
+                <div class="sm:hidden">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Fund Category</label>
+                    <div class="relative">
+                        <select id="mfe-cat-dropdown" onchange="mfeSetCat(this.value)" class="mfe-cat-dd-select">
+                            <option value="Index">📊  Index</option>
+                            <option value="Large Cap">🏛  Large Cap</option>
+                            <option value="Mid Cap">📈  Mid Cap</option>
+                            <option value="Small Cap">🚀  Small Cap</option>
+                            <option value="Flexi Cap">🔄  Flexi Cap</option>
+                            <option value="ELSS">🧾  ELSS</option>
+                            <option value="Hybrid">⚖️  Hybrid</option>
+                            <option value="Debt">🏦  Debt</option>
+                            <option value="Liquid">💧  Liquid</option>
+                            <option value="Sectoral">🏭  Sectoral</option>
+                            <option value="International">🌍  International</option>
+                            <option value="Commodity">🥇  Commodity</option>
+                        </select>
+                        <!-- Chevron -->
+                        <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:#0d9488;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+                <!-- ── Desktop: pill row (hidden on mobile) ── -->
+                <div class="hidden sm:flex mfe-cat-scroll" id="mfe-cat-filters">
                     <button onclick="mfeSetCat('Index')"         data-cat="Index"         class="mfe-cat-btn mfe-cat-active  px-3 py-1.5 rounded-full text-xs font-bold transition-all">📊 Index</button>
                     <button onclick="mfeSetCat('Large Cap')"     data-cat="Large Cap"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🏛 Large Cap</button>
                     <button onclick="mfeSetCat('Mid Cap')"       data-cat="Mid Cap"       class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">📈 Mid Cap</button>
@@ -2792,7 +2817,8 @@
                     <button onclick="mfeSetCat('International')" data-cat="International" class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🌍 Intl</button>
                     <button onclick="mfeSetCat('Commodity')"     data-cat="Commodity"     class="mfe-cat-btn mfe-cat-inactive px-3 py-1.5 rounded-full text-xs font-bold transition-all">🥇 Commodity</button>
                 </div>
-                <!-- Sub-sector pills — visible only when Sectoral is active -->
+
+                <!-- Sub-sector pills — visible only when Sectoral is active (both breakpoints) -->
                 <div id="mfe-subsect-row" class="hidden mfe-cat-scroll pt-1 border-t border-slate-100"></div>
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -7308,7 +7334,27 @@
         .mfe-famc{font-size:10px;color:#94a3b8;font-weight:600;display:block;margin-top:1px;}
 
         /* ── Mobile table: compact everything so more columns are visible ── */
-        /* Category pills / filter rows: scroll on mobile, wrap on desktop */
+        /* ── Mobile category dropdown ── */
+        .mfe-cat-dd-select {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(13,148,136,0.35);
+            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%);
+            color: #0f766e;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .mfe-cat-dd-select:focus {
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.15);
+        }
         .mfe-cat-scroll {
             display: flex;
             align-items: center;
@@ -8308,13 +8354,15 @@
         _mfeCur=cat; _mfePage=0;
         // For Sectoral: reset to empty so mfeRenderSubSectPills auto-picks first available
         _mfeSubSect = (cat === 'Sectoral') ? '' : 'All';
-        // Update pill styling + scroll active pill into view on mobile
+        // Update pill styling (desktop) + sync mobile dropdown
         document.querySelectorAll('.mfe-cat-btn').forEach(b=>{
             b.className=b.className.replace(/mfe-cat-(active|inactive)/g,'');
             b.classList.add(b.dataset.cat===cat?'mfe-cat-active':'mfe-cat-inactive');
         });
         const activeBtn = document.querySelector(`.mfe-cat-btn[data-cat="${cat}"]`);
         if (activeBtn) activeBtn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+        const dd = document.getElementById('mfe-cat-dropdown');
+        if (dd && dd.value !== cat) dd.value = cat;
         // Show / build sub-sector pills only for Sectoral
         mfeRenderSubSectPills();
         const cf=_mfeList.filter(f=>f.cat===cat);
