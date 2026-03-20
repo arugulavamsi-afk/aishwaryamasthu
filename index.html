@@ -3015,10 +3015,10 @@
             </div>
 
             <!-- ===================== FUND COMPARATOR ===================== -->
-            <div class="bg-white rounded-2xl border border-[#f5c842]/30 overflow-hidden shadow-sm" id="mfc-section">
+            <div class="bg-white rounded-2xl border border-[#f5c842]/30 shadow-sm" id="mfc-section">
 
                 <!-- Header -->
-                <div class="px-5 py-4 flex items-center justify-between gap-3 flex-wrap"
+                <div class="mfc-header-wrap px-5 py-4 flex items-center justify-between gap-3 flex-wrap"
                      style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
                     <div>
                         <h3 class="text-white font-black text-base flex items-center gap-2">⚖️ Fund Comparator</h3>
@@ -3070,7 +3070,7 @@
                 </div>
 
                 <!-- Comparison grid -->
-                <div id="mfc-grid" class="hidden overflow-x-auto">
+                <div id="mfc-grid" class="hidden" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;border-radius:0 0 1rem 1rem;">
                     <table id="mfc-table" class="w-full border-collapse" style="min-width:520px;"></table>
                 </div>
 
@@ -7634,20 +7634,135 @@
         .mfc-ac-name{font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .mfc-ac-meta{font-size:10px;color:#94a3b8;font-weight:600;}
         .mfc-ac-added{font-size:10px;color:#0d9488;font-weight:700;}
-        #mfc-table th.mfc-metric{padding:9px 12px;font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;white-space:nowrap;min-width:110px;position:sticky;left:0;z-index:2;}
-        #mfc-table th.mfc-fund-col{padding:10px 14px;background:linear-gradient(135deg,#1e3a5f,#0e6655);color:#fff;font-size:11px;font-weight:800;text-align:center;border-right:1px solid rgba(255,255,255,.12);min-width:150px;max-width:190px;}
-        #mfc-table th.mfc-fund-col:last-child{border-right:none;}
-        #mfc-table th.mfc-fund-col .mfc-fn{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;display:block;}
-        #mfc-table th.mfc-fund-col .mfc-fa{font-size:9px;opacity:.65;font-weight:600;margin-top:1px;display:block;}
-        #mfc-table th.mfc-fund-col .mfc-rm{display:inline-flex;align-items:center;justify-content:center;margin-top:4px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:11px;transition:background .15s;}
-        #mfc-table th.mfc-fund-col .mfc-rm:hover{background:rgba(255,80,80,.4);color:#fff;}
-        #mfc-table td.mfc-metric{padding:8px 12px;font-size:11px;color:#64748b;font-weight:700;background:#f8fafc;border-bottom:1px solid #f1f5f9;border-right:1px solid #e2e8f0;white-space:nowrap;position:sticky;left:0;z-index:2;}
-        #mfc-table td.mfc-val{padding:8px 14px;font-size:12px;font-weight:700;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;white-space:nowrap;transition:background .2s;}
-        #mfc-table td.mfc-val:last-child{border-right:none;}
-        #mfc-table td.mfc-best{background:#f0fdf4 !important;color:#15803d !important;}
-        #mfc-table td.mfc-worst{color:#b91c1c !important;}
-        #mfc-table tr:last-child td{border-bottom:none;}
-        #mfc-table tr.mfc-section-head td,#mfc-table tr.mfc-section-head th{background:#f1f5f9;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;padding:5px 12px;border-bottom:1px solid #e2e8f0;}
+        /* ── Fund Comparator table ──
+           KEY RULES for reliable column freeze on mobile:
+           1. Outer card must NOT have overflow:hidden — it silently breaks sticky on iOS Safari.
+           2. #mfc-grid is the ONLY overflow:auto container.
+           3. table-layout:fixed + border-collapse:separate + border-spacing:0 are required
+              for sticky cells to paint correctly on all browsers.
+           4. Sticky cells get will-change:transform to force GPU compositing on mobile.
+           5. Right-side box-shadow on sticky cells creates the "freeze" visual separator.
+        */
+        #mfc-section { overflow: visible; border-radius: 1rem; }
+        /* Clip the header gradient corners using the wrapper, not overflow:hidden */
+        #mfc-section > .mfc-header-wrap {
+            border-radius: 1rem 1rem 0 0;
+            overflow: hidden;
+        }
+        #mfc-grid{
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 0 0 1rem 1rem;
+        }
+        #mfc-table{
+            border-collapse: separate;   /* required for sticky cells */
+            border-spacing: 0;
+            table-layout: auto;
+            width: 100%;
+            min-width: 420px;
+        }
+        /* ── Sticky label column (col 1) ── */
+        #mfc-table th.mfc-metric,
+        #mfc-table td.mfc-metric {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            will-change: transform;   /* GPU layer on mobile */
+            background: #f8fafc;
+            white-space: nowrap;
+            min-width: 108px;
+            max-width: 140px;
+            border-right: 2px solid #e2e8f0;
+            /* Shadow gives the "freeze line" look when columns scroll under it */
+            box-shadow: 2px 0 6px -2px rgba(0,0,0,0.08);
+        }
+        #mfc-table th.mfc-metric {
+            padding: 9px 12px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            /* Sticky header cell also needs top:0 if vertical scroll ever applies */
+            top: 0;
+            z-index: 4;
+        }
+        #mfc-table td.mfc-metric {
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        /* Section divider rows — label cell stays sticky too */
+        #mfc-table tr.mfc-section-head td {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            will-change: transform;
+            background: #f1f5f9;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #94a3b8;
+            padding: 5px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 2px solid #e2e8f0;
+            box-shadow: 2px 0 6px -2px rgba(0,0,0,0.08);
+            white-space: nowrap;
+        }
+        /* ── Fund column headers ── */
+        #mfc-table th.mfc-fund-col {
+            padding: 10px 14px;
+            background: linear-gradient(135deg,#1e3a5f,#0e6655);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            border-right: 1px solid rgba(255,255,255,.12);
+            min-width: 140px;
+            max-width: 180px;
+            top: 0;
+            position: sticky;
+            z-index: 2;
+        }
+        #mfc-table th.mfc-fund-col:last-child { border-right: none; }
+        #mfc-table th.mfc-fund-col .mfc-fn { font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:155px;display:block; }
+        #mfc-table th.mfc-fund-col .mfc-fa { font-size:9px;opacity:.65;font-weight:600;margin-top:1px;display:block; }
+        #mfc-table th.mfc-fund-col .mfc-rm { display:inline-flex;align-items:center;justify-content:center;margin-top:4px;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:11px;transition:background .15s; }
+        #mfc-table th.mfc-fund-col .mfc-rm:hover { background:rgba(255,80,80,.4);color:#fff; }
+        /* Top-left corner cell — sticky on both axes */
+        #mfc-table thead tr th.mfc-metric {
+            z-index: 5;
+            background: #f8fafc;
+        }
+        /* ── Value cells ── */
+        #mfc-table td.mfc-val {
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+            border-right: 1px solid #f1f5f9;
+            white-space: nowrap;
+            transition: background .2s;
+        }
+        #mfc-table td.mfc-val:last-child { border-right: none; }
+        #mfc-table td.mfc-best  { background: #f0fdf4 !important; color: #15803d !important; }
+        #mfc-table td.mfc-worst { color: #b91c1c !important; }
+        #mfc-table tr:last-child td { border-bottom: none; }
+        /* Mobile: slightly tighter */
+        @media (max-width: 640px) {
+            #mfc-table th.mfc-metric,
+            #mfc-table td.mfc-metric { min-width: 90px; max-width: 110px; padding: 7px 8px; font-size: 10px; }
+            #mfc-table th.mfc-fund-col { min-width: 120px; padding: 8px 10px; }
+            #mfc-table td.mfc-val { padding: 7px 10px; font-size: 11px; }
+        }
     </style>
 
 
