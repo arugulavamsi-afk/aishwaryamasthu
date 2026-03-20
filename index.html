@@ -2839,32 +2839,33 @@
                     <span class="text-[10px] text-slate-300 ml-2">Shows — if fund history is too short for that period</span>
                 </div>
                 <!-- Benchmark label -->
-                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2">
+                <div class="px-4 py-1.5 border-b border-slate-100 flex items-center gap-2 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk metrics computed against:</span>
                     <span class="text-[10px] font-bold text-teal-600" id="mfe-bench-label">Benchmark: Nifty 50</span>
-                    <span class="text-[10px] text-slate-300">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
+                    <span class="text-[10px] text-slate-300 hidden sm:inline">· Alpha, Beta, Sharpe &amp; Sortino use category-appropriate index</span>
+                    <span class="text-[10px] text-slate-400 sm:hidden ml-auto">← Swipe table →</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse" style="min-width:1180px;width:100%;">
+                    <table class="w-full text-left border-collapse" style="min-width:780px;width:100%;">
                         <colgroup>
-                            <col style="width:42px">
-                            <col style="width:280px">
-                            <col style="width:80px">
-                            <col style="width:90px">
-                            <col style="width:90px">
-                            <col style="width:80px">
-                            <col style="width:80px">
-                            <col style="width:80px">
-                            <col style="width:75px">
+                            <col style="width:34px">
+                            <col style="width:180px">
                             <col style="width:70px">
-                            <col style="width:80px">
-                            <col style="width:75px">
-                            <col style="width:75px">
+                            <col style="width:76px">
+                            <col style="width:76px">
+                            <col style="width:72px">
+                            <col style="width:72px">
+                            <col style="width:72px">
+                            <col style="width:66px">
+                            <col style="width:60px">
+                            <col style="width:68px">
+                            <col style="width:66px">
+                            <col style="width:66px">
                         </colgroup>
                         <thead>
                             <tr style="background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 40%,#0e6655 100%);">
-                                <th class="mfe-th" style="width:42px;">#</th>
-                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('name')" style="width:280px;">Fund Name <span class="mfe-si">↕</span></th>
+                                <th class="mfe-th" style="width:34px;text-align:center;">#</th>
+                                <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('name')" style="width:180px;">Fund Name <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('score')" title="Star rating: top 10% = 5★, next 22.5% = 4★, middle 35% = 3★, next 22.5% = 2★, bottom 10% = 1★ — within category">Rating <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('cagr')" id="mfe-cagr-header" title="Compounded Annual Growth Rate for selected period">CAGR <span class="mfe-si">↕</span></th>
                                 <th class="mfe-th mfe-th-sort" onclick="mfeSortBy('nav')" title="Latest NAV from AMFI">NAV ₹ <span class="mfe-si">↕</span></th>
@@ -7232,7 +7233,7 @@
 
         /* ===== MF EXPLORER STYLES ===== */
         /* MFE Table layout */
-        #mfe-table-wrap .overflow-x-auto{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        #mfe-table-wrap .overflow-x-auto{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;}
         .mfe-th{padding:9px 10px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-right:1px solid rgba(255,255,255,.08);vertical-align:middle;}
         .mfe-th:last-child{border-right:none;}
         .mfe-th-sort{cursor:pointer;transition:background .15s;}
@@ -7245,10 +7246,40 @@
         #mfe-table-wrap table tbody tr:hover{background:#f8fafc;}
         .mfe-td{padding:8px 10px;font-size:12px;color:#334155;white-space:nowrap;border-right:1px solid #f1f5f9;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;}
         .mfe-td:last-child{border-right:none;}
-        .mfe-td-name{font-weight:700;color:#1e293b;width:280px;min-width:240px;max-width:280px;position:sticky;left:0;background:#fff;z-index:5;white-space:normal;overflow:hidden;}
+        /* Freeze col 1 (#) */
+        .mfe-td-rank{position:sticky;left:0;background:#fff;z-index:4;font-size:11px;font-weight:900;color:#94a3b8;text-align:center;border-right:1px solid #e2e8f0 !important;}
+        #mfe-table-wrap table thead tr th:first-child{position:sticky;left:0;z-index:6;background:linear-gradient(135deg,#1e3a5f 0%,#1a5276 60%);}
+        #mfe-table-wrap table tbody tr:hover .mfe-td-rank{background:#f8fafc;}
+        /* Freeze col 2 (Fund Name) */
+        .mfe-td-name{font-weight:700;color:#1e293b;position:sticky;left:34px;background:#fff;z-index:5;white-space:normal;overflow:hidden;border-right:2px solid #cbd5e1 !important;box-shadow:2px 0 6px -2px rgba(0,0,0,0.08);}
+        #mfe-table-wrap table thead tr th:nth-child(2){position:sticky;left:34px;z-index:6;background:linear-gradient(135deg,#1a5276 0%,#0e6655 100%);border-right:2px solid rgba(255,255,255,0.2) !important;box-shadow:2px 0 6px -2px rgba(0,0,0,0.25);}
         #mfe-table-wrap table tbody tr:hover .mfe-td-name{background:#f8fafc;}
-        .mfe-fname{display:block;white-space:normal;word-break:break-word;line-height:1.3;font-size:12px;max-width:260px;}
+        .mfe-fname{display:block;white-space:normal;word-break:break-word;line-height:1.3;font-size:12px;}
         .mfe-famc{font-size:10px;color:#94a3b8;font-weight:600;display:block;margin-top:1px;}
+
+        /* ── Mobile table: compact everything so more columns are visible ── */
+        @media (max-width: 640px) {
+            #mfe-table-wrap .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+            .mfe-th { padding: 7px 6px; font-size: 9px; letter-spacing: .03em; }
+            .mfe-td { padding: 6px 6px; font-size: 11px; }
+            .mfe-td-rank { min-width: 28px; width: 28px; max-width: 28px; padding: 6px 4px; font-size: 10px; }
+            #mfe-table-wrap table thead tr th:first-child { min-width: 28px; width: 28px; }
+            .mfe-td-name { left: 28px; min-width: 130px; max-width: 150px; width: 140px; padding: 6px 6px; }
+            #mfe-table-wrap table thead tr th:nth-child(2) { left: 28px; min-width: 130px; width: 140px; }
+            .mfe-fname { font-size: 11px; max-width: 130px; }
+            .mfe-famc { font-size: 9px; }
+            .mfe-stars { font-size: 11px; }
+            /* Shrink hint strip */
+            #mfe-table-wrap .text-\[10px\].text-slate-300 { display: none; }
+        }
+        /* Extra-small (≤380px) */
+        @media (max-width: 380px) {
+            .mfe-td-name { min-width: 110px; max-width: 120px; width: 115px; left: 26px; }
+            #mfe-table-wrap table thead tr th:nth-child(2) { left: 26px; min-width: 110px; width: 115px; }
+            .mfe-td-rank { min-width: 26px; width: 26px; }
+            #mfe-table-wrap table thead tr th:first-child { min-width: 26px; width: 26px; }
+            .mfe-fname { font-size: 10px; max-width: 108px; }
+        }
         .mfe-score{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:900;}
         /* Star rating badges */
         .mfe-stars{display:inline-flex;align-items:center;gap:1px;font-size:14px;line-height:1;}
@@ -8118,7 +8149,7 @@
             }
 
             return `<tr>
-                <td class="mfe-td text-center">${rankHtml}</td>
+                <td class="mfe-td mfe-td-rank text-center">${rankHtml}</td>
                 <td class="mfe-td mfe-td-name">
                     <span class="mfe-fname">${_esc(f.name)}</span>
                     <span class="mfe-famc">${_esc(f.amc)}${_mfeCur==='Sectoral'?` <span style="margin-left:4px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px;background:rgba(13,148,136,0.12);color:#0d9488;">${_esc(MFE_SUBSECT_ICON[f.subSect]||'📌')} ${_esc(f.subSect)}</span>`:''}</span>
